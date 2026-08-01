@@ -4,7 +4,8 @@
     "pages/category/category",
     "pages/profile/profile",
     "pages/post-detail/post-detail",
-    "pages/posts/posts"
+    "pages/posts/posts",
+    "pages/search/search"
   ],
   "window": {
     "navigationBarBackgroundColor": "#f7f8fa",

@@ -8,17 +8,20 @@ Page({
   data: {
     blogName: config.blogName,
     blogDesc: config.blogDesc,
+    version: config.version,
     stats: {
-      postCount: '0',
-      categoryCount: '0',
-      tagCount: '0',
-      visitCount: '0'
+      postCount: '--',
+      categoryCount: '--',
+      tagCount: '--',
+      visitCount: '--'
     },
     commentEnabled: false
   },
 
   onLoad() {
-    this.setData({ commentEnabled: app.globalData.runtime.commentEnabled })
+    app.runtimeReady().then((runtime) => {
+      this.setData({ commentEnabled: !!runtime.commentEnabled })
+    })
     this.fetchStats()
   },
 
@@ -31,24 +34,33 @@ Page({
     this.fetchStats().finally(() => wx.stopPullDownRefresh())
   },
 
+  // 文章/分类/阅读来自 stats 接口；标签数取标签列表分页响应的 total（stats 不一定返回）
   async fetchStats() {
-    try {
-      const res = await api.getStats()
-      this.setData({
-        stats: {
-          postCount: formatCount(res.postCount ?? res.post ?? 0),
-          categoryCount: formatCount(res.categoryCount ?? res.category ?? 0),
-          tagCount: formatCount(res.tagCount ?? res.tag ?? 0),
-          visitCount: formatCount(res.visitCount ?? res.visit ?? 0)
-        }
-      })
-    } catch (err) {
-      console.error('加载统计失败', err)
-    }
-  },
+    const [statsRes, tagRes] = await Promise.allSettled([
+      api.getStats(),
+      api.getTagList({ page: 1, size: 1 })
+    ])
 
-  // 归档 / 友链 / 关于 / 设置：二期功能
-  todo() {
-    wx.showToast({ title: '功能开发中，敬请期待', icon: 'none' })
+    const next = {}
+    if (statsRes.status === 'fulfilled') {
+      const res = statsRes.value || {}
+      next.postCount = formatCount(res.postCount ?? res.post ?? 0)
+      next.categoryCount = formatCount(res.categoryCount ?? res.category ?? 0)
+      next.visitCount = formatCount(res.visitCount ?? res.visit ?? 0)
+    } else {
+      console.error('加载统计失败', statsRes.reason)
+    }
+    if (tagRes.status === 'fulfilled') {
+      // 失败时显示 '--'，不伪造 0
+      next.tagCount = formatCount((tagRes.value && tagRes.value.total) || 0)
+    } else {
+      console.error('加载标签数失败', tagRes.reason)
+    }
+    if (Object.keys(next).length) {
+      this.setData({ stats: { ...this.data.stats, ...next } })
+    } else if (!this._statsToastShown) {
+      this._statsToastShown = true
+      wx.showToast({ title: '加载失败，请检查网络', icon: 'none' })
+    }
   }
 })

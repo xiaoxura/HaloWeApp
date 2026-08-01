@@ -1,6 +1,6 @@
 const api = require('../../utils/api')
 const config = require('../../config/index')
-const { formatDate, formatCount } = require('../../utils/util')
+const { normalizePostSummary } = require('../../utils/adapters/post')
 
 Page({
   data: {
@@ -9,17 +9,41 @@ Page({
     postList: [],
     page: 1,
     hasMore: true,
-    loading: false
+    loading: false,
+    loadFailed: false,
+    paramInvalid: false,
+    showBackTop: false
   },
 
   onLoad(options) {
+    const type = options && options.type
+    const name = options && options.name ? decodeURIComponent(options.name) : ''
+    // 参数合法性检查：类型或名称缺失/非法时进入独立错误态
+    if ((type !== 'category' && type !== 'tag') || !name) {
+      wx.setNavigationBarTitle({ title: '文章列表' })
+      this.setData({ paramInvalid: true })
+      return
+    }
     const title = decodeURIComponent(options.title || '文章列表')
     wx.setNavigationBarTitle({ title })
-    this.setData({ type: options.type, name: options.name })
+    this._unloaded = false
+    this.setData({ type, name })
     this.fetchPosts(true)
   },
 
+  onUnload() {
+    this._unloaded = true
+  },
+
   onPullDownRefresh() {
+    if (this.data.paramInvalid) {
+      wx.stopPullDownRefresh()
+      return
+    }
+    if (this.data.loading) {
+      wx.stopPullDownRefresh()
+      return
+    }
     this.fetchPosts(true).finally(() => wx.stopPullDownRefresh())
   },
 
@@ -29,9 +53,20 @@ Page({
     }
   },
 
+  // 滚动超过一屏半后显示返回顶部按钮
+  onPageScroll(e) {
+    const show = e.scrollTop > 600
+    if (show !== this.data.showBackTop) this.setData({ showBackTop: show })
+  },
+
+  backTop() {
+    wx.pageScrollTo({ scrollTop: 0, duration: 300 })
+  },
+
   async fetchPosts(refresh) {
+    if (this.data.loading) return
     const page = refresh ? 1 : this.data.page
-    this.setData({ loading: true })
+    this.setData({ loading: true, loadFailed: false })
 
     const params = { page, size: config.pageSize, sort: ['spec.publishTime,desc'] }
     const fetcher =
@@ -41,34 +76,32 @@ Page({
 
     try {
       const res = await fetcher
-      const items = (res.items || []).map((item) => ({
-        name: item.metadata.name,
-        title: item.spec.title,
-        cover: item.spec.cover || '',
-        pinned: item.spec.pinned || false,
-        excerpt: (item.status && item.status.excerpt) || '',
-        publishTime: formatDate(item.spec.publishTime),
-        visits: formatCount((item.stats && item.stats.visit) || 0),
-        comments: (item.stats && item.stats.comment) || 0,
-        upvotes: (item.stats && item.stats.upvote) || 0,
-        category:
-          (item.categories && item.categories[0] && item.categories[0].spec.displayName) || ''
-      }))
+      if (this._unloaded) return
+      const items = (res.items || []).map(normalizePostSummary)
       this.setData({
         postList: refresh ? items : [...this.data.postList, ...items],
         page: page + 1,
         hasMore: res.hasNext || false
       })
     } catch (err) {
-      console.error('加载文章失败', err)
-      wx.showToast({ title: '加载失败', icon: 'none' })
+      if (this._unloaded) return
+      console.error('加载文章失败', err.type || '', err.statusCode || '')
+      if (refresh && !this.data.postList.length) {
+        this.setData({ loadFailed: true })
+      } else {
+        wx.showToast({ title: '加载失败，请检查网络', icon: 'none' })
+      }
     } finally {
-      this.setData({ loading: false })
+      if (!this._unloaded) this.setData({ loading: false })
     }
+  },
+
+  reloadFirstPage() {
+    this.fetchPosts(true)
   },
 
   goDetail(e) {
     const { name } = e.currentTarget.dataset
-    wx.navigateTo({ url: `/pages/post-detail/post-detail?name=${name}` })
+    wx.navigateTo({ url: `/pages/post-detail/post-detail?name=${encodeURIComponent(name)}` })
   }
 })

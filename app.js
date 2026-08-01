@@ -1,17 +1,26 @@
 const config = require('./config/index')
+const { runtimeConfig } = require('./utils/runtime-config')
 
 App({
   globalData: {
     config,
-    // 运行时可被远程配置覆盖（配套插件下发）
+    // 运行时可被远程配置覆盖（配套插件下发），默认本地配置
     runtime: {
-      commentEnabled: config.commentEnabled
+      commentEnabled: !!config.commentEnabled
     }
   },
 
   onLaunch() {
     this.loadFont()
-    this.fetchRemoteConfig()
+    // 远程配置就绪后覆盖运行时配置；任何异常都保持本地默认值
+    runtimeConfig.ready().then((runtime) => {
+      Object.assign(this.globalData.runtime, runtime)
+    })
+  },
+
+  // 页面通过统一的就绪 Promise 获取配置，避免启动时序竞争
+  runtimeReady() {
+    return runtimeConfig.ready().then(() => this.globalData.runtime)
   },
 
   // 加载自定义字体（霞鹜文楷），失败不影响系统字体兜底
@@ -22,31 +31,5 @@ App({
       source: `url("${config.fontUrl}")`,
       fail: (err) => console.warn('字体加载失败，使用系统字体', err)
     })
-  },
-
-  // 拉取配套插件下发的远程配置；插件未安装/请求失败时使用本地默认
-  fetchRemoteConfig() {
-    const stored = wx.getStorageSync('remoteConfig')
-    if (stored) this.applyRemoteConfig(stored)
-
-    wx.request({
-      url: `${config.baseUrl}/apis/api.weapp.halo.run/v1alpha1/config`,
-      timeout: 5000,
-      success: (res) => {
-        if (res.statusCode === 200 && res.data) {
-          wx.setStorageSync('remoteConfig', res.data)
-          this.applyRemoteConfig(res.data)
-        }
-      },
-      fail: () => {
-        // 插件不存在或网络异常，静默使用本地配置
-      }
-    })
-  },
-
-  applyRemoteConfig(remote) {
-    if (typeof remote.commentEnabled === 'boolean') {
-      this.globalData.runtime.commentEnabled = remote.commentEnabled
-    }
   }
 })

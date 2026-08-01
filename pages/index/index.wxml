@@ -1,6 +1,6 @@
 <!-- 搜索胶囊 -->
 <view class="search-pill" bindtap="goSearch">
-  <text class="iconfont icon-search">🔍</text>
+  <view class="icon i-search"></view>
   <text class="placeholder">搜索文章…</text>
 </view>
 
@@ -31,6 +31,18 @@
   <text class="title">最新文章</text>
 </view>
 
+<!-- 首屏加载失败：错误态 + 重试 -->
+<view wx:if="{{loadFailed && !postList.length}}" class="state-wrap">
+  <view class="icon i-alert"></view>
+  <view class="state-text">加载失败，请检查网络</view>
+  <button class="state-btn" bindtap="reloadFirstPage">重新加载</button>
+</view>
+
+<!-- 首屏加载中 -->
+<view wx:elif="{{loading && !postList.length}}" class="state-wrap">
+  <view class="state-text">加载中…</view>
+</view>
+
 <view
   wx:for="{{postList}}"
   wx:key="name"
@@ -46,11 +58,16 @@
     <view class="post-excerpt text-clamp-2" wx:if="{{item.excerpt}}">{{item.excerpt}}</view>
     <view class="post-meta">
       <text wx:if="{{item.category}}" class="cat-chip">{{item.category}}</text>
-      <text>{{item.publishTime}}</text>
+      <text class="meta-date">{{item.publishTime}}</text>
       <text class="spacer"></text>
-      <text>{{item.visits}} 阅读</text>
-      <text>{{item.comments}} 评论</text>
-      <text wx:if="{{item.upvotes}}">{{item.upvotes}} 赞</text>
+      <view class="meta-stat">
+        <view class="icon i-eye"></view>
+        <text>{{item.visits}}</text>
+      </view>
+      <view class="meta-stat">
+        <view class="icon i-msg"></view>
+        <text>{{item.comments}}</text>
+      </view>
     </view>
   </view>
   <image
@@ -62,9 +79,19 @@
   />
 </view>
 
-<!-- 加载状态 -->
-<view class="load-status">
+<!-- 加载状态（有列表时展示分页状态） -->
+<view class="load-status" wx:if="{{postList.length}}">
   <text wx:if="{{loading}}">加载中…</text>
-  <text wx:elif="{{!hasMore && postList.length}}">— 没有更多了 —</text>
-  <text wx:elif="{{!postList.length}}">暂无文章</text>
+  <text wx:elif="{{!hasMore}}">— 没有更多了 —</text>
+</view>
+
+<!-- 成功但无数据：空状态 -->
+<view wx:if="{{!loading && !loadFailed && !postList.length}}" class="state-wrap">
+  <view class="icon i-inbox"></view>
+  <view class="state-text">暂无文章</view>
+</view>
+
+<!-- 返回顶部 -->
+<view wx:if="{{showBackTop}}" class="back-top" bindtap="backTop" hover-class="back-top-hover">
+  <view class="icon i-top"></view>
 </view>

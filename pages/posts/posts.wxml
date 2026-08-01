@@ -1,37 +1,74 @@
 <view class="posts-page">
-  <view
-    wx:for="{{postList}}"
-    wx:key="name"
-    class="post-card"
-    bindtap="goDetail"
-    data-name="{{item.name}}"
-    hover-class="post-card-hover"
-  >
-    <view class="post-info">
-      <view class="post-title text-clamp-2">
-        <text wx:if="{{item.pinned}}" class="pin-chip">置顶</text>{{item.title}}
-      </view>
-      <view class="post-excerpt text-clamp-2" wx:if="{{item.excerpt}}">{{item.excerpt}}</view>
-      <view class="post-meta">
-        <text wx:if="{{item.category}}" class="cat-chip">{{item.category}}</text>
-        <text>{{item.publishTime}}</text>
-        <text class="spacer"></text>
-        <text>{{item.visits}} 阅读</text>
-        <text>{{item.comments}} 评论</text>
-      </view>
-    </view>
-    <image
-      wx:if="{{item.cover}}"
-      class="post-cover"
-      src="{{item.cover}}"
-      mode="aspectFill"
-      lazy-load
-    />
+  <!-- 参数非法 -->
+  <view wx:if="{{paramInvalid}}" class="state-wrap">
+    <view class="icon i-file"></view>
+    <view class="state-text">页面参数错误，请返回重试</view>
   </view>
 
-  <view class="load-status">
-    <text wx:if="{{loading}}">加载中…</text>
-    <text wx:elif="{{!hasMore && postList.length}}">— 没有更多了 —</text>
-    <text wx:elif="{{!postList.length}}">该分类下暂无文章</text>
+  <block wx:else>
+    <!-- 首屏加载失败：错误态 + 重试 -->
+    <view wx:if="{{loadFailed && !postList.length}}" class="state-wrap">
+      <view class="icon i-alert"></view>
+      <view class="state-text">加载失败，请检查网络</view>
+      <button class="state-btn" bindtap="reloadFirstPage">重新加载</button>
+    </view>
+
+    <!-- 首屏加载中 -->
+    <view wx:elif="{{loading && !postList.length}}" class="state-wrap">
+      <view class="state-text">加载中…</view>
+    </view>
+
+    <view
+      wx:for="{{postList}}"
+      wx:key="name"
+      class="post-card"
+      bindtap="goDetail"
+      data-name="{{item.name}}"
+      hover-class="post-card-hover"
+    >
+      <view class="post-info">
+        <view class="post-title text-clamp-2">
+          <text wx:if="{{item.pinned}}" class="pin-chip">置顶</text>{{item.title}}
+        </view>
+        <view class="post-excerpt text-clamp-2" wx:if="{{item.excerpt}}">{{item.excerpt}}</view>
+        <view class="post-meta">
+          <text wx:if="{{item.category}}" class="cat-chip">{{item.category}}</text>
+          <text class="meta-date">{{item.publishTime}}</text>
+          <text class="spacer"></text>
+          <view class="meta-stat">
+            <view class="icon i-eye"></view>
+            <text>{{item.visits}}</text>
+          </view>
+          <view class="meta-stat">
+            <view class="icon i-msg"></view>
+            <text>{{item.comments}}</text>
+          </view>
+        </view>
+      </view>
+      <image
+        wx:if="{{item.cover}}"
+        class="post-cover"
+        src="{{item.cover}}"
+        mode="aspectFill"
+        lazy-load
+      />
+    </view>
+
+    <!-- 分页状态 -->
+    <view class="load-status" wx:if="{{postList.length}}">
+      <text wx:if="{{loading}}">加载中…</text>
+      <text wx:elif="{{!hasMore}}">— 没有更多了 —</text>
+    </view>
+
+    <!-- 成功但无数据：空状态 -->
+    <view wx:if="{{!loading && !loadFailed && !postList.length}}" class="state-wrap">
+      <view class="icon i-inbox"></view>
+      <view class="state-text">暂无文章</view>
+    </view>
+  </block>
+
+  <!-- 返回顶部 -->
+  <view wx:if="{{showBackTop}}" class="back-top" bindtap="backTop" hover-class="back-top-hover">
+    <view class="icon i-top"></view>
   </view>
 </view>

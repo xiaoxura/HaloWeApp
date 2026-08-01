@@ -24,6 +24,7 @@
 .banner-img {
   width: 100%;
   height: 100%;
+  animation: img-fade 0.5s ease-out;
 }
 .banner-mask {
   position: absolute;

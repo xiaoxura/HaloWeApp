@@ -1,6 +1,6 @@
 const api = require('../../utils/api')
 const config = require('../../config/index')
-const { formatDate, formatCount } = require('../../utils/util')
+const { normalizePostSummary } = require('../../utils/adapters/post')
 
 Page({
   data: {
@@ -8,7 +8,10 @@ Page({
     postList: [],     // 文章列表
     page: 1,
     hasMore: true,
-    loading: false
+    loading: false,
+    // 首屏加载失败标记（分页失败不清空列表，仅提示）
+    loadFailed: false,
+    showBackTop: false
   },
 
   onLoad() {
@@ -16,6 +19,11 @@ Page({
   },
 
   onPullDownRefresh() {
+    // 刷新与触底加载互斥：请求进行中直接结束刷新动画
+    if (this.data.loading) {
+      wx.stopPullDownRefresh()
+      return
+    }
     this.fetchPosts(true).finally(() => wx.stopPullDownRefresh())
   },
 
@@ -25,9 +33,21 @@ Page({
     }
   },
 
+  // 滚动超过一屏半后显示返回顶部按钮
+  onPageScroll(e) {
+    const show = e.scrollTop > 600
+    if (show !== this.data.showBackTop) this.setData({ showBackTop: show })
+  },
+
+  backTop() {
+    wx.pageScrollTo({ scrollTop: 0, duration: 300 })
+  },
+
   async fetchPosts(refresh) {
+    // 单飞：快速连续触底/刷新只产生一个请求
+    if (this.data.loading) return
     const page = refresh ? 1 : this.data.page
-    this.setData({ loading: true })
+    this.setData({ loading: true, loadFailed: false })
 
     try {
       const res = await api.getPostList({
@@ -36,7 +56,7 @@ Page({
         sort: ['spec.pinned,desc', 'spec.publishTime,desc']
       })
 
-      const items = (res.items || []).map((item) => this.normalizePost(item))
+      const items = (res.items || []).map(normalizePostSummary)
 
       this.setData({
         postList: refresh ? items : [...this.data.postList, ...items],
@@ -48,35 +68,30 @@ Page({
           : this.data.bannerList
       })
     } catch (err) {
-      console.error('加载文章失败', err)
-      wx.showToast({ title: '加载失败，请检查网络', icon: 'none' })
+      console.error('加载文章失败', err.type || '', err.statusCode || '')
+      if (refresh && !this.data.postList.length) {
+        // 首屏失败：整页错误态，可重试
+        this.setData({ loadFailed: true })
+      } else {
+        // 刷新/分页失败：保留已有数据
+        wx.showToast({ title: '加载失败，请检查网络', icon: 'none' })
+      }
     } finally {
       this.setData({ loading: false })
     }
   },
 
-  normalizePost(item) {
-    return {
-      name: item.metadata.name,
-      title: item.spec.title,
-      cover: item.spec.cover || '',
-      pinned: item.spec.pinned || false,
-      excerpt: (item.status && item.status.excerpt) || '',
-      publishTime: formatDate(item.spec.publishTime),
-      visits: formatCount((item.stats && item.stats.visit) || 0),
-      comments: (item.stats && item.stats.comment) || 0,
-      upvotes: (item.stats && item.stats.upvote) || 0,
-      category:
-        (item.categories && item.categories[0] && item.categories[0].spec.displayName) || ''
-    }
-  },
-
   goDetail(e) {
     const { name } = e.currentTarget.dataset
-    wx.navigateTo({ url: `/pages/post-detail/post-detail?name=${name}` })
+    wx.navigateTo({ url: `/pages/post-detail/post-detail?name=${encodeURIComponent(name)}` })
+  },
+
+  // 首屏错误态重试
+  reloadFirstPage() {
+    this.fetchPosts(true)
   },
 
   goSearch() {
-    wx.showToast({ title: '搜索功能开发中', icon: 'none' })
+    wx.navigateTo({ url: '/pages/search/search' })
   }
 })

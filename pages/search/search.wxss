@@ -1,0 +1,97 @@
+/* ===== 搜索栏 ===== */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx 32rpx;
+}
+.search-input-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  height: 72rpx;
+  background: var(--color-card);
+  border-radius: var(--radius-full);
+  padding: 0 28rpx;
+  box-shadow: var(--shadow-card);
+}
+.search-input {
+  flex: 1;
+  font-size: 26rpx;
+}
+.search-clear {
+  padding: 8rpx;
+  display: flex;
+  align-items: center;
+}
+.search-btn {
+  font-size: 28rpx;
+  color: var(--color-primary);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* ===== 最近搜索 ===== */
+.history-block {
+  padding: 16rpx 32rpx;
+}
+.history-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.history-title {
+  font-size: 26rpx;
+  color: var(--color-text-2);
+  font-weight: 500;
+}
+.history-clear {
+  font-size: 24rpx;
+  color: var(--color-text-3);
+}
+.history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.history-chip {
+  font-size: 24rpx;
+  color: var(--color-text-2);
+  background: var(--color-card);
+  border-radius: var(--radius-full);
+  padding: 12rpx 28rpx;
+  box-shadow: var(--shadow-card);
+}
+
+/* ===== 搜索结果 ===== */
+.result-meta {
+  padding: 8rpx 32rpx 20rpx;
+  font-size: 22rpx;
+  color: var(--color-text-3);
+}
+.result-card {
+  margin: 0 32rpx 24rpx;
+  padding: 28rpx 32rpx 24rpx;
+}
+.result-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 1.45;
+  margin-bottom: 12rpx;
+}
+.result-desc {
+  font-size: 24rpx;
+  color: var(--color-text-2);
+  line-height: 1.6;
+}
+.result-time {
+  font-size: 22rpx;
+  color: var(--color-text-3);
+  margin-top: 16rpx;
+}
+.hl {
+  color: var(--color-primary);
+  font-weight: 600;
+}

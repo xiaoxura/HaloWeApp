@@ -73,22 +73,30 @@ page {
   border-radius: var(--radius-md);
   flex-shrink: 0;
   background: #eef1f5;
+  animation: img-fade 0.5s ease-out;
 }
 .post-meta {
   display: flex;
   align-items: center;
-  gap: 20rpx;
+  gap: 16rpx;
   font-size: 22rpx;
   color: var(--color-text-3);
   margin-top: auto;
   padding-top: 20rpx;
   white-space: nowrap;
+  overflow: hidden;
 }
-.post-meta text {
+.post-meta .meta-date {
   flex-shrink: 0;
 }
 .post-meta .spacer {
   flex: 1;
+}
+.meta-stat {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  flex-shrink: 0;
 }
 .cat-chip {
   background: var(--color-primary-light);
@@ -96,6 +104,11 @@ page {
   padding: 4rpx 16rpx;
   border-radius: var(--radius-md);
   font-size: 20rpx;
+  max-width: 200rpx;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ===== 加载状态 ===== */
@@ -104,6 +117,31 @@ page {
   padding: 40rpx 0 60rpx;
   color: var(--color-text-3);
   font-size: 24rpx;
+}
+
+/* ===== 返回顶部浮动按钮 ===== */
+.back-top {
+  position: fixed;
+  right: 32rpx;
+  bottom: 140rpx;
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 8rpx 24rpx rgba(30, 128, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99;
+}
+.back-top-hover {
+  opacity: 0.85;
+}
+
+/* ===== 图片渐入动画（配合浅色背景占位，加载完成时平滑出现） ===== */
+@keyframes img-fade {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
 }
 
 /* ===== 文本截断 ===== */
@@ -119,83 +157,118 @@ page {
   overflow: hidden;
 }
 
-/* ===== rich-text 正文样式 =====
-   注意：rich-text 节点样式只有定义在 app.wxss 才生效（页面 wxss 不穿透） */
-.richtext h1, .richtext h2, .richtext h3, .richtext h4 {
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 36rpx 0 20rpx;
-  line-height: 1.4;
+/* ===== 页面状态（加载/错误/空数据/重试，各页面共用，保持文案与交互一致） ===== */
+.state-wrap {
+  padding: 200rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
 }
-.richtext h1 { font-size: 36rpx; }
-.richtext h2 { font-size: 34rpx; }
-.richtext h3 { font-size: 32rpx; }
-.richtext h4 { font-size: 30rpx; }
-.richtext p { margin-bottom: 24rpx; }
-.richtext img {
-  max-width: 100%;
-  border-radius: 20rpx;
-  margin: 24rpx 0;
-}
-.richtext pre {
-  background: #282c34;
-  color: #abb2bf;
-  border-radius: 20rpx;
-  padding: 24rpx;
-  margin: 24rpx 0;
-  font-size: 24rpx;
-  line-height: 1.7;
-  overflow-x: auto;
-  white-space: pre;
-}
-.richtext code {
-  font-family: Consolas, monospace;
-}
-.richtext p code, .richtext li code {
-  background: #f5f6f8;
-  color: #d63384;
-  border-radius: 8rpx;
-  padding: 2rpx 10rpx;
+.state-text {
+  color: var(--color-text-3);
   font-size: 26rpx;
 }
-.richtext pre code {
-  background: transparent;
-  color: inherit;
-  padding: 0;
+.state-btn {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  border-radius: var(--radius-full);
+  padding: 0 48rpx;
+  line-height: 72rpx;
 }
-.richtext blockquote {
-  margin: 24rpx 0;
-  padding: 20rpx 28rpx;
-  background: #f7f8fa;
-  border-left: 6rpx solid #d6dae1;
-  border-radius: 0 20rpx 20rpx 0;
-  color: #666;
-}
-.richtext ul, .richtext ol {
-  margin: 0 0 24rpx 4rpx;
-  padding-left: 36rpx;
-}
-.richtext li { margin-bottom: 8rpx; }
-.richtext li::marker { color: #1e80ff; }
-.richtext hr {
+.state-btn::after {
   border: none;
-  border-top: 1rpx solid #e5e7eb;
-  margin: 36rpx 0;
 }
-.richtext table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 24rpx;
-  margin: 24rpx 0;
+
+/* ===== 线条图标（内联 SVG，Feather 风格，颜色随类固化） ===== */
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
-.richtext th {
-  background: #f5f7fa;
-  font-weight: 600;
-  padding: 16rpx 24rpx;
-  text-align: left;
+/* 搜索（灰） */
+.i-search {
+  width: 28rpx;
+  height: 28rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
 }
-.richtext td {
-  padding: 16rpx 24rpx;
-  border-top: 1rpx solid #f0f1f3;
+/* 心形（未点赞，灰） */
+.i-heart {
+  width: 40rpx;
+  height: 40rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'/%3E%3C/svg%3E");
 }
-.richtext a { color: #1e80ff; }
+/* 心形（已点赞，红） */
+.i-heart-on {
+  width: 40rpx;
+  height: 40rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ef4444' stroke='%23ef4444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'/%3E%3C/svg%3E");
+}
+/* 分享（灰） */
+.i-share {
+  width: 38rpx;
+  height: 38rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='18' cy='5' r='3'/%3E%3Ccircle cx='6' cy='12' r='3'/%3E%3Ccircle cx='18' cy='19' r='3'/%3E%3Cline x1='8.59' y1='13.51' x2='15.42' y2='17.49'/%3E%3Cline x1='15.41' y1='6.51' x2='8.59' y2='10.49'/%3E%3C/svg%3E");
+}
+/* 关闭/清除（灰） */
+.i-x {
+  width: 22rpx;
+  height: 22rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E");
+}
+/* 评论（灰） */
+.i-comment {
+  width: 32rpx;
+  height: 32rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z'/%3E%3C/svg%3E");
+}
+/* 返回（深色） */
+.i-back {
+  width: 36rpx;
+  height: 36rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231a1a1a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='15 18 9 12 15 6'/%3E%3C/svg%3E");
+}
+/* 眼睛/阅读量（浅灰） */
+.i-eye {
+  width: 26rpx;
+  height: 26rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+}
+/* 评论气泡（浅灰，列表元信息用） */
+.i-msg {
+  width: 24rpx;
+  height: 24rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/%3E%3C/svg%3E");
+}
+/* 返回顶部（白） */
+.i-top {
+  width: 36rpx;
+  height: 36rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='19' x2='12' y2='5'/%3E%3Cpolyline points='5 12 12 5 19 12'/%3E%3C/svg%3E");
+}
+/* 文件夹（主题色，分类占位） */
+.i-folder {
+  width: 40rpx;
+  height: 40rpx;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e80ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z'/%3E%3C/svg%3E");
+}
+/* 页面状态大图标（浅灰） */
+.i-alert,
+.i-file,
+.i-inbox {
+  width: 80rpx;
+  height: 80rpx;
+}
+.i-alert {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c0c4cc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E");
+}
+.i-file {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c0c4cc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3C/svg%3E");
+}
+.i-inbox {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c0c4cc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='22 12 16 12 14 15 10 15 8 12 2 12'/%3E%3Cpath d='M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z'/%3E%3C/svg%3E");
+}

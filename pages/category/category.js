@@ -3,7 +3,9 @@ const api = require('../../utils/api')
 Page({
   data: {
     categories: [],
-    tags: []
+    tags: [],
+    loading: true,
+    loadFailed: false
   },
 
   onLoad() {
@@ -15,6 +17,7 @@ Page({
   },
 
   async fetchData() {
+    this.setData({ loading: true, loadFailed: false })
     try {
       const [catRes, tagRes] = await Promise.all([
         api.getCategoryList({ page: 1, size: 100 }),
@@ -34,22 +37,29 @@ Page({
         }))
       })
     } catch (err) {
-      console.error('加载分类失败', err)
-      wx.showToast({ title: '加载失败', icon: 'none' })
+      console.error('加载分类失败', err.type || '', err.statusCode || '')
+      // 刷新失败保留旧数据；首次失败显示错误态
+      if (!this.data.categories.length && !this.data.tags.length) {
+        this.setData({ loadFailed: true })
+      } else {
+        wx.showToast({ title: '加载失败，请检查网络', icon: 'none' })
+      }
+    } finally {
+      this.setData({ loading: false })
     }
   },
 
   goCategoryPosts(e) {
     const { name, title } = e.currentTarget.dataset
     wx.navigateTo({
-      url: `/pages/posts/posts?type=category&name=${name}&title=${encodeURIComponent(title)}`
+      url: `/pages/posts/posts?type=category&name=${encodeURIComponent(name)}&title=${encodeURIComponent(title)}`
     })
   },
 
   goTagPosts(e) {
     const { name, title } = e.currentTarget.dataset
     wx.navigateTo({
-      url: `/pages/posts/posts?type=tag&name=${name}&title=${encodeURIComponent(title)}`
+      url: `/pages/posts/posts?type=tag&name=${encodeURIComponent(name)}&title=${encodeURIComponent(title)}`
     })
   }
 })

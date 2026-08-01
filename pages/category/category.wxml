@@ -1,34 +1,54 @@
-<!-- 分类网格 -->
-<view class="cat-grid">
-  <view
-    wx:for="{{categories}}"
-    wx:key="name"
-    class="cat-card card"
-    bindtap="goCategoryPosts"
-    data-name="{{item.name}}"
-    data-title="{{item.displayName}}"
-    hover-class="cat-card-hover"
-  >
-    <image wx:if="{{item.cover}}" class="cat-cover" src="{{item.cover}}" mode="aspectFill" />
-    <view wx:else class="cat-cover cat-cover-placeholder">🗂</view>
-    <view class="cat-name">{{item.displayName}}</view>
-    <view class="cat-count">{{item.postCount}} 篇文章</view>
-  </view>
+<!-- 首屏加载失败：错误态 + 重试 -->
+<view wx:if="{{loadFailed}}" class="state-wrap">
+  <view class="icon i-alert"></view>
+  <view class="state-text">加载失败，请检查网络</view>
+  <button class="state-btn" bindtap="fetchData">重新加载</button>
 </view>
 
-<view wx:if="{{!categories.length}}" class="empty">暂无分类</view>
+<!-- 首屏加载中 -->
+<view wx:elif="{{loading && !categories.length && !tags.length}}" class="state-wrap">
+  <view class="state-text">加载中…</view>
+</view>
 
-<!-- 标签云 -->
-<view wx:if="{{tags.length}}" class="tag-cloud card">
-  <view class="tag-cloud-title">热门标签</view>
-  <view class="tags">
-    <text
-      wx:for="{{tags}}"
+<block wx:else>
+  <!-- 分类网格 -->
+  <view class="cat-grid">
+    <view
+      wx:for="{{categories}}"
       wx:key="name"
-      class="tag"
-      bindtap="goTagPosts"
+      class="cat-card card"
+      bindtap="goCategoryPosts"
       data-name="{{item.name}}"
       data-title="{{item.displayName}}"
-    >{{item.displayName}}</text>
+      hover-class="cat-card-hover"
+    >
+      <image wx:if="{{item.cover}}" class="cat-cover" src="{{item.cover}}" mode="aspectFill" />
+      <view wx:else class="cat-cover cat-cover-placeholder">
+        <view class="icon i-folder"></view>
+      </view>
+      <view class="cat-name">{{item.displayName}}</view>
+      <view class="cat-count">{{item.postCount}} 篇文章</view>
+    </view>
   </view>
-</view>
+
+  <!-- 成功但无数据：空状态 -->
+  <view wx:if="{{!categories.length && !tags.length}}" class="state-wrap">
+    <view class="icon i-inbox"></view>
+    <view class="state-text">暂无分类</view>
+  </view>
+
+  <!-- 标签云 -->
+  <view wx:if="{{tags.length}}" class="tag-cloud card">
+    <view class="tag-cloud-title">热门标签</view>
+    <view class="tags">
+      <text
+        wx:for="{{tags}}"
+        wx:key="name"
+        class="tag"
+        bindtap="goTagPosts"
+        data-name="{{item.name}}"
+        data-title="{{item.displayName}}"
+      >{{item.displayName}}</text>
+    </view>
+  </view>
+</block>

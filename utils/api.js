@@ -54,9 +54,10 @@ module.exports = {
     }),
 
   // ===== 搜索 =====
-  search: (keyword, page = 1, size = 10) =>
+  // 当前搜索 API 使用 limit 而非标准分页（v0.2.0 最多返回 20 条，不做伪分页）
+  search: (keyword, limit = 20) =>
     post('/apis/api.halo.run/v1alpha1/indices/-/search', {
       keyword,
-      limit: size
+      limit
     })
 }

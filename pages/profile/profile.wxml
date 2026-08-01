@@ -24,36 +24,13 @@
   </view>
 </view>
 
-<!-- 功能菜单 -->
+<!-- 状态信息（归档/友链/关于/设置等功能规划至 v0.3.x，不提供死入口） -->
 <view class="menu-list card">
-  <view class="menu-item" bindtap="todo">
-    <text class="m-ico" style="background:#e8f2ff">🕐</text>
-    <text>归档</text>
-    <text class="m-arrow">›</text>
-  </view>
-  <view class="menu-item" bindtap="todo">
-    <text class="m-ico" style="background:#fdeee4">🔗</text>
-    <text>友情链接</text>
-    <text class="m-arrow">›</text>
-  </view>
-  <view class="menu-item" bindtap="todo">
-    <text class="m-ico" style="background:#e6f7ec">📖</text>
-    <text>关于博主</text>
-    <text class="m-arrow">›</text>
-  </view>
-</view>
-
-<view class="menu-list card">
-  <view class="menu-item" bindtap="todo">
-    <text class="m-ico" style="background:#f3eafd">⚙️</text>
-    <text>设置</text>
-    <text class="m-arrow">›</text>
-  </view>
   <view class="menu-item">
-    <text class="m-ico" style="background:#eef1f5">💬</text>
+    <text class="m-ico" style="background:#eef1f5"><view class="icon i-comment"></view></text>
     <text>评论功能</text>
     <text class="m-extra">{{commentEnabled ? '已开启' : '已关闭'}}</text>
   </view>
 </view>
 
-<view class="version">HaloWeApp v0.1.0</view>
+<view class="version">HaloWeApp v{{version}}</view>
