@@ -1,0 +1,4 @@
+/* 本页样式已抽至 app.wxss（.post-card 等，与首页共用） */
+.posts-page {
+  padding-top: 8rpx;
+}

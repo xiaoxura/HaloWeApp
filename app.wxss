@@ -1,0 +1,201 @@
+/* ===== 设计规范（与 docs/prototype 一致）===== */
+page {
+  --color-primary: #1e80ff;
+  --color-primary-light: #e8f2ff;
+  --color-bg: #f7f8fa;
+  --color-card: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-2: #666666;
+  --color-text-3: #999999;
+  --color-border: #f0f0f0;
+  --radius-lg: 32rpx;
+  --radius-md: 20rpx;
+  --radius-full: 999rpx;
+  --shadow-card: 0 4rpx 24rpx rgba(0, 0, 0, 0.04);
+
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'LXGW WenKai', -apple-system, 'PingFang SC', sans-serif;
+  font-size: 28rpx;
+}
+
+/* ===== 通用卡片 ===== */
+.card {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+/* ===== 文章卡片（左文右图，首页/列表页共用）===== */
+.post-card {
+  margin: 0 32rpx 24rpx;
+  padding: 28rpx 32rpx 24rpx;
+  display: flex;
+  gap: 28rpx;
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+.post-card-hover {
+  opacity: 0.85;
+}
+.post-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.post-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 1.45;
+  margin-bottom: 12rpx;
+}
+.pin-chip {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: 500;
+  padding: 4rpx 16rpx;
+  border-radius: var(--radius-md);
+  margin-right: 12rpx;
+  vertical-align: 4rpx;
+}
+.post-excerpt {
+  font-size: 24rpx;
+  color: var(--color-text-2);
+  line-height: 1.6;
+}
+.post-cover {
+  width: 216rpx;
+  height: 160rpx;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+  background: #eef1f5;
+}
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  font-size: 22rpx;
+  color: var(--color-text-3);
+  margin-top: auto;
+  padding-top: 20rpx;
+  white-space: nowrap;
+}
+.post-meta text {
+  flex-shrink: 0;
+}
+.post-meta .spacer {
+  flex: 1;
+}
+.cat-chip {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  padding: 4rpx 16rpx;
+  border-radius: var(--radius-md);
+  font-size: 20rpx;
+}
+
+/* ===== 加载状态 ===== */
+.load-status {
+  text-align: center;
+  padding: 40rpx 0 60rpx;
+  color: var(--color-text-3);
+  font-size: 24rpx;
+}
+
+/* ===== 文本截断 ===== */
+.text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.text-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ===== rich-text 正文样式 =====
+   注意：rich-text 节点样式只有定义在 app.wxss 才生效（页面 wxss 不穿透） */
+.richtext h1, .richtext h2, .richtext h3, .richtext h4 {
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 36rpx 0 20rpx;
+  line-height: 1.4;
+}
+.richtext h1 { font-size: 36rpx; }
+.richtext h2 { font-size: 34rpx; }
+.richtext h3 { font-size: 32rpx; }
+.richtext h4 { font-size: 30rpx; }
+.richtext p { margin-bottom: 24rpx; }
+.richtext img {
+  max-width: 100%;
+  border-radius: 20rpx;
+  margin: 24rpx 0;
+}
+.richtext pre {
+  background: #282c34;
+  color: #abb2bf;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin: 24rpx 0;
+  font-size: 24rpx;
+  line-height: 1.7;
+  overflow-x: auto;
+  white-space: pre;
+}
+.richtext code {
+  font-family: Consolas, monospace;
+}
+.richtext p code, .richtext li code {
+  background: #f5f6f8;
+  color: #d63384;
+  border-radius: 8rpx;
+  padding: 2rpx 10rpx;
+  font-size: 26rpx;
+}
+.richtext pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+.richtext blockquote {
+  margin: 24rpx 0;
+  padding: 20rpx 28rpx;
+  background: #f7f8fa;
+  border-left: 6rpx solid #d6dae1;
+  border-radius: 0 20rpx 20rpx 0;
+  color: #666;
+}
+.richtext ul, .richtext ol {
+  margin: 0 0 24rpx 4rpx;
+  padding-left: 36rpx;
+}
+.richtext li { margin-bottom: 8rpx; }
+.richtext li::marker { color: #1e80ff; }
+.richtext hr {
+  border: none;
+  border-top: 1rpx solid #e5e7eb;
+  margin: 36rpx 0;
+}
+.richtext table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 24rpx;
+  margin: 24rpx 0;
+}
+.richtext th {
+  background: #f5f7fa;
+  font-weight: 600;
+  padding: 16rpx 24rpx;
+  text-align: left;
+}
+.richtext td {
+  padding: 16rpx 24rpx;
+  border-top: 1rpx solid #f0f1f3;
+}
+.richtext a { color: #1e80ff; }

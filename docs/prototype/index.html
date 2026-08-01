@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HaloWeApp UI 原型</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+<style>
+  :root {
+    /* ===== 设计规范（Design Tokens）===== */
+    --color-primary: #1e80ff;        /* 主色：Halo 蓝 */
+    --color-primary-light: #e8f2ff;  /* 主色浅底 */
+    --color-bg: #f7f8fa;             /* 页面背景 */
+    --color-card: #ffffff;           /* 卡片背景 */
+    --color-text: #1a1a1a;           /* 主文字 */
+    --color-text-2: #666666;         /* 次要文字 */
+    --color-text-3: #999999;         /* 辅助文字 */
+    --color-border: #f0f0f0;         /* 分割线 */
+    --radius-lg: 16px;               /* 大卡片圆角 = 32rpx */
+    --radius-md: 10px;               /* 小卡片/标签圆角 = 20rpx */
+    --radius-full: 999px;            /* 胶囊 */
+    --shadow-card: 0 2px 12px rgba(0,0,0,.04);
+    --shadow-bar: 0 -2px 16px rgba(0,0,0,.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "LXGW WenKai", -apple-system, "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+    background: #eceef1;
+    color: var(--color-text);
+    padding: 40px 24px 80px;
+  }
+
+  /* ===== 页面布局 ===== */
+  .page-header { max-width: 1680px; margin: 0 auto 32px; }
+  .page-header h1 { font-size: 28px; margin-bottom: 8px; }
+  .page-header p { color: var(--color-text-2); font-size: 14px; }
+
+  .tokens {
+    max-width: 1680px; margin: 0 auto 40px;
+    background: #fff; border-radius: var(--radius-lg);
+    padding: 24px 28px; box-shadow: var(--shadow-card);
+    display: flex; flex-wrap: wrap; gap: 32px;
+  }
+  .token-group h3 { font-size: 13px; color: var(--color-text-3); margin-bottom: 12px; font-weight: 500; }
+  .swatches { display: flex; gap: 10px; }
+  .swatch { text-align: center; font-size: 11px; color: var(--color-text-2); }
+  .swatch i { display: block; width: 44px; height: 44px; border-radius: 12px; margin-bottom: 6px; border: 1px solid rgba(0,0,0,.05); }
+  .radius-demo { display: flex; gap: 10px; align-items: flex-end; }
+  .radius-demo i { display: block; width: 44px; height: 44px; background: var(--color-primary-light); border: 1.5px solid var(--color-primary); }
+  .radius-demo .r1 { border-radius: 16px; }
+  .radius-demo .r2 { border-radius: 10px; }
+  .radius-demo .r3 { border-radius: 999px; width: 72px; }
+
+  .screens { display: flex; flex-wrap: wrap; gap: 40px; max-width: 1680px; margin: 0 auto; }
+  .screen-block { width: 375px; flex-shrink: 0; }
+  .screen-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .screen-desc { font-size: 12px; color: var(--color-text-2); margin-bottom: 14px; line-height: 1.6; }
+
+  /* ===== 手机外框 ===== */
+  .phone {
+    width: 375px; height: 760px;
+    background: var(--color-bg);
+    border-radius: 36px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.12);
+    overflow: hidden; position: relative;
+    display: flex; flex-direction: column;
+    border: 6px solid #1c1c1e;
+  }
+  .statusbar {
+    height: 44px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px 0 28px; font-size: 13px; font-weight: 600;
+    background: transparent;
+  }
+  .statusbar .icons { display: flex; gap: 5px; align-items: center; font-size: 11px; }
+
+  .scroll-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+  /* ===== 导航栏 ===== */
+  .navbar {
+    height: 48px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; font-size: 16px; font-weight: 600;
+  }
+  .navbar .nav-back { position: absolute; left: 16px; font-size: 20px; color: var(--color-text); font-weight: 400; }
+  .navbar .nav-more { position: absolute; right: 16px; font-size: 16px; color: var(--color-text-2); letter-spacing: 2px; }
+
+  .phone.tall { height: 1120px; }
+
+  /* ===== 底部 TabBar ===== */
+  .tabbar {
+    height: 64px; flex-shrink: 0;
+    background: var(--color-card);
+    box-shadow: var(--shadow-bar);
+    display: flex; border-radius: 20px 20px 0 0;
+  }
+  .tab-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 3px;
+    color: var(--color-text-3); font-size: 10px;
+  }
+  .tab-item .tab-icon { font-size: 20px; line-height: 1; }
+  .tab-item.active { color: var(--color-primary); font-weight: 500; }
+
+  /* ===== 首页 ===== */
+  .search-pill {
+    margin: 4px 16px 12px;
+    height: 38px; border-radius: var(--radius-full);
+    background: var(--color-card);
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 16px; color: var(--color-text-3); font-size: 13px;
+    box-shadow: var(--shadow-card);
+  }
+  .banner {
+    margin: 0 16px 16px; height: 160px;
+    border-radius: var(--radius-lg);
+    /* 模拟文章封面图：实际为 <image> 全铺 + 底部渐变遮罩 */
+    background:
+      linear-gradient(to top, rgba(0,0,0,.55) 0%, rgba(0,0,0,0) 55%),
+      linear-gradient(120deg, #5b8def 0%, #7aa8f5 40%, #a5c8f8 70%, #c9defc 100%);
+    position: relative; overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+  .banner .pin-tag {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(0,0,0,.35); color: #fff;
+    font-size: 10px; padding: 3px 10px;
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(4px);
+  }
+  .banner .banner-text { position: absolute; left: 16px; right: 16px; bottom: 14px; color: #fff; }
+  .banner .banner-text b {
+    font-size: 16px; display: block; margin-bottom: 5px;
+    text-shadow: 0 1px 4px rgba(0,0,0,.3);
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  }
+  .banner .banner-text span { font-size: 11px; opacity: .9; }
+  .banner .dots { position: absolute; right: 14px; bottom: 14px; display: flex; gap: 5px; }
+  .banner .dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.45); }
+  .banner .dots i.on { width: 14px; border-radius: 3px; background: #fff; }
+
+  .section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; margin-bottom: 10px;
+  }
+  .section-head b { font-size: 16px; }
+  .section-head span { font-size: 12px; color: var(--color-text-3); }
+
+  .post-card {
+    margin: 0 16px 12px;
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 14px 16px 12px;
+  }
+  .post-row { display: flex; gap: 14px; }
+  .post-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .post-info h4 {
+    font-size: 15px; line-height: 1.45; margin-bottom: 6px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .pin-chip {
+    display: inline-block; background: var(--color-primary); color: #fff;
+    font-size: 10px; padding: 2px 8px; border-radius: var(--radius-md);
+    margin-right: 6px; vertical-align: 2px; font-weight: 500;
+  }
+  .post-info .excerpt {
+    font-size: 12px; color: var(--color-text-2); line-height: 1.6;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .post-cover {
+    width: 108px; height: 80px; border-radius: var(--radius-md); flex-shrink: 0;
+    background: linear-gradient(135deg, #dfe9f5 0%, #c3d7ee 100%);
+  }
+  .post-cover.c2 { background: linear-gradient(135deg, #fde8e8 0%, #f6cfc9 100%); }
+  .post-cover.c3 { background: linear-gradient(135deg, #e2f3e8 0%, #c2e6d0 100%); }
+  .post-meta { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--color-text-3); margin-top: auto; padding-top: 10px; white-space: nowrap; }
+  .post-meta span { flex-shrink: 0; }
+  .post-meta .cat-chip {
+    background: var(--color-primary-light); color: var(--color-primary);
+    padding: 2px 8px; border-radius: var(--radius-md); font-size: 10px;
+  }
+  .post-meta .spacer { flex: 1; }
+
+  /* ===== 分类页 ===== */
+  .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 4px 16px 16px; }
+  .cat-card {
+    background: var(--color-card); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card); padding: 16px;
+  }
+  .cat-card .cat-ico {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; margin-bottom: 10px;
+  }
+  .cat-card b { font-size: 14px; display: block; margin-bottom: 3px; }
+  .cat-card span { font-size: 11px; color: var(--color-text-3); }
+  .tag-cloud { margin: 0 16px; background: var(--color-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 16px; }
+  .tag-cloud h5 { font-size: 14px; margin-bottom: 12px; }
+  .tag-cloud .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag-cloud .tags i {
+    font-style: normal; font-size: 12px; color: var(--color-text-2);
+    background: var(--color-bg); border-radius: var(--radius-full);
+    padding: 5px 14px;
+  }
+  .tag-cloud .tags i.hot { color: var(--color-primary); background: var(--color-primary-light); }
+
+  /* ===== 详情页 ===== */
+  .detail-head { padding: 8px 20px 0; }
+  .detail-head h2 { font-size: 21px; line-height: 1.4; margin-bottom: 12px; }
+  .author-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e80ff, #6db3ff); flex-shrink: 0; }
+  .author-row .a-info b { font-size: 13px; display: block; }
+  .author-row .a-info span { font-size: 11px; color: var(--color-text-3); }
+  .detail-cover { margin: 0 16px 14px; height: 150px; border-radius: var(--radius-lg); background: linear-gradient(135deg, #dfe9f5, #c3d7ee); }
+  .richtext { padding: 0 20px; font-size: 14px; line-height: 1.8; color: #333; }
+  .richtext p { margin-bottom: 12px; }
+  .richtext .fake-h { font-size: 17px; font-weight: 600; color: var(--color-text); margin: 18px 0 10px; }
+  .richtext .fake-img { height: 90px; border-radius: var(--radius-md); background: #eef1f5; margin: 12px 0; display: flex; align-items: center; justify-content: center; color: var(--color-text-3); font-size: 11px; }
+  .richtext .fake-code { background: #f5f6f8; border-radius: var(--radius-md); padding: 10px 12px; font-family: monospace; font-size: 11px; color: #d63384; margin-bottom: 12px; }
+  .richtext .inline-code { background: #f5f6f8; border-radius: 4px; padding: 1px 5px; font-family: monospace; font-size: 12px; color: #d63384; }
+
+  /* 代码块（对应 mp-html 渲染 pre>code） */
+  .code-block { margin: 12px 0; border-radius: var(--radius-md); background: #282c34; overflow: hidden; }
+  .code-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px; background: rgba(255,255,255,.06);
+  }
+  .code-bar .lang { color: #abb2bf; font-size: 10px; font-family: monospace; }
+  .code-bar .copy {
+    margin-left: auto; color: #abb2bf; font-size: 10px;
+    border: 1px solid rgba(255,255,255,.25); border-radius: var(--radius-full);
+    padding: 2px 10px;
+  }
+  .code-body { padding: 10px 12px; overflow-x: auto; }
+  .code-body pre { font-family: "JetBrains Mono", Consolas, monospace; font-size: 11px; line-height: 1.7; color: #abb2bf; white-space: pre; }
+  .tok-k { color: #c678dd; }  /* 关键字 */
+  .tok-s { color: #98c379; }  /* 字符串 */
+  .tok-f { color: #61afef; }  /* 函数 */
+  .tok-c { color: #7f848e; font-style: italic; }  /* 注释 */
+  .tok-n { color: #d19a66; }  /* 数字 */
+
+  /* 表格（对应 table） */
+  .table-wrap { margin: 12px 0; border: 1px solid #eceef1; border-radius: var(--radius-md); overflow-x: auto; }
+  .table-wrap table { border-collapse: collapse; width: 100%; font-size: 12px; }
+  .table-wrap th {
+    background: #f5f7fa; color: var(--color-text); font-weight: 600;
+    padding: 8px 12px; text-align: left; white-space: nowrap;
+  }
+  .table-wrap td { padding: 8px 12px; border-top: 1px solid #f0f1f3; color: #444; white-space: nowrap; }
+  .table-wrap tr:nth-child(even) td { background: #fafbfc; }
+
+  /* 分割线（对应 hr） */
+  .divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #e5e7eb; }
+  .divider i { width: 5px; height: 5px; border-radius: 50%; background: #d0d3d9; }
+
+  /* 提示块（对应 blockquote / 编辑器 callout 插件） */
+  .callout {
+    display: flex; gap: 10px; align-items: flex-start;
+    margin: 12px 0; padding: 10px 12px;
+    border-radius: var(--radius-md); font-size: 13px; line-height: 1.65;
+  }
+  .callout .co-ico { flex-shrink: 0; font-size: 14px; line-height: 1.5; }
+  .callout b { display: block; margin-bottom: 2px; }
+  .callout.info { background: #eef5ff; color: #2b5fa3; }
+  .callout.info b { color: #1e80ff; }
+  .callout.success { background: #ecf9f0; color: #2e7d4f; }
+  .callout.success b { color: #1fa65a; }
+  .callout.warn { background: #fdf6e9; color: #a1742a; }
+  .callout.warn b { color: #e6a23c; }
+  .callout.danger { background: #fdeeee; color: #b03a3a; }
+  .callout.danger b { color: #e05050; }
+
+  /* 引用块（对应 blockquote） */
+  .quote-block {
+    margin: 12px 0; padding: 10px 14px;
+    background: #f7f8fa; border-left: 3px solid #d6dae1;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    color: #666; font-size: 13px; line-height: 1.7;
+  }
+
+  /* 列表（对应 ul/ol） */
+  .richtext ul.fake-list { margin: 0 0 12px 2px; padding-left: 18px; }
+  .richtext ul.fake-list li { margin-bottom: 4px; }
+  .richtext ul.fake-list li::marker { color: var(--color-primary); }
+
+  .detail-tags { display: flex; gap: 8px; padding: 4px 20px 14px; }
+  .detail-tags i { font-style: normal; font-size: 11px; color: var(--color-primary); background: var(--color-primary-light); padding: 4px 12px; border-radius: var(--radius-full); }
+
+  .comment-block { margin: 0 16px 14px; background: var(--color-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 16px; }
+  .comment-block h5 { font-size: 14px; margin-bottom: 14px; }
+  .comment-item { display: flex; gap: 10px; margin-bottom: 14px; }
+  .comment-item .avatar { width: 30px; height: 30px; background: linear-gradient(135deg, #ffb56b, #ff8f5c); }
+  .comment-item:nth-child(3) .avatar { background: linear-gradient(135deg, #7bd88f, #4ec77f); }
+  .c-body { flex: 1; }
+  .c-body .c-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .c-body .c-head b { font-size: 12px; }
+  .c-body .c-head span { font-size: 10px; color: var(--color-text-3); }
+  .c-body p { font-size: 13px; line-height: 1.6; color: #444; }
+  .c-reply { margin: 8px 0 0 8px; padding: 8px 10px; background: var(--color-bg); border-radius: var(--radius-md); font-size: 12px; color: #555; line-height: 1.55; }
+  .c-reply b { color: var(--color-primary); font-weight: 500; }
+
+  .action-bar {
+    height: 56px; flex-shrink: 0;
+    background: var(--color-card); box-shadow: var(--shadow-bar);
+    display: flex; align-items: center; gap: 10px; padding: 0 16px;
+  }
+  .action-bar .input-fake {
+    flex: 1; height: 34px; border-radius: var(--radius-full);
+    background: var(--color-bg); color: var(--color-text-3);
+    display: flex; align-items: center; padding: 0 14px; font-size: 12px;
+  }
+  .action-bar .act { display: flex; flex-direction: column; align-items: center; font-size: 9px; color: var(--color-text-2); gap: 2px; }
+  .action-bar .act i { font-style: normal; font-size: 17px; }
+
+  /* ===== 我的页 ===== */
+  .me-card {
+    margin: 8px 16px 14px;
+    background: linear-gradient(135deg, #1e80ff 0%, #5aa5ff 100%);
+    border-radius: var(--radius-lg);
+    padding: 22px 20px; color: #fff;
+    box-shadow: 0 6px 20px rgba(30,128,255,.25);
+  }
+  .me-card .me-row { display: flex; align-items: center; gap: 14px; }
+  .me-card .avatar { width: 52px; height: 52px; background: rgba(255,255,255,.25); border: 2px solid rgba(255,255,255,.5); }
+  .me-card b { font-size: 17px; display: block; margin-bottom: 4px; }
+  .me-card span { font-size: 12px; opacity: .85; }
+  .stats-row { display: flex; margin: 0 16px 14px; background: var(--color-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 16px 0; }
+  .stats-row .stat { flex: 1; text-align: center; }
+  .stats-row .stat + .stat { border-left: 1px solid var(--color-border); }
+  .stats-row b { font-size: 18px; display: block; margin-bottom: 2px; }
+  .stats-row span { font-size: 11px; color: var(--color-text-3); }
+  .menu-list { margin: 0 16px 12px; background: var(--color-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; }
+  .menu-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; font-size: 14px;
+  }
+  .menu-item + .menu-item { border-top: 1px solid var(--color-border); }
+  .menu-item .m-ico { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+  .menu-item .m-arrow { margin-left: auto; color: var(--color-text-3); font-size: 13px; }
+  .menu-item .m-extra { margin-left: auto; color: var(--color-text-3); font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>HaloWeApp UI 原型 v1</h1>
+  <p>白色主题 · 圆角卡片 · 底部菜单 —— 一期范围：首页 / 分类 / 文章详情 / 我的</p>
+</div>
+
+<!-- ===== 设计规范 ===== -->
+<div class="tokens">
+  <div class="token-group">
+    <h3>颜色</h3>
+    <div class="swatches">
+      <div class="swatch"><i style="background:#1e80ff"></i>主色<br>#1e80ff</div>
+      <div class="swatch"><i style="background:#e8f2ff"></i>浅底<br>#e8f2ff</div>
+      <div class="swatch"><i style="background:#f7f8fa"></i>页面底<br>#f7f8fa</div>
+      <div class="swatch"><i style="background:#fff"></i>卡片<br>#fff</div>
+      <div class="swatch"><i style="background:#1a1a1a"></i>文字<br>#1a1a1a</div>
+      <div class="swatch"><i style="background:#666"></i>次要<br>#666</div>
+      <div class="swatch"><i style="background:#999"></i>辅助<br>#999</div>
+    </div>
+  </div>
+  <div class="token-group">
+    <h3>圆角（rpx = px × 2）</h3>
+    <div class="radius-demo">
+      <div class="swatch"><i class="r1"></i>卡片<br>32rpx</div>
+      <div class="swatch"><i class="r2"></i>标签<br>20rpx</div>
+      <div class="swatch"><i class="r3"></i>胶囊<br>999rpx</div>
+    </div>
+  </div>
+  <div class="token-group">
+    <h3>约定</h3>
+    <div style="font-size:12px;color:#666;line-height:2">
+      字体：霞鹜文楷（LXGW WenKai）<br>
+      卡片阴影：0 4rpx 24rpx rgba(0,0,0,.04)<br>
+      页面左右边距：32rpx · 卡片间距：24rpx<br>
+      正文字号 28rpx · 标题 30–42rpx
+    </div>
+  </div>
+</div>
+
+<div class="screens">
+
+  <!-- ===== 1. 首页 ===== -->
+  <div class="screen-block">
+    <div class="screen-title">① 首页（Tab 1）</div>
+    <div class="screen-desc">搜索胶囊 + Banner 轮播（置顶/精选文章封面，标题压图）+ 文章卡片流</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">●●●●○ 5G ▮</span></div>
+      <div class="scroll-body">
+        <div class="search-pill">🔍&nbsp;&nbsp;搜索文章…</div>
+        <div class="banner">
+          <span class="pin-tag">📌 置顶</span>
+          <div class="banner-text"><b>用 Halo + 微信小程序打造博客移动端</b><span>02-20 · 👁 128 · 💬 12</span></div>
+          <div class="dots"><i class="on"></i><i></i><i></i></div>
+        </div>
+        <div class="section-head"><b>最新文章</b><span>更多 ›</span></div>
+
+        <!-- 有封面：左文右图 -->
+        <div class="post-card">
+          <div class="post-row">
+            <div class="post-info">
+              <h4><span class="pin-chip">置顶</span>用 Halo + 微信小程序打造博客移动端</h4>
+              <p class="excerpt">从零开始开发 Halo 博客的微信小程序端，记录架构设计和 API 对接的完整过程……</p>
+              <div class="post-meta">
+                <span class="cat-chip">技术</span><span>02-20</span>
+                <span class="spacer"></span><span>👁 128</span><span>💬 12</span><span>❤️ 8</span>
+              </div>
+            </div>
+            <div class="post-cover"></div>
+          </div>
+        </div>
+
+        <!-- 有封面：左文右图 -->
+        <div class="post-card">
+          <div class="post-row">
+            <div class="post-info">
+              <h4>Arch Linux + Niri 桌面折腾手记</h4>
+              <p class="excerpt">滚动平铺 Wayland 合成器 Niri 的上手体验，以及日常开发环境的配置分享……</p>
+              <div class="post-meta">
+                <span class="cat-chip">随笔</span><span>02-18</span>
+                <span class="spacer"></span><span>👁 96</span><span>💬 5</span><span>❤️ 3</span>
+              </div>
+            </div>
+            <div class="post-cover c2"></div>
+          </div>
+        </div>
+
+        <!-- 无封面：纯文字通栏 -->
+        <div class="post-card">
+          <div class="post-info">
+            <h4>没有封面图时，卡片就是纯文字通栏样式</h4>
+            <p class="excerpt">不设置封面的文章，标题和简介会占满整个卡片宽度，列表不会留出尴尬的空白位……</p>
+            <div class="post-meta">
+              <span class="cat-chip">生活</span><span>02-15</span>
+              <span class="spacer"></span><span>👁 64</span><span>💬 2</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab-item active"><span class="tab-icon">🏠</span>首页</div>
+        <div class="tab-item"><span class="tab-icon">🗂</span>分类</div>
+        <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 2. 分类页 ===== -->
+  <div class="screen-block">
+    <div class="screen-title">② 分类（Tab 2）</div>
+    <div class="screen-desc">分类网格 + 标签云；点击分类进入该分类的文章列表</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">●●●●○ 5G ▮</span></div>
+      <div class="navbar">分类</div>
+      <div class="scroll-body">
+        <div class="cat-grid">
+          <div class="cat-card">
+            <div class="cat-ico" style="background:#e8f2ff">💻</div>
+            <b>技术</b><span>24 篇文章</span>
+          </div>
+          <div class="cat-card">
+            <div class="cat-ico" style="background:#fdeee4">📝</div>
+            <b>随笔</b><span>12 篇文章</span>
+          </div>
+          <div class="cat-card">
+            <div class="cat-ico" style="background:#e6f7ec">🌱</div>
+            <b>生活</b><span>8 篇文章</span>
+          </div>
+          <div class="cat-card">
+            <div class="cat-ico" style="background:#f3eafd">🎮</div>
+            <b>游戏</b><span>5 篇文章</span>
+          </div>
+        </div>
+        <div class="tag-cloud">
+          <h5>热门标签</h5>
+          <div class="tags">
+            <i class="hot">Halo</i><i class="hot">小程序</i><i>Linux</i><i>Docker</i>
+            <i>Arch</i><i>前端</i><i>Java</i><i>算法</i><i>随笔</i><i>效率</i>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab-item"><span class="tab-icon">🏠</span>首页</div>
+        <div class="tab-item active"><span class="tab-icon">🗂</span>分类</div>
+        <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 3. 文章详情 ===== -->
+  <div class="screen-block">
+    <div class="screen-title">③ 文章详情</div>
+    <div class="screen-desc">正文 + 标签 + 评论区；底部固定操作栏（评论输入/点赞/分享）</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">●●●●○ 5G ▮</span></div>
+      <div class="navbar"><span class="nav-back">‹</span>文章详情<span class="nav-more">•••</span></div>
+      <div class="scroll-body">
+        <div class="detail-head">
+          <h2>用 Halo + 微信小程序打造博客移动端</h2>
+          <div class="author-row">
+            <div class="avatar"></div>
+            <div class="a-info"><b>博主</b><span>2026-02-20 · 阅读 128</span></div>
+          </div>
+        </div>
+        <div class="detail-cover"></div>
+        <div class="richtext">
+          <p>最近把博客的微信小程序端提上了日程，这篇文章记录从零开始的完整过程：技术选型、API 对接、UI 设计……</p>
+          <div class="fake-h">为什么选择原生小程序</div>
+          <p>目标是单一微信平台，原生方案少一层框架抽象，官方文档直接可用，长期维护成本更低。网络层用 <span class="inline-code">wx.request</span> 自行封装即可。</p>
+
+          <!-- 代码块：暗色底 + 语言标识 + 复制按钮 + 语法高亮，横向可滚动 -->
+          <div class="code-block">
+            <div class="code-bar"><span class="lang">JavaScript</span><span class="copy">复制</span></div>
+            <div class="code-body"><pre><span class="tok-c">// 封装 wx.request 请求文章列表</span>
+<span class="tok-k">const</span> res = <span class="tok-k">await</span> wx.<span class="tok-f">request</span>({
+  url: <span class="tok-s">'/apis/api.content.halo.run/v1alpha1/posts'</span>,
+  data: { page: <span class="tok-n">1</span>, size: <span class="tok-n">5</span> }
+})
+<span class="tok-f">console</span>.<span class="tok-f">log</span>(res.data.items)</pre></div>
+          </div>
+
+          <div class="fake-img">正文插图</div>
+        </div>
+        <div class="detail-tags"><i># Halo</i><i># 小程序</i></div>
+
+        <div class="comment-block">
+          <h5>评论 12</h5>
+          <div class="comment-item">
+            <div class="avatar"></div>
+            <div class="c-body">
+              <div class="c-head"><b>路人甲</b><span>2 小时前</span></div>
+              <p>蹲一个后续，正好也想给自己的博客搞一个</p>
+              <div class="c-reply"><b>博主</b> 回复 路人甲：下周就更新第二篇 🐶</div>
+            </div>
+          </div>
+          <div class="comment-item">
+            <div class="avatar"></div>
+            <div class="c-body">
+              <div class="c-head"><b>老王</b><span>5 小时前</span></div>
+              <p>原生小程序好评，uni-app 打包出来体积太大了</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="action-bar">
+        <div class="input-fake">说点什么…</div>
+        <div class="act"><i>❤️</i>8</div>
+        <div class="act"><i>⭐</i>收藏</div>
+        <div class="act"><i>↗️</i>分享</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 4. 我的 ===== -->
+  <div class="screen-block">
+    <div class="screen-title">④ 我的（Tab 3）</div>
+    <div class="screen-desc">博客信息卡 + 站点统计 + 功能菜单（归档/友链/关于/设置）</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">●●●●○ 5G ▮</span></div>
+      <div class="navbar">我的</div>
+      <div class="scroll-body">
+        <div class="me-card">
+          <div class="me-row">
+            <div class="avatar"></div>
+            <div><b>我的博客</b><span>记录技术 · 记录生活</span></div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><b>49</b><span>文章</span></div>
+          <div class="stat"><b>4</b><span>分类</span></div>
+          <div class="stat"><b>18</b><span>标签</span></div>
+          <div class="stat"><b>3.2k</b><span>阅读</span></div>
+        </div>
+        <div class="menu-list">
+          <div class="menu-item"><span class="m-ico" style="background:#e8f2ff">🕐</span>归档<span class="m-arrow">›</span></div>
+          <div class="menu-item"><span class="m-ico" style="background:#fdeee4">🔗</span>友情链接<span class="m-arrow">›</span></div>
+          <div class="menu-item"><span class="m-ico" style="background:#e6f7ec">📖</span>关于博主<span class="m-arrow">›</span></div>
+        </div>
+        <div class="menu-list">
+          <div class="menu-item"><span class="m-ico" style="background:#f3eafd">⚙️</span>设置<span class="m-arrow">›</span></div>
+          <div class="menu-item"><span class="m-ico" style="background:#eef1f5">💬</span>评论功能<span class="m-extra">已开启 ›</span></div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab-item"><span class="tab-icon">🏠</span>首页</div>
+        <div class="tab-item"><span class="tab-icon">🗂</span>分类</div>
+        <div class="tab-item active"><span class="tab-icon">👤</span>我的</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 5. 正文组件 ===== -->
+  <div class="screen-block">
+    <div class="screen-title">⑤ 正文组件（详情页内）</div>
+    <div class="screen-desc">表格 / 分割线 / 提示块 / 引用 / 列表 —— Halo 编辑器常用元素的渲染样式（为完整展示加高了屏幕）</div>
+    <div class="phone tall">
+      <div class="statusbar"><span>9:41</span><span class="icons">●●●●○ 5G ▮</span></div>
+      <div class="navbar"><span class="nav-back">‹</span>文章详情<span class="nav-more">•••</span></div>
+      <div class="scroll-body">
+        <div class="richtext" style="padding-top: 10px;">
+          <p>正文段落。下面依次展示 Halo 编辑器中常用组件在小程序里的渲染样式。</p>
+
+          <div class="fake-h">提示块</div>
+          <div class="callout info"><span class="co-ico">💡</span><div><b>提示</b>这是一般性说明，用于补充上下文信息。</div></div>
+          <div class="callout success"><span class="co-ico">✅</span><div><b>完成</b>操作已成功，可以继续下一步。</div></div>
+          <div class="callout warn"><span class="co-ico">⚠️</span><div><b>注意</b>执行前请先备份数据，操作不可逆。</div></div>
+          <div class="callout danger"><span class="co-ico">⛔</span><div><b>危险</b>请勿在生产环境直接执行此命令。</div></div>
+
+          <div class="fake-h">引用块</div>
+          <div class="quote-block">写作最难的不是开始写，而是持续地写下去。—— 某位博主</div>
+
+          <div class="fake-h">分割线</div>
+          <p>上一节内容到此结束。</p>
+          <div class="divider"><i></i><i></i><i></i></div>
+          <p>分割线之后开始新的话题。</p>
+
+          <div class="fake-h">表格</div>
+          <div class="table-wrap">
+            <table>
+              <tr><th>接口</th><th>方法</th><th>说明</th></tr>
+              <tr><td>/posts</td><td>GET</td><td>文章列表</td></tr>
+              <tr><td>/posts/:name</td><td>GET</td><td>文章详情</td></tr>
+              <tr><td>/comments</td><td>POST</td><td>发表评论</td></tr>
+            </table>
+          </div>
+
+          <div class="fake-h">列表</div>
+          <ul class="fake-list">
+            <li>无序列表项一</li>
+            <li>无序列表项二</li>
+            <li>无序列表项三</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

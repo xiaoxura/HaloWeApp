@@ -1,0 +1,70 @@
+<!-- 搜索胶囊 -->
+<view class="search-pill" bindtap="goSearch">
+  <text class="iconfont icon-search">🔍</text>
+  <text class="placeholder">搜索文章…</text>
+</view>
+
+<!-- Banner 轮播：置顶/精选文章封面 -->
+<swiper
+  wx:if="{{bannerList.length}}"
+  class="banner"
+  indicator-dots
+  indicator-color="rgba(255,255,255,.45)"
+  indicator-active-color="#ffffff"
+  autoplay
+  circular
+  interval="4000"
+>
+  <swiper-item wx:for="{{bannerList}}" wx:key="name" bindtap="goDetail" data-name="{{item.name}}">
+    <image class="banner-img" src="{{item.cover}}" mode="aspectFill" lazy-load />
+    <view class="banner-mask"></view>
+    <view wx:if="{{item.pinned}}" class="pin-tag">置顶</view>
+    <view class="banner-text">
+      <view class="banner-title text-ellipsis">{{item.title}}</view>
+      <view class="banner-meta">{{item.publishTime}} · {{item.visits}} 阅读 · {{item.comments}} 评论</view>
+    </view>
+  </swiper-item>
+</swiper>
+
+<!-- 文章列表 -->
+<view class="section-head">
+  <text class="title">最新文章</text>
+</view>
+
+<view
+  wx:for="{{postList}}"
+  wx:key="name"
+  class="post-card card"
+  bindtap="goDetail"
+  data-name="{{item.name}}"
+  hover-class="post-card-hover"
+>
+  <view class="post-info">
+    <view class="post-title text-clamp-2">
+      <text wx:if="{{item.pinned}}" class="pin-chip">置顶</text>{{item.title}}
+    </view>
+    <view class="post-excerpt text-clamp-2" wx:if="{{item.excerpt}}">{{item.excerpt}}</view>
+    <view class="post-meta">
+      <text wx:if="{{item.category}}" class="cat-chip">{{item.category}}</text>
+      <text>{{item.publishTime}}</text>
+      <text class="spacer"></text>
+      <text>{{item.visits}} 阅读</text>
+      <text>{{item.comments}} 评论</text>
+      <text wx:if="{{item.upvotes}}">{{item.upvotes}} 赞</text>
+    </view>
+  </view>
+  <image
+    wx:if="{{item.cover}}"
+    class="post-cover"
+    src="{{item.cover}}"
+    mode="aspectFill"
+    lazy-load
+  />
+</view>
+
+<!-- 加载状态 -->
+<view class="load-status">
+  <text wx:if="{{loading}}">加载中…</text>
+  <text wx:elif="{{!hasMore && postList.length}}">— 没有更多了 —</text>
+  <text wx:elif="{{!postList.length}}">暂无文章</text>
+</view>

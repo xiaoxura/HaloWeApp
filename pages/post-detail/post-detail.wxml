@@ -1,0 +1,71 @@
+<view wx:if="{{loading}}" class="loading-wrap">加载中…</view>
+
+<block wx:elif="{{post}}">
+  <scroll-view scroll-y class="detail-scroll">
+    <!-- 标题与作者 -->
+    <view class="detail-head">
+      <view class="detail-title">{{post.title}}</view>
+      <view class="author-row">
+        <image wx:if="{{post.avatar}}" class="avatar" src="{{post.avatar}}" mode="aspectFill" />
+        <view wx:else class="avatar avatar-placeholder"></view>
+        <view class="a-info">
+          <view class="a-name">{{post.author}}</view>
+          <view class="a-meta">{{post.publishTime}} · 阅读 {{post.visits}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 封面 -->
+    <image wx:if="{{post.cover}}" class="detail-cover" src="{{post.cover}}" mode="aspectFill" />
+
+    <!-- 正文（rich-text 渲染；后续可替换为 mp-html 获得代码高亮等能力） -->
+    <view class="richtext">
+      <rich-text nodes="{{post.content}}" bindtap="previewImage" />
+    </view>
+
+    <!-- 标签 -->
+    <view wx:if="{{post.tags.length}}" class="detail-tags">
+      <text wx:for="{{post.tags}}" wx:key="name" class="tag-chip"># {{item.displayName}}</text>
+    </view>
+
+    <!-- 评论区（受远程/本地开关控制） -->
+    <view wx:if="{{commentEnabled && post.allowComment}}" class="comment-block card">
+      <view class="comment-title">评论 {{commentTotal || ''}}</view>
+      <view wx:if="{{!comments.length}}" class="comment-empty">还没有评论，来抢沙发～</view>
+      <view wx:for="{{comments}}" wx:key="name" class="comment-item">
+        <image wx:if="{{item.avatar}}" class="c-avatar" src="{{item.avatar}}" mode="aspectFill" />
+        <view wx:else class="c-avatar c-avatar-placeholder"></view>
+        <view class="c-body">
+          <view class="c-head">
+            <text class="c-name">{{item.author}}</text>
+            <text class="c-time">{{item.time}}</text>
+          </view>
+          <view class="c-content">{{item.content}}</view>
+          <view wx:for="{{item.replies}}" wx:for-item="reply" wx:key="index" class="c-reply">
+            <text class="c-reply-name">{{reply.author}}</text>：{{reply.content}}
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部占位，避免内容被操作栏遮挡 -->
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="action-bar">
+    <block wx:if="{{commentEnabled && post.allowComment}}">
+      <view class="input-fake" bindtap="handleComment">说点什么…</view>
+    </block>
+    <view class="act {{upvoted ? 'act-on' : ''}}" bindtap="handleUpvote">
+      <text class="act-icon">❤️</text>
+      <text>{{post.upvotes}}</text>
+    </view>
+    <view class="act" bindtap="handleShare">
+      <text class="act-icon">↗️</text>
+      <text>分享</text>
+    </view>
+  </view>
+</block>
+
+<view wx:else class="loading-wrap">文章不存在或已删除</view>

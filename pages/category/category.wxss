@@ -1,0 +1,65 @@
+/* ===== 分类网格 ===== */
+.cat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24rpx;
+  padding: 8rpx 32rpx 32rpx;
+}
+.cat-card {
+  padding: 32rpx;
+}
+.cat-card-hover {
+  opacity: 0.85;
+}
+.cat-cover {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 24rpx;
+  margin-bottom: 20rpx;
+}
+.cat-cover-placeholder {
+  background: var(--color-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+}
+.cat-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  margin-bottom: 6rpx;
+}
+.cat-count {
+  font-size: 22rpx;
+  color: var(--color-text-3);
+}
+
+.empty {
+  text-align: center;
+  color: var(--color-text-3);
+  font-size: 26rpx;
+  padding: 80rpx 0;
+}
+
+/* ===== 标签云 ===== */
+.tag-cloud {
+  margin: 0 32rpx 32rpx;
+  padding: 32rpx;
+}
+.tag-cloud-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 24rpx;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.tag {
+  font-size: 24rpx;
+  color: var(--color-text-2);
+  background: var(--color-bg);
+  border-radius: var(--radius-full);
+  padding: 10rpx 28rpx;
+}

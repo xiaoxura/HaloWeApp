@@ -1,0 +1,62 @@
+const { get, post } = require('./request')
+
+/**
+ * Halo API 接口层
+ * 路径参考 docs/halo-api.md
+ */
+module.exports = {
+  // ===== 文章 =====
+  // 文章列表（公开）
+  getPostList: (params) => get('/apis/api.content.halo.run/v1alpha1/posts', params),
+
+  // 文章详情（公开）
+  getPostByName: (name) => get(`/apis/api.content.halo.run/v1alpha1/posts/${name}`),
+
+  // ===== 分类 =====
+  getCategoryList: (params) => get('/apis/api.content.halo.run/v1alpha1/categories', params),
+
+  getCategoryPostList: (name, params) =>
+    get(`/apis/api.content.halo.run/v1alpha1/categories/${name}/posts`, params),
+
+  // ===== 标签 =====
+  getTagList: (params) => get('/apis/api.content.halo.run/v1alpha1/tags', params),
+
+  getTagPostList: (name, params) =>
+    get(`/apis/api.content.halo.run/v1alpha1/tags/${name}/posts`, params),
+
+  // ===== 评论 =====
+  getCommentList: (params) => get('/apis/api.halo.run/v1alpha1/comments', params),
+
+  addComment: (data) => post('/apis/api.halo.run/v1alpha1/comments', data),
+
+  getCommentReplyList: (commentName, params) =>
+    get(`/apis/api.halo.run/v1alpha1/comments/${commentName}/reply`, params),
+
+  addCommentReply: (commentName, data) =>
+    post(`/apis/api.halo.run/v1alpha1/comments/${commentName}/reply`, data),
+
+  // ===== 统计与计数 =====
+  getStats: () => get('/apis/api.halo.run/v1alpha1/stats/-'),
+
+  // 点赞 / 浏览计数（tracker 形式）
+  upvote: (name) =>
+    post('/apis/api.halo.run/v1alpha1/trackers/upvote', {
+      group: 'content.halo.run',
+      plural: 'posts',
+      name
+    }),
+
+  reportCounter: (name) =>
+    post('/apis/api.halo.run/v1alpha1/trackers/counter', {
+      group: 'content.halo.run',
+      plural: 'posts',
+      name
+    }),
+
+  // ===== 搜索 =====
+  search: (keyword, page = 1, size = 10) =>
+    post('/apis/api.halo.run/v1alpha1/indices/-/search', {
+      keyword,
+      limit: size
+    })
+}
