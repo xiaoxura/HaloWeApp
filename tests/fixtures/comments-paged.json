@@ -1,0 +1,258 @@
+{
+  "page": 1,
+  "size": 10,
+  "total": 23,
+  "items": [
+    {
+      "metadata": {
+        "creationTimestamp": "2026-07-28T02:13:44.123456789Z",
+        "finalizers": ["comment-protection"],
+        "name": "c0ffee01-1111-4000-8000-0000000000a1",
+        "version": 3
+      },
+      "owner": {
+        "displayName": "置顶读者",
+        "kind": "Email",
+        "avatar": "/upload/avatar-reader-01.png"
+      },
+      "replies": {
+        "page": 1,
+        "size": 10,
+        "total": 0,
+        "items": [],
+        "first": true,
+        "hasNext": false,
+        "hasPrevious": false,
+        "last": true,
+        "totalPages": 0
+      },
+      "spec": {
+        "allowNotification": false,
+        "approved": true,
+        "approvedTime": "2026-07-28T02:13:44.100000000Z",
+        "content": "<p>置顶评论：欢迎留言讨论。&lt;友好交流&gt;&amp;&amp;共同进步</p>",
+        "creationTime": "2026-07-28T02:13:44.100000001Z",
+        "hidden": false,
+        "owner": {
+          "displayName": "置顶读者",
+          "kind": "Email",
+          "name": ""
+        },
+        "priority": 0,
+        "raw": "<p>置顶评论：欢迎留言讨论。&lt;友好交流&gt;&amp;&amp;共同进步</p>",
+        "subjectRef": {
+          "group": "content.halo.run",
+          "kind": "Post",
+          "name": "019c092e-6e4e-71f4-9b82-9d6a7de81a02",
+          "version": "v1alpha1"
+        },
+        "top": true
+      },
+      "stats": {
+        "upvote": 12
+      },
+      "status": {
+        "hasNewReply": false,
+        "replyCount": 0,
+        "unreadReplyCount": 0,
+        "visibleReplyCount": 0
+      }
+    },
+    {
+      "metadata": {
+        "creationTimestamp": "2026-07-29T09:41:02.530454332Z",
+        "finalizers": ["comment-protection"],
+        "name": "c0ffee01-1111-4000-8000-0000000000b2",
+        "version": 8
+      },
+      "owner": {
+        "displayName": "热心网友",
+        "kind": "Email"
+      },
+      "replies": {
+        "page": 1,
+        "size": 2,
+        "total": 5,
+        "items": [
+          {
+            "metadata": {
+              "creationTimestamp": "2026-07-29T10:02:11.000000000Z",
+              "name": "rep1ee01-2222-4000-8000-0000000000c1",
+              "version": 2
+            },
+            "owner": {
+              "displayName": "博主",
+              "kind": "Email",
+              "avatar": "https://cdn.example.com/avatar-blogger.png"
+            },
+            "quoteReply": null,
+            "spec": {
+              "allowNotification": false,
+              "approved": true,
+              "approvedTime": "2026-07-29T10:02:10.900000000Z",
+              "content": "<p>感谢支持！<br>后续会更新第二部分。</p>",
+              "creationTime": "2026-07-29T10:02:10.900000001Z",
+              "hidden": false,
+              "owner": {
+                "displayName": "博主",
+                "kind": "Email",
+                "name": ""
+              },
+              "quoteReply": "",
+              "raw": "<p>感谢支持！<br>后续会更新第二部分。</p>"
+            }
+          },
+          {
+            "metadata": {
+              "creationTimestamp": "2026-07-29T11:20:45.000000000Z",
+              "name": "rep1ee01-2222-4000-8000-0000000000c2",
+              "version": 1
+            },
+            "owner": {
+              "displayName": "热心网友",
+              "kind": "Email"
+            },
+            "quoteReply": {
+              "metadata": {
+                "creationTimestamp": "2026-07-29T10:02:11.000000000Z",
+                "name": "rep1ee01-2222-4000-8000-0000000000c1",
+                "version": 2
+              },
+              "owner": {
+                "displayName": "博主",
+                "kind": "Email",
+                "avatar": "https://cdn.example.com/avatar-blogger.png"
+              },
+              "quoteReply": null,
+              "spec": {
+                "allowNotification": false,
+                "approved": true,
+                "approvedTime": "2026-07-29T10:02:10.900000000Z",
+                "content": "<p>感谢支持！<br>后续会更新第二部分。</p>",
+                "creationTime": "2026-07-29T10:02:10.900000001Z",
+                "hidden": false,
+                "owner": {
+                  "displayName": "博主",
+                  "kind": "Email",
+                  "name": ""
+                },
+                "quoteReply": "",
+                "raw": "<p>感谢支持！<br>后续会更新第二部分。</p>"
+              }
+            },
+            "spec": {
+              "allowNotification": false,
+              "approved": true,
+              "approvedTime": "2026-07-29T11:20:44.900000000Z",
+              "content": "<p>期待更新！另外&#39;代码示例&#39;里有个笔误。</p>",
+              "creationTime": "2026-07-29T11:20:44.900000001Z",
+              "hidden": false,
+              "owner": {
+                "displayName": "热心网友",
+                "kind": "Email",
+                "name": ""
+              },
+              "quoteReply": "rep1ee01-2222-4000-8000-0000000000c1",
+              "raw": "<p>期待更新！另外&#39;代码示例&#39;里有个笔误。</p>"
+            }
+          }
+        ],
+        "first": true,
+        "hasNext": true,
+        "hasPrevious": false,
+        "last": false,
+        "totalPages": 3
+      },
+      "spec": {
+        "allowNotification": false,
+        "approved": true,
+        "approvedTime": "2026-07-29T09:41:02.500000000Z",
+        "content": "<p>写得很清楚，收藏了 👍</p><p>请问有配套源码吗？</p>",
+        "creationTime": "2026-07-29T09:41:02.500000001Z",
+        "hidden": false,
+        "owner": {
+          "displayName": "热心网友",
+          "kind": "Email",
+          "name": ""
+        },
+        "priority": 0,
+        "raw": "<p>写得很清楚，收藏了 👍</p><p>请问有配套源码吗？</p>",
+        "subjectRef": {
+          "group": "content.halo.run",
+          "kind": "Post",
+          "name": "019c092e-6e4e-71f4-9b82-9d6a7de81a02",
+          "version": "v1alpha1"
+        },
+        "top": false
+      },
+      "stats": {
+        "upvote": 3
+      },
+      "status": {
+        "hasNewReply": false,
+        "replyCount": 5,
+        "unreadReplyCount": 0,
+        "visibleReplyCount": 5
+      }
+    },
+    {
+      "metadata": {
+        "creationTimestamp": "2026-07-30T14:22:09.000000000Z",
+        "finalizers": ["comment-protection"],
+        "name": "c0ffee01-1111-4000-8000-0000000000d3",
+        "version": 1
+      },
+      "owner": {
+        "displayName": "安全测试员",
+        "kind": "Email"
+      },
+      "replies": {
+        "page": 1,
+        "size": 10,
+        "total": 0,
+        "items": [],
+        "first": true,
+        "hasNext": false,
+        "hasPrevious": false,
+        "last": true,
+        "totalPages": 0
+      },
+      "spec": {
+        "allowNotification": false,
+        "approved": true,
+        "approvedTime": "2026-07-30T14:22:08.900000000Z",
+        "content": "<p>试试特殊字符 &lt;script&gt;alert(1)&lt;/script&gt; 和&nbsp;空格</p><script>alert('xss')</script><p onclick=\"hack()\">带事件的段落</p>",
+        "creationTime": "2026-07-30T14:22:08.900000001Z",
+        "hidden": false,
+        "owner": {
+          "displayName": "安全测试员",
+          "kind": "Email",
+          "name": ""
+        },
+        "priority": 0,
+        "raw": "<p>试试特殊字符 &lt;script&gt;alert(1)&lt;/script&gt; 和&nbsp;空格</p><script>alert('xss')</script><p onclick=\"hack()\">带事件的段落</p>",
+        "subjectRef": {
+          "group": "content.halo.run",
+          "kind": "Post",
+          "name": "019c092e-6e4e-71f4-9b82-9d6a7de81a02",
+          "version": "v1alpha1"
+        },
+        "top": false
+      },
+      "stats": {
+        "upvote": 0
+      },
+      "status": {
+        "hasNewReply": false,
+        "replyCount": 0,
+        "unreadReplyCount": 0,
+        "visibleReplyCount": 0
+      }
+    }
+  ],
+  "first": true,
+  "hasNext": true,
+  "hasPrevious": false,
+  "last": false,
+  "totalPages": 3
+}

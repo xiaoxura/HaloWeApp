@@ -1,0 +1,96 @@
+{
+  "page": 1,
+  "size": 50,
+  "total": 2,
+  "items": [
+    {
+      "metadata": {
+        "creationTimestamp": "2025-11-02T03:15:00.000000000Z",
+        "name": "1egacy01-3333-4000-8000-0000000000a1",
+        "version": 4
+      },
+      "owner": {
+        "displayName": "旧版读者",
+        "kind": "Email",
+        "avatar": "/upload/legacy-avatar.png"
+      },
+      "replies": [
+        {
+          "metadata": {
+            "creationTimestamp": "2025-11-02T04:00:00.000000000Z",
+            "name": "1egacy01-3333-4000-8000-0000000000r1",
+            "version": 1
+          },
+          "owner": {
+            "displayName": "博主",
+            "kind": "Email"
+          },
+          "quoteReply": null,
+          "spec": {
+            "allowNotification": true,
+            "approved": true,
+            "content": "<p>旧版本回复结构（数组形式）</p>",
+            "creationTime": "2025-11-02T04:00:00.000000000Z",
+            "hidden": false,
+            "owner": {
+              "displayName": "博主",
+              "kind": "Email",
+              "name": ""
+            },
+            "quoteReply": "",
+            "raw": "<p>旧版本回复结构（数组形式）</p>"
+          }
+        }
+      ],
+      "spec": {
+        "allowNotification": true,
+        "approved": true,
+        "content": "<p>旧版 Halo 的评论，replies 是数组</p>",
+        "creationTime": "2025-11-02T03:15:00.000000000Z",
+        "hidden": false,
+        "owner": {
+          "displayName": "旧版读者",
+          "kind": "Email",
+          "name": ""
+        },
+        "top": false
+      },
+      "stats": {
+        "upvote": 0
+      }
+    },
+    {
+      "metadata": {
+        "creationTimestamp": "2025-11-03T12:30:00.000000000Z",
+        "name": "1egacy01-3333-4000-8000-0000000000b2",
+        "version": 1
+      },
+      "owner": {
+        "displayName": "无回复读者",
+        "kind": "Email"
+      },
+      "replies": [],
+      "spec": {
+        "allowNotification": true,
+        "approved": true,
+        "content": "<p>没有回复的评论</p>",
+        "creationTime": "2025-11-03T12:30:00.000000000Z",
+        "hidden": false,
+        "owner": {
+          "displayName": "无回复读者",
+          "kind": "Email",
+          "name": ""
+        },
+        "top": false
+      },
+      "stats": {
+        "upvote": 0
+      }
+    }
+  ],
+  "first": true,
+  "hasNext": false,
+  "hasPrevious": false,
+  "last": true,
+  "totalPages": 1
+}

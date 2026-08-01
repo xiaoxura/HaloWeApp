@@ -1,0 +1,41 @@
+{
+  "page": 1,
+  "size": 10,
+  "total": 3,
+  "items": [
+    {
+      "metadata": {
+        "name": "degraded-0001-4000-8000-0000000000a1"
+      },
+      "spec": {
+        "approved": true,
+        "content": "<p>缺失 owner 的评论</p>",
+        "creationTime": "2026-07-20T01:00:00.000000000Z",
+        "hidden": false,
+        "top": false
+      }
+    },
+    {
+      "metadata": {
+        "name": "degraded-0001-4000-8000-0000000000b2"
+      },
+      "owner": {
+        "displayName": "缺 spec 读者",
+        "kind": "Email"
+      }
+    },
+    {
+      "metadata": {
+        "name": "degraded-0001-4000-8000-0000000000c3"
+      },
+      "owner": null,
+      "replies": null,
+      "spec": null
+    }
+  ],
+  "first": true,
+  "hasNext": false,
+  "hasPrevious": false,
+  "last": true,
+  "totalPages": 1
+}

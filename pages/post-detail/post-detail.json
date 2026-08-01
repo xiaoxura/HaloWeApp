@@ -2,6 +2,7 @@
   "navigationStyle": "custom",
   "enablePullDownRefresh": false,
   "usingComponents": {
-    "mp-html": "mp-html"
+    "mp-html": "mp-html",
+    "comment-sheet": "/components/comment-sheet/comment-sheet"
   }
 }

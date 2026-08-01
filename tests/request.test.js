@@ -99,3 +99,28 @@ test('request: tracker 空 body 正常放行', async () => {
   const data = await post('/apis/trackers/upvote', { name: 'x' })
   assert.strictEqual(data, null)
 })
+
+test('request: 非 2xx 携带解析后的 JSON 错误体（插件业务码）', async () => {
+  mockWx(({ success }) =>
+    success({
+      statusCode: 429,
+      data: { code: 'RATE_LIMITED', message: '操作过于频繁', requestId: 'req_x', retryAfter: 30 }
+    })
+  )
+  await assert.rejects(post('/apis/x', {}), (err) => {
+    assert.strictEqual(err.type, 'http')
+    assert.strictEqual(err.statusCode, 429)
+    assert.strictEqual(err.data.code, 'RATE_LIMITED')
+    assert.strictEqual(err.data.retryAfter, 30)
+    return true
+  })
+})
+
+test('request: 非 2xx 且错误体非 JSON 时 data 为 null', async () => {
+  mockWx(({ success }) => success({ statusCode: 502, data: '<html>bad gateway</html>' }))
+  await assert.rejects(get('/apis/x'), (err) => {
+    assert.strictEqual(err.type, 'http')
+    assert.strictEqual(err.data, null)
+    return true
+  })
+})

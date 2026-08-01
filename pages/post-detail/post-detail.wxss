@@ -227,3 +227,70 @@
   40% { transform: scale(1.35); }
   100% { transform: scale(1); }
 }
+
+/* ===== v0.3.0 评论区扩展 ===== */
+
+.c-top {
+  font-size: 20rpx;
+  color: #1e80ff;
+  background: rgba(30, 128, 255, 0.1);
+  border-radius: 6rpx;
+  padding: 2rpx 10rpx;
+  margin-left: 12rpx;
+}
+
+.c-reply-line {
+  line-height: 1.6;
+}
+
+.c-reply-quote {
+  color: #999;
+  font-size: 24rpx;
+}
+
+.c-reply-btn {
+  display: inline-block;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #999;
+}
+
+.c-comment-reply-btn {
+  margin-top: 16rpx;
+}
+
+.c-more-replies {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #1e80ff;
+}
+
+.comment-loading,
+.comment-more {
+  text-align: center;
+  font-size: 24rpx;
+  color: #999;
+  padding: 24rpx 0 8rpx;
+}
+
+.comment-more {
+  color: #1e80ff;
+}
+
+.comment-loadfail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+  padding: 24rpx 0 8rpx;
+}
+
+.comment-retry {
+  color: #1e80ff;
+}
+
+.input-fake-off {
+  color: #bbb;
+}

@@ -185,7 +185,7 @@ upvote / counter 请求体（tracker 形式）：
 | 友链分组 | GET | `/apis/api.link.halo.run/v1alpha1/linkgroups` |
 | 友链列表 | GET | `/apis/api.link.halo.run/v1alpha1/links` |
 
-## 4. 配套插件（自研）
+## 4. 配套插件（plugin-halo-weapp，自研）
 
 ### 为什么需要它
 
@@ -193,42 +193,40 @@ upvote / counter 请求体（tracker 形式）：
 
 - **评论开关**（核心诉求）：个人主体小程序含 UGC（评论/留言）功能在审核时容易被驳回，
   需要能在提审版本关闭评论、过审后远程开启。
-- 公告、Banner、分享文案等展示配置。
-- 最低版本要求（`minVersion`）：接口不兼容升级时提示用户更新小程序。
+- 公告、最低版本要求（`minVersion`）：运营调整与接口不兼容升级时提示用户更新。
+- **评论写入安全网关**：AppSecret、微信登录态与内容安全检测只能存在于服务端，
+  小程序不直接调用 Halo 评论写入 API。
 
 ### 插件形态
 
-- 标准 Halo 插件（Java + Gradle，结构参考 halo-sigs 官方插件），发布 jar 手动安装或上架应用市场。
+- 标准 Halo 插件（Java 21 + Gradle，独立仓库
+  [plugin-halo-weapp](https://github.com/xiaoxura/plugin-halo-weapp)），发布 jar 手动安装。
 - **配置项直接用 Halo 的 Setting 机制**（插件 `settings.yaml` 声明表单，Console 自动渲染设置页），
-  无需自研管理 UI，配置持久化在 Halo 的 ConfigMap 中。
-- 对外暴露一个公开的配置下发接口（CustomEndpoint），无需认证。
+  配置持久化在 Halo 的 ConfigMap 中。
+- 对外暴露公开的 CustomEndpoint（匿名角色模板聚合），无需 Halo 账号。
 
-### 下发的公开 API（草案）
+### 公开 API（group：`api.weapp.halo.run`，前缀 `/apis/api.weapp.halo.run/v1alpha1`）
 
-```
-GET /apis/api.weapp.<domain>/v1alpha1/config
-```
+| 功能 | 方法 | 路径 | 说明 |
+| --- | --- | --- | --- |
+| 公开配置 | GET | `/config` | 评论/公告/最低版本/隐私政策（白名单 DTO） |
+| 微信登录短会话 | POST | `/session` | `wx.login` code 换 90 分钟不透明 token |
+| 发表评论 | POST | `/comments` | 登录态+频控+幂等+msgSecCheck 后代理写入 |
+| 回复评论 | POST | `/comments/{commentName}/replies` | 同上，可选 `quoteReplyName` |
 
-> 路径中的 group 由插件自定义，待插件仓库定名后确定（参考各官方插件的 group 命名，
-> 如 `api.moment.halo.run`、`api.link.halo.run`）。
-
-响应示例：
-
-```json
-{
-  "commentEnabled": true,
-  "announcement": {
-    "enabled": true,
-    "content": "本站小程序上线啦"
-  },
-  "minVersion": "1.0.0"
-}
-```
+契约的唯一事实来源是插件仓库的
+[`docs/openapi.yaml`](https://github.com/xiaoxura/plugin-halo-weapp/blob/main/docs/openapi.yaml)；
+本仓库只保存响应夹具与手写 adapter。写接口使用 `X-WeApp-Session`、
+`X-Idempotency-Key`、`X-WeApp-Client-Version` 请求头；错误统一为
+`{ code, message, requestId, retryAfter? }` 稳定业务码结构。
 
 ### 小程序端约定
 
 - 启动时先用「插件检测」接口探测插件是否安装，再决定是否拉取配置。
-- 拉取失败或插件未安装时使用内置默认配置（评论功能默认**关闭**，对齐提审状态）。
+- `commentEnabled` 控制评论区展示；`commentOptions.submitEnabled` / `replyEnabled`
+  单独控制写入口，且只有本次冷启动**实时**探测+拉取成功才允许写入（fail-closed）。
+- 拉取失败或插件未安装时使用内置默认配置（评论功能默认**关闭**，对齐提审状态）；
+  未过期缓存可降级展示评论/公告，但写入口强制关闭。
 - 配置缓存到 `wx.setStorage`，每次冷启动刷新，弱网不阻塞首屏。
 
 ## 5. 需要认证的 API（PAT，二期管理功能用）

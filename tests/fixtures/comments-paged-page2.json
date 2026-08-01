@@ -1,0 +1,66 @@
+{
+  "page": 2,
+  "size": 10,
+  "total": 23,
+  "items": [
+    {
+      "metadata": {
+        "creationTimestamp": "2026-07-27T08:05:31.000000000Z",
+        "finalizers": ["comment-protection"],
+        "name": "c0ffee01-1111-4000-8000-0000000000e4",
+        "version": 1
+      },
+      "owner": {
+        "displayName": "第二页读者",
+        "kind": "Email"
+      },
+      "replies": {
+        "page": 1,
+        "size": 10,
+        "total": 0,
+        "items": [],
+        "first": true,
+        "hasNext": false,
+        "hasPrevious": false,
+        "last": true,
+        "totalPages": 0
+      },
+      "spec": {
+        "allowNotification": false,
+        "approved": true,
+        "approvedTime": "2026-07-27T08:05:30.900000000Z",
+        "content": "<p>第二页的评论</p>",
+        "creationTime": "2026-07-27T08:05:30.900000001Z",
+        "hidden": false,
+        "owner": {
+          "displayName": "第二页读者",
+          "kind": "Email",
+          "name": ""
+        },
+        "priority": 0,
+        "raw": "<p>第二页的评论</p>",
+        "subjectRef": {
+          "group": "content.halo.run",
+          "kind": "Post",
+          "name": "019c092e-6e4e-71f4-9b82-9d6a7de81a02",
+          "version": "v1alpha1"
+        },
+        "top": false
+      },
+      "stats": {
+        "upvote": 1
+      },
+      "status": {
+        "hasNewReply": false,
+        "replyCount": 0,
+        "unreadReplyCount": 0,
+        "visibleReplyCount": 0
+      }
+    }
+  ],
+  "first": false,
+  "hasNext": false,
+  "hasPrevious": true,
+  "last": true,
+  "totalPages": 3
+}

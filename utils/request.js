@@ -14,6 +14,8 @@ class RequestError extends Error {
     this.type = type
     this.statusCode = extra.statusCode || 0
     this.path = extra.path || ''
+    // 非 2xx 时解析后的响应体（如插件的稳定业务码 { code, message, requestId }），无则为 null
+    this.data = extra.data || null
   }
 }
 
@@ -85,10 +87,18 @@ function request(method, path, options = {}) {
             reject(err)
           }
         } else {
+          // 非 2xx：尝试解析 JSON 错误体（插件业务码），解析失败不影响错误分类
+          let data = null
+          try {
+            data = parseBody(res.data, path)
+          } catch (e) {
+            data = null
+          }
           reject(
             new RequestError('http', `请求失败（${res.statusCode}）`, {
               statusCode: res.statusCode,
-              path
+              path,
+              data
             })
           )
         }

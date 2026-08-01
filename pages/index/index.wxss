@@ -76,3 +76,41 @@
 }
 
 /* 文章卡片样式见 app.wxss（与列表页共用） */
+
+/* ===== v0.3.0 公告条 ===== */
+
+.announce-bar {
+  display: flex;
+  align-items: center;
+  margin: 0 24rpx 20rpx;
+  padding: 16rpx 20rpx;
+  background: rgba(30, 128, 255, 0.08);
+  border-radius: 12rpx;
+}
+
+.announce-tag {
+  flex-shrink: 0;
+  font-size: 20rpx;
+  color: #1e80ff;
+  background: rgba(30, 128, 255, 0.12);
+  border-radius: 6rpx;
+  padding: 2rpx 10rpx;
+  margin-right: 14rpx;
+}
+
+.announce-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: #4a5a6a;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.announce-close {
+  flex-shrink: 0;
+  font-size: 36rpx;
+  line-height: 1;
+  color: #9aa5b1;
+  padding: 0 6rpx;
+}

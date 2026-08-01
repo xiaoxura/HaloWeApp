@@ -1,0 +1,92 @@
+{
+  "page": 1,
+  "size": 10,
+  "total": 12,
+  "items": [
+    {
+      "metadata": {
+        "creationTimestamp": "2026-07-29T10:02:11.000000000Z",
+        "name": "rep1ee01-2222-4000-8000-0000000000c1",
+        "version": 2
+      },
+      "owner": {
+        "displayName": "博主",
+        "kind": "Email",
+        "avatar": "https://cdn.example.com/avatar-blogger.png"
+      },
+      "quoteReply": null,
+      "spec": {
+        "allowNotification": false,
+        "approved": true,
+        "approvedTime": "2026-07-29T10:02:10.900000000Z",
+        "content": "<p>感谢支持！<br>后续会更新第二部分。</p>",
+        "creationTime": "2026-07-29T10:02:10.900000001Z",
+        "hidden": false,
+        "owner": {
+          "displayName": "博主",
+          "kind": "Email",
+          "name": ""
+        },
+        "quoteReply": "",
+        "raw": "<p>感谢支持！<br>后续会更新第二部分。</p>"
+      }
+    },
+    {
+      "metadata": {
+        "creationTimestamp": "2026-07-29T11:20:45.000000000Z",
+        "name": "rep1ee01-2222-4000-8000-0000000000c2",
+        "version": 1
+      },
+      "owner": {
+        "displayName": "热心网友",
+        "kind": "Email"
+      },
+      "quoteReply": {
+        "metadata": {
+          "creationTimestamp": "2026-07-29T10:02:11.000000000Z",
+          "name": "rep1ee01-2222-4000-8000-0000000000c1",
+          "version": 2
+        },
+        "owner": {
+          "displayName": "博主",
+          "kind": "Email",
+          "avatar": "https://cdn.example.com/avatar-blogger.png"
+        },
+        "quoteReply": null,
+        "spec": {
+          "allowNotification": false,
+          "approved": true,
+          "content": "<p>感谢支持！<br>后续会更新第二部分。</p>",
+          "creationTime": "2026-07-29T10:02:10.900000001Z",
+          "hidden": false,
+          "owner": {
+            "displayName": "博主",
+            "kind": "Email",
+            "name": ""
+          },
+          "quoteReply": "",
+          "raw": "<p>感谢支持！<br>后续会更新第二部分。</p>"
+        }
+      },
+      "spec": {
+        "allowNotification": false,
+        "approved": true,
+        "content": "<p>期待更新！另外&#39;代码示例&#39;里有个笔误。</p>",
+        "creationTime": "2026-07-29T11:20:44.900000001Z",
+        "hidden": false,
+        "owner": {
+          "displayName": "热心网友",
+          "kind": "Email",
+          "name": ""
+        },
+        "quoteReply": "rep1ee01-2222-4000-8000-0000000000c1",
+        "raw": "<p>期待更新！另外&#39;代码示例&#39;里有个笔误。</p>"
+      }
+    }
+  ],
+  "first": true,
+  "hasNext": true,
+  "hasPrevious": false,
+  "last": false,
+  "totalPages": 2
+}

@@ -1,0 +1,38 @@
+{
+  "page": 2,
+  "size": 10,
+  "total": 12,
+  "items": [
+    {
+      "metadata": {
+        "creationTimestamp": "2026-07-30T09:12:00.000000000Z",
+        "name": "rep1ee01-2222-4000-8000-0000000000c3",
+        "version": 1
+      },
+      "owner": {
+        "displayName": "另一位读者",
+        "kind": "Email"
+      },
+      "quoteReply": null,
+      "spec": {
+        "allowNotification": false,
+        "approved": true,
+        "content": "<p>第二页的回复 &gt;&gt; 测试</p>",
+        "creationTime": "2026-07-30T09:12:00.000000000Z",
+        "hidden": false,
+        "owner": {
+          "displayName": "另一位读者",
+          "kind": "Email",
+          "name": ""
+        },
+        "quoteReply": "",
+        "raw": "<p>第二页的回复 &gt;&gt; 测试</p>"
+      }
+    }
+  ],
+  "first": false,
+  "hasNext": false,
+  "hasPrevious": true,
+  "last": true,
+  "totalPages": 2
+}

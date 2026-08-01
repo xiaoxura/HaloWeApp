@@ -1,7 +1,7 @@
 // 全局配置：修改为你的博客信息
 module.exports = {
   // 小程序版本号（“我的”页面等展示位置统一从这里读取）
-  version: '0.2.0',
+  version: '0.3.0',
 
   // 你的 Halo 博客地址（必须 HTTPS，且已加入小程序 request 合法域名）
   baseUrl: 'https://www.uomn.cn',

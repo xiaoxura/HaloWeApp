@@ -4,6 +4,13 @@
   <text class="placeholder">搜索文章…</text>
 </view>
 
+<!-- 远程公告条（可关闭，关闭状态按版本保存） -->
+<view wx:if="{{announcement}}" class="announce-bar">
+  <text class="announce-tag">公告</text>
+  <text class="announce-text">{{announcement.content}}</text>
+  <view class="announce-close" bindtap="dismissAnnouncement">×</view>
+</view>
+
 <!-- Banner 轮播：置顶/精选文章封面 -->
 <swiper
   wx:if="{{bannerList.length}}"

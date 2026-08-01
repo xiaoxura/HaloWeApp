@@ -1,0 +1,60 @@
+<view wx:if="{{visible}}" class="sheet-mask" bindtap="handleClose"></view>
+<view wx:if="{{visible}}" class="sheet" catchtouchmove="true">
+  <view class="sheet-header">
+    <text class="sheet-title">{{replyTo ? '回复 @' + replyTo : '发表评论'}}</text>
+    <view class="sheet-close" bindtap="handleClose">×</view>
+  </view>
+
+  <view class="sheet-body">
+    <input
+      class="sheet-nickname"
+      placeholder="昵称（2～20 个字符）"
+      value="{{nickname}}"
+      maxlength="40"
+      bindinput="onNicknameInput"
+    />
+    <textarea
+      class="sheet-textarea"
+      placeholder="{{replyTo ? '写下你的回复…' : '写下你的评论…'}}"
+      value="{{content}}"
+      maxlength="-1"
+      auto-height
+      show-confirm-bar="{{false}}"
+      cursor-spacing="24"
+      adjust-position
+      bindinput="onContentInput"
+    />
+    <view class="sheet-counter {{contentCount > maxLength ? 'sheet-counter-over' : ''}}">
+      {{contentCount}}/{{maxLength}}
+    </view>
+
+    <view wx:if="{{errorMsg}}" class="sheet-error">{{errorMsg}}</view>
+
+    <label class="sheet-opt">
+      <checkbox-group bindchange="onSaveNicknameChange">
+        <checkbox value="1" checked="{{saveNickname}}" class="sheet-checkbox" />
+      </checkbox-group>
+      <text>在本机记住昵称</text>
+    </label>
+
+    <view wx:if="{{!consentGiven}}" class="sheet-privacy">
+      <label class="sheet-opt">
+        <checkbox-group bindchange="onConsentChange">
+          <checkbox value="1" checked="{{consentChecked}}" class="sheet-checkbox" />
+        </checkbox-group>
+        <text>我已阅读并同意</text>
+      </label>
+      <text class="sheet-privacy-link" bindtap="copyPrivacyUrl">《隐私政策》</text>
+      <text class="sheet-privacy-tip">（点击复制链接）</text>
+    </view>
+
+    <button
+      class="sheet-submit {{submitting ? 'sheet-submitting' : ''}}"
+      disabled="{{submitting}}"
+      loading="{{submitting}}"
+      bindtap="handleSubmit"
+    >
+      {{submitting ? '发布中…' : '发布'}}
+    </button>
+  </view>
+</view>

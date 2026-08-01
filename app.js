@@ -2,6 +2,9 @@ const config = require('./config/index')
 const { runtimeConfig } = require('./utils/runtime-config')
 
 App({
+  // 运行时配置管理器（页面用 canSubmit/canReply/isVersionOk 做写能力判定）
+  runtimeConfig,
+
   globalData: {
     config,
     // 运行时可被远程配置覆盖（配套插件下发），默认本地配置
