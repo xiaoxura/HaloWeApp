@@ -1,6 +1,7 @@
 const api = require('../../utils/api')
-const config = require('../../config/index')
 const { normalizePostSummary } = require('../../utils/adapters/post')
+
+const app = getApp()
 
 Page({
   data: {
@@ -28,7 +29,16 @@ Page({
     wx.setNavigationBarTitle({ title })
     this._unloaded = false
     this.setData({ type, name })
-    this.fetchPosts(true)
+    // 首屏使用内置默认值/有效缓存，不等待配置网络请求；若首次实时配置的分页大小
+    // 不同，则在首屏请求结束后自动重载，避免本次页面一直沿用默认 pageSize。
+    const initialLoad = this.fetchPosts(true)
+    app.runtimeReady().then(async (runtime) => {
+      if (this._unloaded || this._pageSize === runtime.site.pageSize) return
+      await initialLoad
+      if (this._unloaded) return
+      this._pageSize = runtime.site.pageSize
+      await this.fetchPosts(true)
+    })
   },
 
   onUnload() {
@@ -66,9 +76,14 @@ Page({
   async fetchPosts(refresh) {
     if (this.data.loading) return
     const page = refresh ? 1 : this.data.page
+    // 一轮分页固定使用同一个 pageSize，避免远程配置在翻页中途更新导致跳项。
+    if (refresh || !this._pageSize) {
+      const cfg = app.runtimeConfig.getConfig()
+      this._pageSize = cfg.site.pageSize
+    }
     this.setData({ loading: true, loadFailed: false })
 
-    const params = { page, size: config.pageSize, sort: ['spec.publishTime,desc'] }
+    const params = { page, size: this._pageSize, sort: ['spec.publishTime,desc'] }
     const fetcher =
       this.data.type === 'tag'
         ? api.getTagPostList(this.data.name, params)

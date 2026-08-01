@@ -1,5 +1,4 @@
 const api = require('../../utils/api')
-const config = require('../../config/index')
 const { normalizePostSummary } = require('../../utils/adapters/post')
 
 const app = getApp()
@@ -22,15 +21,23 @@ Page({
   },
 
   onLoad() {
-    this.fetchPosts(true)
-    this.applyRuntimeConfig()
+    // 不阻塞首屏：先用内置默认值/有效缓存加载；首次拿到插件配置后，如分页大小不同，
+    // 自动重载第一页，确保管理员在插件中配置的 pageSize 当次启动即可生效。
+    const initialLoad = this.fetchPosts(true)
+    this.applyRuntimeConfig(initialLoad)
   },
 
   // 远程配置消费：公告条与最低版本提示（C-06）
-  applyRuntimeConfig() {
-    app.runtimeReady().then(() => {
+  applyRuntimeConfig(initialLoad) {
+    app.runtimeReady().then(async () => {
       const rc = app.runtimeConfig
       const cfg = rc.getConfig()
+
+      if (this._pageSize !== cfg.site.pageSize) {
+        await initialLoad
+        this._pageSize = cfg.site.pageSize
+        await this.fetchPosts(true)
+      }
 
       // 公告：可关闭，关闭状态按版本记录；降级缓存可展示公告但写入口仍关闭
       const ann = cfg.announcement || {}
@@ -99,12 +106,17 @@ Page({
     // 单飞：快速连续触底/刷新只产生一个请求
     if (this.data.loading) return
     const page = refresh ? 1 : this.data.page
+    // 一轮分页固定使用同一个 pageSize，避免远程配置在翻页中途更新导致跳项。
+    if (refresh || !this._pageSize) {
+      const cfg = app.runtimeConfig.getConfig()
+      this._pageSize = cfg.site.pageSize
+    }
     this.setData({ loading: true, loadFailed: false })
 
     try {
       const res = await api.getPostList({
         page,
-        size: config.pageSize,
+        size: this._pageSize,
         sort: ['spec.pinned,desc', 'spec.publishTime,desc']
       })
 

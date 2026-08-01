@@ -3,11 +3,12 @@ const config = require('../../config/index')
 const { formatCount } = require('../../utils/util')
 
 const app = getApp()
+const initialSite = app.runtimeConfig.getConfig().site
 
 Page({
   data: {
-    blogName: config.blogName,
-    blogDesc: config.blogDesc,
+    blogName: initialSite.blogName,
+    blogDesc: initialSite.blogDesc,
     version: config.version,
     stats: {
       postCount: '--',
@@ -20,14 +21,23 @@ Page({
 
   onLoad() {
     app.runtimeReady().then((runtime) => {
-      this.setData({ commentEnabled: !!runtime.commentEnabled })
+      this.applyRuntime(runtime)
     })
     this.fetchStats()
   },
 
   onShow() {
     // 远程配置可能已更新
-    this.setData({ commentEnabled: app.globalData.runtime.commentEnabled })
+    this.applyRuntime(app.globalData.runtime)
+  },
+
+  applyRuntime(runtime) {
+    const site = runtime.site
+    this.setData({
+      blogName: site.blogName,
+      blogDesc: site.blogDesc,
+      commentEnabled: !!runtime.commentEnabled
+    })
   },
 
   onPullDownRefresh() {

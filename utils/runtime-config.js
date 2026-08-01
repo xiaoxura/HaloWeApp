@@ -1,14 +1,18 @@
 const config = require('../config/index')
 const request = require('./request')
 const { compareSemver } = require('./util')
+const {
+  PLUGIN_NAME,
+  PLUGIN_CONFIG_ENDPOINT,
+  CONFIG_CACHE_TTL
+} = require('./plugin-contract')
 
 /**
  * 运行时远程配置（配套插件下发）。
  *
- * v0.2.0 采用「显式启用」策略：config.remoteConfig 中 enabled / pluginName /
- * endpoint 任一缺失时不发起任何网络请求，直接使用本地默认值。
- * 任何异常（插件不可用、超时、HTML、非法字段）都不会覆盖默认值，
- * 最终兜底始终为 commentEnabled: false。
+ * 插件名称与 API 路径是固定协议，不再由 config/index.js 重复配置。任何异常
+ * （插件不可用、超时、HTML、非法字段）都不会覆盖安全默认值，评论写能力始终
+ * fail-closed；站点展示配置则使用内置非敏感默认值降级。
  *
  * v0.3.0 起区分「评论读取」与「评论写入」（C-04）：
  * - commentEnabled 只控制评论区展示；写入口由 commentOptions.submitEnabled /
@@ -16,7 +20,6 @@ const { compareSemver } = require('./util')
  * - 写能力 fail-closed：只有本次冷启动实时完成插件探测与 config 拉取（live），
  *   且 schema 受支持、客户端版本不低于 minVersion，才允许写入；
  * - 过期或降级缓存可继续展示公告/评论，但绝不开启写入口；
- * - 本地 config.commentEnabled 最多开启评论读取，不能开启写入。
  */
 
 const CACHE_KEY = 'runtimeConfig'
@@ -24,7 +27,19 @@ const SCHEMA_VERSION = 1
 // 客户端支持的远程配置 schema 版本；高于此版本的响应整体忽略（保持只读）
 const SUPPORTED_SCHEMA_VERSION = 1
 
+const CONFIG_SOURCE = Object.freeze({
+  pluginName: PLUGIN_NAME,
+  endpoint: PLUGIN_CONFIG_ENDPOINT,
+  cacheTtl: CONFIG_CACHE_TTL
+})
+
 const DEFAULT_CONFIG = Object.freeze({
+  site: Object.freeze({
+    blogName: '我的博客',
+    blogDesc: '记录技术 · 记录生活',
+    pageSize: 10,
+    fontUrl: ''
+  }),
   commentEnabled: false,
   commentOptions: Object.freeze({
     submitEnabled: false,
@@ -49,6 +64,33 @@ const DEFAULT_CONFIG = Object.freeze({
 function validateRemoteConfig(data) {
   if (!data || typeof data !== 'object' || Array.isArray(data)) return null
   const out = {}
+  if (data.site && typeof data.site === 'object' && !Array.isArray(data.site)) {
+    const site = {}
+    if (
+      typeof data.site.blogName === 'string' &&
+      data.site.blogName.trim() &&
+      data.site.blogName.length <= 100
+    ) {
+      site.blogName = data.site.blogName
+    }
+    if (typeof data.site.blogDesc === 'string' && data.site.blogDesc.length <= 200) {
+      site.blogDesc = data.site.blogDesc
+    }
+    if (
+      Number.isInteger(data.site.pageSize) &&
+      data.site.pageSize >= 1 &&
+      data.site.pageSize <= 100
+    ) {
+      site.pageSize = data.site.pageSize
+    }
+    if (
+      typeof data.site.fontUrl === 'string' &&
+      (!data.site.fontUrl || /^https:\/\//i.test(data.site.fontUrl))
+    ) {
+      site.fontUrl = data.site.fontUrl
+    }
+    if (Object.keys(site).length > 0) out.site = site
+  }
   if (typeof data.commentEnabled === 'boolean') out.commentEnabled = data.commentEnabled
   if (typeof data.minVersion === 'string') out.minVersion = data.minVersion
   if (typeof data.schemaVersion === 'number') out.schemaVersion = data.schemaVersion
@@ -89,9 +131,10 @@ function validateRemoteConfig(data) {
   return Object.keys(out).length > 0 ? out : null
 }
 
-/** 浅合并 + 嵌套对象（commentOptions / announcement）与默认值合并 */
+/** 浅合并 + 嵌套对象（site / commentOptions / announcement）与默认值合并 */
 function mergeConfig(base, extra) {
   const out = { ...base, ...(extra || {}) }
+  out.site = { ...base.site, ...((extra && extra.site) || {}) }
   out.commentOptions = { ...base.commentOptions, ...((extra && extra.commentOptions) || {}) }
   out.announcement = { ...base.announcement, ...((extra && extra.announcement) || {}) }
   return out
@@ -103,14 +146,14 @@ function mergeConfig(base, extra) {
  * @param {Function} deps.get 发起 GET 请求的函数 (path, params) => Promise
  * @param {object} deps.storage { get(key), set(key, value) } 同步存储
  * @param {Function} deps.now 当前时间戳（毫秒）
- * @param {object} deps.remoteConfig config.remoteConfig 配置项
+ * @param {object} [deps.source] 测试或兼容场景覆盖插件配置源；生产使用固定协议
  * @param {string} [deps.clientVersion] 当前客户端版本（SemVer），用于 minVersion 门槛
  */
 function createRuntimeConfig(deps) {
-  const { get, storage, now, remoteConfig } = deps
-  const rc = remoteConfig || {}
-  const ttl = typeof rc.cacheTtl === 'number' ? rc.cacheTtl : 21600000
-  const localDefaults = mergeConfig(DEFAULT_CONFIG, deps.defaults || {})
+  const { get, storage, now } = deps
+  const source = deps.source || CONFIG_SOURCE
+  const ttl = typeof source.cacheTtl === 'number' ? source.cacheTtl : CONFIG_CACHE_TTL
+  const localDefaults = mergeConfig(DEFAULT_CONFIG, null)
   const clientVersion = typeof deps.clientVersion === 'string' ? deps.clientVersion : ''
 
   let current = mergeConfig(localDefaults, null)
@@ -143,11 +186,20 @@ function createRuntimeConfig(deps) {
     }
   }
 
+  // 页面可在实时请求完成前同步使用未过期缓存中的站点展示配置；写能力仍由 live=false
+  // 强制关闭。这样插件短时不可用不会阻塞文章首屏，也不会误开放评论提交。
+  const initialCache = readCache()
+  if (initialCache && now() - initialCache.fetchedAt <= ttl) {
+    current = mergeConfig(localDefaults, initialCache.data)
+  }
+
   async function fetchRemote() {
     // 1. 插件可用性检测，不可用则抛错进入兜底
-    await get(`/apis/api.plugin.halo.run/v1alpha1/plugins/${encodeURIComponent(rc.pluginName)}/available`)
+    await get(
+      `/apis/api.plugin.halo.run/v1alpha1/plugins/${encodeURIComponent(source.pluginName)}/available`
+    )
     // 2. 拉取配置（request 层已保证非 2xx / HTML / 非法 JSON 都会 reject）
-    const data = await get(rc.endpoint)
+    const data = await get(source.endpoint)
     const valid = validateRemoteConfig(data)
     if (!valid) {
       const err = new Error('远程配置字段不合法')
@@ -176,8 +228,8 @@ function createRuntimeConfig(deps) {
 
   async function init() {
     live = false
-    // 显式启用策略：配置不完整时不发起任何网络请求
-    if (!rc.enabled || !rc.pluginName || !rc.endpoint) {
+    // 固定协议被测试覆盖为不完整值时安全降级，不发起网络请求
+    if (!source.pluginName || !source.endpoint) {
       current = mergeConfig(localDefaults, null)
       return current
     }
@@ -188,7 +240,7 @@ function createRuntimeConfig(deps) {
       current = mergeConfig(localDefaults, remote)
     } catch (err) {
       // 拉取失败：未过期缓存可降级使用（仅读取/公告，写入口保持关闭）；
-      // 过期则回退本地默认值，等待下次冷启动刷新
+      // 过期则回退内置安全默认值，等待下次冷启动刷新
       const cached = readCache()
       if (cached && now() - cached.fetchedAt <= ttl) {
         current = mergeConfig(localDefaults, cached.data)
@@ -244,8 +296,6 @@ const runtimeConfig = createRuntimeConfig({
     set: (key, value) => wx.setStorageSync(key, value)
   },
   now: () => Date.now(),
-  remoteConfig: config.remoteConfig,
-  defaults: { commentEnabled: !!config.commentEnabled },
   clientVersion: config.version
 })
 
@@ -254,6 +304,7 @@ module.exports = {
   CACHE_KEY,
   SCHEMA_VERSION,
   SUPPORTED_SCHEMA_VERSION,
+  CONFIG_SOURCE,
   validateRemoteConfig,
   mergeConfig,
   createRuntimeConfig,

@@ -209,7 +209,7 @@ upvote / counter 请求体（tracker 形式）：
 
 | 功能 | 方法 | 路径 | 说明 |
 | --- | --- | --- | --- |
-| 公开配置 | GET | `/config` | 评论/公告/最低版本/隐私政策（白名单 DTO） |
+| 公开配置 | GET | `/config` | 站点展示/分页/字体/评论/公告/版本/隐私（白名单 DTO） |
 | 微信登录短会话 | POST | `/session` | `wx.login` code 换 90 分钟不透明 token |
 | 发表评论 | POST | `/comments` | 登录态+频控+幂等+msgSecCheck 后代理写入 |
 | 回复评论 | POST | `/comments/{commentName}/replies` | 同上，可选 `quoteReplyName` |
@@ -222,6 +222,9 @@ upvote / counter 请求体（tracker 形式）：
 
 ### 小程序端约定
 
+- `config/index.js` 只保存客户端版本和 Halo `baseUrl`；插件名称与 API 路径是固定协议。
+- 博客名称、简介、分页大小、字体等展示配置与评论/公告配置统一由插件 Setting 下发。
+- 管理员 PAT、AppSecret 等长期凭据不得进入小程序包；公开读取接口无需认证。
 - 启动时先用「插件检测」接口探测插件是否安装，再决定是否拉取配置。
 - `commentEnabled` 控制评论区展示；`commentOptions.submitEnabled` / `replyEnabled`
   单独控制写入口，且只有本次冷启动**实时**探测+拉取成功才允许写入（fail-closed）。

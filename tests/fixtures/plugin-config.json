@@ -1,6 +1,12 @@
 {
   "schemaVersion": 1,
   "generatedAt": "2026-08-01T08:00:00Z",
+  "site": {
+    "blogName": "技术博客",
+    "blogDesc": "Halo 驱动",
+    "pageSize": 20,
+    "fontUrl": "https://cdn.example.com/font.woff2"
+  },
   "commentEnabled": true,
   "commentOptions": {
     "submitEnabled": true,

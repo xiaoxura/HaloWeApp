@@ -2,6 +2,20 @@
 
 本项目遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [未发布]
+
+### 变更
+
+- `config/index.js` 收口为客户端版本与 Halo `baseUrl`；插件名/API 路径改为固定协议常量
+- 博客名称、简介、分页大小和字体地址迁移到 `plugin-halo-weapp` Setting 与公开配置的
+  `site` 节点；客户端保留非敏感默认值和缓存降级
+- 移除本地评论开关与远程端点开关，所有运行时业务配置统一由 Halo 插件下发
+
+### 安全
+
+- 明确禁止在小程序配置和公开 DTO 中存放 Halo 管理员 PAT；读者端 Public API 无需 PAT，
+  长期管理凭据只能留在服务端安全边界内
+
 ## [0.3.0] - 2026-08-01
 
 合规互动 Beta。按 [docs/development-plan-v0.3.0.md](docs/development-plan-v0.3.0.md) 实施，

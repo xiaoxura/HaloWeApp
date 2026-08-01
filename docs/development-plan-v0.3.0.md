@@ -140,6 +140,7 @@ plugin-halo-weapp/
 插件 v0.1.0 只使用 Halo Setting 生成管理表单，配置项至少包括：
 
 - 小程序 AppID、AppSecret；
+- 博客名称、简介、分页大小和可选字体 URL；
 - 评论区展示开关、评论提交开关、回复提交开关；
 - 评论最大长度；
 - 每用户每分钟/每小时频控；
@@ -199,7 +200,7 @@ GET /apis/api.weapp.halo.run/v1alpha1/config
 
 - 保留 v0.2.0 已识别的顶层 `commentEnabled`、`announcement`、`minVersion`；
 - `commentEnabled` 控制评论区是否展示，`commentOptions.submitEnabled` 单独控制写入口；
-- 本地 `config.commentEnabled` 最多开启评论读取，不能开启 `submitEnabled`；
+- 客户端不提供本地评论开关；读取与写入能力只接受插件公开配置，缺失时全部关闭；
 - 只有本次冷启动已实时完成插件探测和 config 拉取，才允许评论写入；
 - 过期或降级缓存可以继续展示公告，但强制覆盖 `submitEnabled/replyEnabled=false`；
 - 配置端关闭评论后，已打开的评论表单在最终提交前仍需由服务端再次校验开关。

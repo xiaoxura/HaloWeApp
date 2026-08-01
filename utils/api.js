@@ -1,5 +1,5 @@
 const { get, post } = require('./request')
-const config = require('../config/index')
+const { PLUGIN_API_BASE } = require('./plugin-contract')
 
 /**
  * Halo API 接口层
@@ -32,11 +32,9 @@ module.exports = {
     get(`/apis/api.halo.run/v1alpha1/comments/${commentName}/reply`, params),
 
   // ===== 配套插件（plugin-halo-weapp）=====
-  // 插件 API 前缀由 remoteConfig.endpoint 推导：
-  // /apis/api.weapp.halo.run/v1alpha1/config => /apis/api.weapp.halo.run/v1alpha1
+  // 插件 API 前缀是客户端与 plugin-halo-weapp 的固定协议，不属于部署配置
   pluginApiBase() {
-    const ep = (config.remoteConfig && config.remoteConfig.endpoint) || ''
-    return ep.endsWith('/config') ? ep.slice(0, -'/config'.length) : ''
+    return PLUGIN_API_BASE
   },
 
   // 微信登录 code 换取短会话 token

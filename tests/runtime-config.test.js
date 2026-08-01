@@ -12,6 +12,13 @@ const {
 
 test('validate: 白名单字段逐项校验', () => {
   const out = validateRemoteConfig({
+    site: {
+      blogName: '技术博客',
+      blogDesc: 'Halo 驱动',
+      pageSize: 20,
+      fontUrl: 'https://cdn.example.com/font.woff2',
+      adminToken: 'drop'
+    },
     commentEnabled: true,
     minVersion: '1.0.0',
     schemaVersion: 1,
@@ -20,6 +27,12 @@ test('validate: 白名单字段逐项校验', () => {
     nested: { evil: 'drop' }
   })
   assert.deepStrictEqual(out, {
+    site: {
+      blogName: '技术博客',
+      blogDesc: 'Halo 驱动',
+      pageSize: 20,
+      fontUrl: 'https://cdn.example.com/font.woff2'
+    },
     commentEnabled: true,
     minVersion: '1.0.0',
     schemaVersion: 1,
@@ -46,14 +59,13 @@ function makeStorage(initial = {}) {
   }
 }
 
-const ENABLED_RC = {
-  enabled: true,
+const TEST_SOURCE = {
   pluginName: 'plugin-halo-weapp',
   endpoint: '/apis/api.weapp.halo.run/v1alpha1/config',
   cacheTtl: 21600000
 }
 
-test('runtime: 未启用时不发起任何请求，返回默认值', async () => {
+test('runtime: 配置源不完整时不发起任何请求，返回安全默认值', async () => {
   let calls = 0
   const rc = createRuntimeConfig({
     get: () => {
@@ -62,7 +74,7 @@ test('runtime: 未启用时不发起任何请求，返回默认值', async () =>
     },
     storage: makeStorage(),
     now: () => 1000,
-    remoteConfig: { enabled: false, pluginName: '', endpoint: '' }
+    source: { pluginName: '', endpoint: '' }
   })
   const cfg = await rc.ready()
   assert.strictEqual(calls, 0)
@@ -78,7 +90,7 @@ test('runtime: 缺少 pluginName/endpoint 时不发请求', async () => {
     },
     storage: makeStorage(),
     now: () => 1000,
-    remoteConfig: { enabled: true, pluginName: '', endpoint: '/apis/x' }
+    source: { pluginName: '', endpoint: '/apis/x' }
   })
   const cfg = await rc.ready()
   assert.strictEqual(calls, 0)
@@ -94,7 +106,7 @@ test('runtime: 合法配置生效并写入缓存', async () => {
     },
     storage,
     now: () => 5000,
-    remoteConfig: ENABLED_RC
+    source: TEST_SOURCE
   })
   const cfg = await rc.ready()
   assert.strictEqual(cfg.commentEnabled, true)
@@ -110,7 +122,7 @@ test('runtime: 插件不可用时保持默认且不写缓存', async () => {
     get: () => Promise.reject(Object.assign(new Error('nf'), { type: 'http', statusCode: 404 })),
     storage,
     now: () => 1000,
-    remoteConfig: ENABLED_RC
+    source: TEST_SOURCE
   })
   const cfg = await rc.ready()
   assert.strictEqual(cfg.commentEnabled, false)
@@ -127,7 +139,7 @@ test('runtime: 返回 HTML/非法字段时保持默认且不写缓存', async ()
       },
       storage,
       now: () => 1000,
-      remoteConfig: ENABLED_RC
+      source: TEST_SOURCE
     })
     const cfg = await rc.ready()
     assert.strictEqual(cfg.commentEnabled, false, `bad=${JSON.stringify(bad)}`)
@@ -143,7 +155,7 @@ test('runtime: 拉取失败时未过期缓存可降级', async () => {
     get: () => Promise.reject(new Error('network')),
     storage,
     now: () => 1000,
-    remoteConfig: ENABLED_RC
+    source: TEST_SOURCE
   })
   const cfg = await rc.ready()
   assert.strictEqual(cfg.commentEnabled, true)
@@ -157,7 +169,7 @@ test('runtime: 过期缓存不降级，回退默认值', async () => {
     get: () => Promise.reject(new Error('network')),
     storage,
     now: () => 21600000 + 1,
-    remoteConfig: ENABLED_RC
+    source: TEST_SOURCE
   })
   const cfg = await rc.ready()
   assert.strictEqual(cfg.commentEnabled, false)
@@ -171,22 +183,33 @@ test('runtime: schema 版本不符的缓存被忽略', async () => {
     get: () => Promise.reject(new Error('network')),
     storage,
     now: () => 1000,
-    remoteConfig: ENABLED_RC
+    source: TEST_SOURCE
   })
   const cfg = await rc.ready()
   assert.strictEqual(cfg.commentEnabled, false)
 })
 
-test('runtime: 本地默认值可被 config.commentEnabled 覆盖', async () => {
+test('runtime: ready 前可同步读取未过期站点缓存，但写能力保持关闭', () => {
+  const cached = {
+    data: {
+      site: { blogName: '缓存博客', pageSize: 20 },
+      commentEnabled: true,
+      commentOptions: { submitEnabled: true, replyEnabled: true }
+    },
+    fetchedAt: 900,
+    schemaVersion: 1
+  }
   const rc = createRuntimeConfig({
-    get: () => Promise.reject(new Error('should not be called')),
-    storage: makeStorage(),
+    get: () => Promise.reject(new Error('not started')),
+    storage: makeStorage({ [CACHE_KEY]: cached }),
     now: () => 1000,
-    remoteConfig: { enabled: false },
-    defaults: { commentEnabled: true }
+    source: TEST_SOURCE
   })
-  const cfg = await rc.ready()
-  assert.strictEqual(cfg.commentEnabled, true)
+  assert.strictEqual(rc.getConfig().site.blogName, '缓存博客')
+  assert.strictEqual(rc.getConfig().site.blogDesc, DEFAULT_CONFIG.site.blogDesc)
+  assert.strictEqual(rc.getConfig().commentEnabled, true)
+  assert.strictEqual(rc.isLive(), false)
+  assert.strictEqual(rc.canSubmit(), false)
   assert.deepStrictEqual(DEFAULT_CONFIG.commentEnabled, false)
   assert.deepStrictEqual(DEFAULT_CONFIG.commentOptions.submitEnabled, false)
 })
@@ -196,6 +219,12 @@ test('runtime: 本地默认值可被 config.commentEnabled 覆盖', async () => 
 const FULL_CONFIG = {
   schemaVersion: 1,
   generatedAt: '2026-08-01T08:00:00Z',
+  site: {
+    blogName: '技术博客',
+    blogDesc: 'Halo 驱动',
+    pageSize: 20,
+    fontUrl: 'https://cdn.example.com/font.woff2'
+  },
   commentEnabled: true,
   commentOptions: { submitEnabled: true, replyEnabled: true, maxLength: 500, nicknameRequired: true },
   announcement: { enabled: true, version: '2026-08-01', content: 'hi' },
@@ -214,9 +243,8 @@ function createWithRemote(remote, extra = {}) {
     },
     storage,
     now: () => 1000,
-    remoteConfig: ENABLED_RC,
-    clientVersion: extra.clientVersion || '0.3.0',
-    defaults: extra.defaults || {}
+    source: TEST_SOURCE,
+    clientVersion: extra.clientVersion || '0.3.0'
   })
 }
 
@@ -230,6 +258,19 @@ test('validate: commentOptions 部分字段与非法 maxLength', () => {
   assert.deepStrictEqual(out, { commentOptions: { submitEnabled: true } })
 })
 
+test('validate: site 非法字段被剔除，不能下发客户端凭据', () => {
+  const out = validateRemoteConfig({
+    site: {
+      blogName: '',
+      blogDesc: 'ok',
+      pageSize: 0,
+      fontUrl: 'http://unsafe.example/font.woff2',
+      adminToken: 'pat_leak'
+    }
+  })
+  assert.deepStrictEqual(out, { site: { blogDesc: 'ok' } })
+})
+
 test('runtime: 实时拉取成功且开关全开时允许写入', async () => {
   const rc = createWithRemote(FULL_CONFIG)
   await rc.ready()
@@ -240,16 +281,15 @@ test('runtime: 实时拉取成功且开关全开时允许写入', async () => {
   assert.strictEqual(rc.getConfig().privacyPolicyVersion, '2026-08-01')
 })
 
-test('runtime: 本地 config.commentEnabled 只能开启读取，不能开启写入', async () => {
+test('runtime: 内置默认配置不能开启评论读取或写入', async () => {
   const rc = createRuntimeConfig({
     get: () => Promise.reject(new Error('should not be called')),
     storage: makeStorage(),
     now: () => 1000,
-    remoteConfig: { enabled: false },
-    defaults: { commentEnabled: true }
+    source: { pluginName: '', endpoint: '' }
   })
   await rc.ready()
-  assert.strictEqual(rc.getConfig().commentEnabled, true)
+  assert.strictEqual(rc.getConfig().commentEnabled, false)
   assert.strictEqual(rc.canSubmit(), false)
   assert.strictEqual(rc.canReply(), false)
 })
@@ -291,7 +331,7 @@ test('runtime: schema 版本高于支持范围时保持只读且不写缓存', a
     },
     storage,
     now: () => 1000,
-    remoteConfig: ENABLED_RC,
+    source: TEST_SOURCE,
     clientVersion: '0.3.0'
   })
   await rc.ready()
@@ -342,6 +382,9 @@ test('runtime: 插件配置夹具可完整转换并开放写能力', async () =>
   assert.strictEqual(rc.canSubmit(), true)
   assert.strictEqual(rc.canReply(), true)
   const cfg = rc.getConfig()
+  assert.strictEqual(cfg.site.blogName, '技术博客')
+  assert.strictEqual(cfg.site.pageSize, 20)
+  assert.strictEqual(cfg.site.fontUrl, 'https://cdn.example.com/font.woff2')
   assert.strictEqual(cfg.announcement.version, '2026-08-01')
   assert.strictEqual(cfg.privacyPolicyVersion, '2026-08-01')
 })
