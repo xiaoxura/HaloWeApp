@@ -17,6 +17,188 @@
   opacity: 0.85;
 }
 
+/* ===== 微信读者身份 ===== */
+.reader-card {
+  margin: 0 32rpx 28rpx;
+  padding: 32rpx;
+}
+.reader-head {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+}
+.reader-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(135deg, #6b8cff, #1e80ff);
+  font-size: 38rpx;
+  font-weight: 600;
+  box-shadow: 0 8rpx 20rpx rgba(30, 128, 255, 0.2);
+}
+.reader-main {
+  flex: 1;
+  min-width: 0;
+}
+.reader-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reader-status {
+  margin-top: 6rpx;
+  color: var(--color-text-3);
+  font-size: 22rpx;
+  line-height: 1.45;
+}
+.reader-badge {
+  flex-shrink: 0;
+  padding: 6rpx 16rpx;
+  border-radius: var(--radius-full);
+  color: #8a8f98;
+  background: #f0f1f3;
+  font-size: 20rpx;
+}
+.reader-badge-on {
+  color: #138a52;
+  background: #e8f8ef;
+}
+.reader-cache-tip,
+.reader-security-tip,
+.reader-delete-tip {
+  margin-top: 20rpx;
+  border-radius: 14rpx;
+  padding: 16rpx 20rpx;
+  color: #7c8490;
+  background: #f7f8fa;
+  font-size: 21rpx;
+  line-height: 1.55;
+}
+.reader-form {
+  margin-top: 28rpx;
+  padding-top: 26rpx;
+  border-top: 1rpx solid var(--color-border);
+}
+.form-label {
+  margin-bottom: 12rpx;
+  color: var(--color-text-2);
+  font-size: 24rpx;
+}
+.reader-input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 80rpx;
+  padding: 0 24rpx;
+  border: 1rpx solid #dfe3e8;
+  border-radius: 16rpx;
+  background: #fff;
+  font-size: 27rpx;
+}
+.reader-input:focus {
+  border-color: var(--color-primary);
+}
+.reader-privacy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6rpx;
+  margin-top: 24rpx;
+  color: var(--color-text-2);
+  font-size: 23rpx;
+}
+.reader-check-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  color: var(--color-text-2);
+  font-size: 23rpx;
+}
+.reader-check-row checkbox {
+  transform: scale(0.78);
+}
+.reader-keep {
+  margin-top: 18rpx;
+}
+.reader-link {
+  color: var(--color-primary);
+}
+.reader-version {
+  color: var(--color-text-3);
+  font-size: 20rpx;
+}
+.reader-error {
+  margin-top: 18rpx;
+  color: #d7383e;
+  font-size: 23rpx;
+  line-height: 1.5;
+}
+.reader-error-bottom {
+  text-align: center;
+}
+.reader-actions {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 24rpx;
+}
+.reader-actions-main {
+  margin-top: 28rpx;
+}
+.reader-btn {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  border-radius: var(--radius-full);
+  font-size: 25rpx;
+  line-height: 72rpx;
+}
+.reader-btn::after,
+.reader-delete::after {
+  border: none;
+}
+.reader-btn-primary {
+  color: #fff;
+  background: var(--color-primary);
+}
+.reader-btn-primary[disabled] {
+  color: rgba(255, 255, 255, 0.85);
+  background: #9fc6f7;
+}
+.reader-btn-ghost {
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+.reader-btn-ghost[disabled] {
+  color: #9aa3ad;
+  background: #f0f1f3;
+}
+.reader-delete {
+  width: 100%;
+  margin: 22rpx 0 0;
+  color: #d7383e;
+  background: #fff0f0;
+  border-radius: var(--radius-full);
+  font-size: 24rpx;
+  line-height: 68rpx;
+}
+.reader-delete[disabled] {
+  color: #ba888a;
+  background: #f7eeee;
+}
+.reader-delete-tip {
+  margin-top: 12rpx;
+  padding: 0;
+  text-align: center;
+  background: transparent;
+  color: #a06b6d;
+}
+
 /* ===== 统计 ===== */
 .stats-row {
   display: flex;
@@ -62,10 +244,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.m-arrow {
-  margin-left: auto;
-  color: var(--color-text-3);
 }
 .m-extra {
   margin-left: auto;

@@ -147,3 +147,59 @@ test('session: isSessionError 判定', () => {
     false
   )
 })
+
+test('session: 有效账号会话优先复用，不申请临时 token', async () => {
+  const account = {
+    calls: 0,
+    getState: () => 'authenticated',
+    withAuthenticated(fn) {
+      this.calls++
+      return fn('account-token')
+    }
+  }
+  const deps = makeDeps({ accountSession: account })
+  const cs = createCommentSession(deps)
+  assert.strictEqual(await cs.ensure(), 'account-token')
+  assert.strictEqual(await cs.withSession((token) => Promise.resolve(`used:${token}`)), 'used:account-token')
+  assert.strictEqual(account.calls, 2)
+  assert.strictEqual(deps.state.loginCalls, 0)
+  assert.strictEqual(deps.state.sessionCalls, 0)
+})
+
+test('session: 账号恢复失败回落临时会话，评论不会永久 loading', async () => {
+  const recoveryError = Object.assign(new Error('account restore failed'), {
+    authRecovery: true,
+    type: 'network'
+  })
+  const account = {
+    getState: () => 'authenticated',
+    withAuthenticated: () => Promise.reject(recoveryError)
+  }
+  const deps = makeDeps({ accountSession: account })
+  const cs = createCommentSession(deps)
+  const result = await cs.withSession((token) => Promise.resolve(`used:${token}`))
+  assert.strictEqual(result, 'used:token-for-code-1')
+  assert.strictEqual(deps.state.loginCalls, 1)
+  assert.strictEqual(deps.state.sessionCalls, 1)
+})
+
+test('session: 评论业务错误不因账号会话而回落重提', async () => {
+  const contentError = Object.assign(new Error('risky'), {
+    type: 'http',
+    statusCode: 422,
+    data: { code: 'CONTENT_RISKY' }
+  })
+  const account = {
+    getState: () => 'authenticated',
+    withAuthenticated: (fn) => fn('account-token')
+  }
+  const deps = makeDeps({ accountSession: account })
+  const cs = createCommentSession(deps)
+  let submitCalls = 0
+  await assert.rejects(cs.withSession(() => {
+    submitCalls++
+    return Promise.reject(contentError)
+  }), (err) => err === contentError)
+  assert.strictEqual(submitCalls, 1)
+  assert.strictEqual(deps.state.loginCalls, 0)
+})

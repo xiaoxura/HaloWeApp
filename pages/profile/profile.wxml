@@ -4,6 +4,120 @@
   <view class="me-desc">{{blogDesc}}</view>
 </view>
 
+<!-- 微信读者身份：缓存资料与真实认证状态明确分开 -->
+<view class="reader-card card">
+  <view class="reader-head">
+    <view class="reader-avatar">{{avatarText}}</view>
+    <view class="reader-main">
+      <view class="reader-name">{{authProfile ? authProfile.displayName : '微信读者'}}</view>
+      <view class="reader-status">{{authStatusText}}</view>
+    </view>
+    <view class="reader-badge {{authenticated ? 'reader-badge-on' : ''}}">
+      {{authenticated ? '已认证' : '未认证'}}
+    </view>
+  </view>
+
+  <view wx:if="{{authProfile && !authenticated}}" class="reader-cache-tip">
+    以上仅为本机缓存资料，不代表当前已登录。
+  </view>
+
+  <view wx:if="{{authenticated && !authAvailable}}" class="reader-cache-tip">
+    登录能力当前已关闭，资料仍可查看；昵称修改需等待重新开放，退出与注销不受影响。
+  </view>
+
+  <!-- 首次/重新同意登录表单；只能由用户点击后显示 -->
+  <view wx:if="{{loginPanelVisible && !authenticated}}" class="reader-form">
+    <view class="form-label">读者昵称</view>
+    <input
+      class="reader-input"
+      value="{{loginNickname}}"
+      placeholder="请输入 2～20 个字符"
+      maxlength="40"
+      disabled="{{authBusy}}"
+      bindinput="onLoginNicknameInput"
+    />
+    <view class="reader-privacy">
+      <label class="reader-check-row">
+        <checkbox-group bindchange="onLoginConsentChange">
+          <checkbox value="consent" checked="{{loginConsentChecked}}" disabled="{{authBusy}}" />
+        </checkbox-group>
+        <text>我已阅读并同意当前</text>
+      </label>
+      <text class="reader-link" bindtap="copyPrivacyUrl">《隐私政策》</text>
+      <text class="reader-version">版本 {{privacyVersion}}</text>
+    </view>
+    <label class="reader-check-row reader-keep">
+      <checkbox-group bindchange="onKeepLoginChange">
+        <checkbox value="keep" checked="{{keepLogin}}" disabled="{{authBusy}}" />
+      </checkbox-group>
+      <text>保持登录意愿（冷启动时仅恢复已有账号）</text>
+    </label>
+    <view class="reader-security-tip">
+      会话凭据只保存在内存；不会保存 OpenID、身份摘要或管理员凭据。
+    </view>
+    <view wx:if="{{formError}}" class="reader-error">{{formError}}</view>
+    <view class="reader-actions">
+      <button class="reader-btn reader-btn-ghost" disabled="{{authBusy}}" bindtap="cancelLogin">取消</button>
+      <button class="reader-btn reader-btn-primary" loading="{{authState === 'logging-in'}}" disabled="{{authBusy}}" bindtap="submitLogin">
+        {{authState === 'logging-in' ? '登录中…' : '同意并登录'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 已认证资料修改 -->
+  <view wx:if="{{authenticated && editVisible}}" class="reader-form">
+    <view class="form-label">修改昵称</view>
+    <input
+      class="reader-input"
+      value="{{editNickname}}"
+      maxlength="40"
+      disabled="{{authBusy}}"
+      bindinput="onEditNicknameInput"
+    />
+    <view wx:if="{{formError}}" class="reader-error">{{formError}}</view>
+    <view class="reader-actions">
+      <button class="reader-btn reader-btn-ghost" disabled="{{authBusy}}" bindtap="cancelEdit">取消</button>
+      <button class="reader-btn reader-btn-primary" disabled="{{authBusy}}" bindtap="submitEdit">保存昵称</button>
+    </view>
+  </view>
+
+  <view wx:if="{{!authenticated && !loginPanelVisible}}" class="reader-actions reader-actions-main">
+    <button
+      wx:if="{{authState === 'error' || authState === 'consent-required'}}"
+      class="reader-btn reader-btn-ghost"
+      disabled="{{authBusy || !authAvailable}}"
+      bindtap="retryRestore"
+    >
+      {{authState === 'consent-required' ? '重新确认' : '重试恢复'}}
+    </button>
+    <button
+      class="reader-btn reader-btn-primary"
+      disabled="{{authBusy || !authAvailable}}"
+      loading="{{authState === 'restoring'}}"
+      bindtap="handlePrimaryAuth"
+    >
+      {{authState === 'restoring' ? '恢复中…' : (authAvailable ? (authState === 'authenticated' ? '恢复登录' : '登录微信读者') : '登录暂未开放')}}
+    </button>
+  </view>
+
+  <view wx:if="{{authenticated && !editVisible}}" class="reader-actions reader-actions-main">
+    <button class="reader-btn reader-btn-ghost" disabled="{{authBusy || !authAvailable}}" bindtap="beginEdit">修改昵称</button>
+    <button class="reader-btn reader-btn-ghost" disabled="{{authBusy}}" bindtap="handleLogout">退出登录</button>
+  </view>
+  <button
+    wx:if="{{authenticated && !editVisible}}"
+    class="reader-delete"
+    disabled="{{authBusy}}"
+    bindtap="handleDeleteAccount"
+  >
+    注销读者账号
+  </button>
+  <view wx:if="{{authenticated && !editVisible}}" class="reader-delete-tip">
+    注销不会自动删除已经公开发表的评论。
+  </view>
+  <view wx:if="{{formError && authenticated && !editVisible}}" class="reader-error reader-error-bottom">{{formError}}</view>
+</view>
+
 <!-- 站点统计 -->
 <view class="stats-row card">
   <view class="stat">
@@ -24,7 +138,6 @@
   </view>
 </view>
 
-<!-- 状态信息（归档/友链/关于/设置等功能规划至 v0.3.x，不提供死入口） -->
 <view class="menu-list card">
   <view class="menu-item">
     <text class="m-ico" style="background:#eef1f5"><view class="icon i-comment"></view></text>

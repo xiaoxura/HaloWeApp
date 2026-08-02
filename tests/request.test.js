@@ -1,7 +1,7 @@
 const { test, beforeEach } = require('node:test')
 const assert = require('node:assert')
 
-const { serialize, RequestError, get, post } = require('../utils/request')
+const { serialize, RequestError, get, post, patch, del } = require('../utils/request')
 const config = require('../config/index')
 
 // ===== serialize =====
@@ -98,6 +98,24 @@ test('request: tracker 空 body 正常放行', async () => {
   mockWx(({ success }) => success({ statusCode: 200, data: '' }))
   const data = await post('/apis/trackers/upvote', { name: 'x' })
   assert.strictEqual(data, null)
+})
+
+test('request: PATCH/DELETE 保留方法、请求体和 header，204 空响应正常', async () => {
+  const seen = []
+  mockWx((opts) => {
+    seen.push(opts)
+    opts.success({ statusCode: opts.method === 'DELETE' ? 204 : 200, data: '' })
+  })
+  await patch('/apis/auth/profile', { displayName: '新昵称' }, {
+    header: { 'X-WeApp-Session': 'memory-token' }
+  })
+  await del('/apis/auth/session', { header: { 'X-WeApp-Session': 'memory-token' } })
+  assert.strictEqual(seen[0].method, 'PATCH')
+  assert.deepStrictEqual(seen[0].data, { displayName: '新昵称' })
+  assert.strictEqual(seen[0].header['X-WeApp-Session'], 'memory-token')
+  assert.strictEqual(seen[1].method, 'DELETE')
+  assert.strictEqual(seen[1].data, undefined)
+  assert.strictEqual(seen[1].header['X-WeApp-Session'], 'memory-token')
 })
 
 test('request: 非 2xx 携带解析后的 JSON 错误体（插件业务码）', async () => {

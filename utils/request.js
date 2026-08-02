@@ -64,7 +64,7 @@ function parseBody(data, path) {
 
 /**
  * wx.request 封装
- * @param {string} method GET / POST / ...
+ * @param {string} method GET / POST / PATCH / DELETE / ...
  * @param {string} path 接口路径（/apis/... 开头）
  * @param {object} options { params, data, header, timeout }
  */
@@ -123,5 +123,10 @@ module.exports = {
   get: (path, params, options = {}) =>
     request('GET', path, { params, header: options.header, timeout: options.timeout }),
   post: (path, data, options = {}) =>
-    request('POST', path, { data, header: options.header, timeout: options.timeout })
+    request('POST', path, { data, header: options.header, timeout: options.timeout }),
+  patch: (path, data, options = {}) =>
+    request('PATCH', path, { data, header: options.header, timeout: options.timeout }),
+  // DELETE 保留为 del，避免调用方与 JavaScript 关键字混淆。
+  del: (path, options = {}) =>
+    request('DELETE', path, { data: options.data, header: options.header, timeout: options.timeout })
 }

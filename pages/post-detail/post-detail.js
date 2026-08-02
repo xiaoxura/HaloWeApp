@@ -5,6 +5,7 @@ const { normalizeCommentList, normalizeReplyList } = require('../../utils/adapte
 const { extractCodeBlocks } = require('../../utils/html')
 const { uuid } = require('../../utils/util')
 const { commentSession } = require('../../utils/comment-session')
+const { AUTH_STORAGE_KEYS } = require('../../utils/auth-session')
 const likes = require('../../utils/likes')
 
 const app = getApp()
@@ -17,7 +18,7 @@ const REPLY_PAGE_SIZE = 10
 
 // 本机存储键：昵称（用户可选择不存）、已同意的隐私政策版本
 const NICKNAME_KEY = 'commentNickname'
-const CONSENT_KEY = 'privacyConsentVersion'
+const CONSENT_KEY = AUTH_STORAGE_KEYS.CONSENT
 
 const { tagStyle } = require('../../utils/rich-text-style')
 
@@ -291,6 +292,8 @@ Page({
     } catch (e) {
       initialNickname = ''
     }
+    // 真实账号认证态优先使用服务端公开 profile；缓存 profile 不能伪装为已登录昵称。
+    initialNickname = app.authSession.preferredDisplayName(initialNickname)
     this.setData({
       sheetVisible: true,
       sheetReplyTo: target ? target.author : '',

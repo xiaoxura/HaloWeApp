@@ -1,9 +1,12 @@
 const config = require('./config/index')
 const { runtimeConfig } = require('./utils/runtime-config')
+const { authSession } = require('./utils/auth-session')
 
 App({
   // 运行时配置管理器（页面用 canSubmit/canReply/isVersionOk 做写能力判定）
   runtimeConfig,
+  // 微信读者账号 token 仅保存在该内存状态机中，不进入 globalData/storage。
+  authSession,
 
   globalData: {
     config,
@@ -12,7 +15,11 @@ App({
   },
 
   onLaunch() {
-    this.runtimeReady().then((runtime) => this.loadFont(runtime.site.fontUrl))
+    this.runtimeReady().then((runtime) => {
+      this.loadFont(runtime.site.fontUrl)
+      // 文章首屏不等待账号恢复；只有曾主动选择保持登录且隐私版本未变化才会发起。
+      authSession.restore()
+    })
   },
 
   // 页面通过统一的就绪 Promise 获取配置，避免启动时序竞争

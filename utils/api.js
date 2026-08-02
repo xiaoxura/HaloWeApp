@@ -1,4 +1,4 @@
-const { get, post } = require('./request')
+const { get, post, patch, del } = require('./request')
 const {
   PLUGIN_API_BASE,
   MOMENTS_PLUGIN_NAME,
@@ -75,6 +75,29 @@ module.exports = {
   // 微信登录 code 换取短会话 token
   createPluginSession(code) {
     return post(`${module.exports.pluginApiBase()}/session`, { code })
+  },
+
+  // ===== 微信读者身份（token 只由 auth-session 在内存中持有） =====
+  // auth 写请求的 header 由调用方传入，统一包含 X-WeApp-Client-Version；
+  // 认证会话 header 绝不进入 URL 或请求体。
+  loginReader(data, header) {
+    return post(`${module.exports.pluginApiBase()}/auth/login`, data, { header })
+  },
+
+  getReaderProfile(header) {
+    return get(`${module.exports.pluginApiBase()}/auth/profile`, null, { header })
+  },
+
+  updateReaderProfile(data, header) {
+    return patch(`${module.exports.pluginApiBase()}/auth/profile`, data, { header })
+  },
+
+  logoutReader(header) {
+    return del(`${module.exports.pluginApiBase()}/auth/session`, { header })
+  },
+
+  deleteReaderAccount(header) {
+    return del(`${module.exports.pluginApiBase()}/auth/account`, { header })
   },
 
   // 发表评论（header 需含 X-WeApp-Session / X-Idempotency-Key / X-WeApp-Client-Version）

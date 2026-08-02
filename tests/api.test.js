@@ -71,3 +71,31 @@ test('api: 非法 Moment name 在发请求前拒绝', async () => {
   await assert.rejects(api.getMomentByName(''), /Moment name 不合法/)
   await assert.rejects(api.getMomentByName('x'.repeat(129)), /Moment name 不合法/)
 })
+
+test('api: auth 路由使用固定插件前缀、正确 HTTP 方法和安全 header', async () => {
+  const captured = []
+  global.wx = {
+    request(options) {
+      captured.push(options)
+      options.success({ statusCode: options.method === 'DELETE' ? 204 : 200, data: '' })
+    }
+  }
+  const header = {
+    'X-WeApp-Session': 'memory-token',
+    'X-WeApp-Client-Version': '0.4.0'
+  }
+  await api.loginReader({ code: 'wx-code', privacyConsentVersion: 'v1' }, header)
+  await api.getReaderProfile(header)
+  await api.updateReaderProfile({ displayName: '新昵称', privacyConsentVersion: 'v1' }, header)
+  await api.logoutReader(header)
+  await api.deleteReaderAccount(header)
+  assert.deepStrictEqual(captured.map((item) => [item.method, item.url]), [
+    ['POST', `${config.baseUrl}/apis/api.weapp.halo.run/v1alpha1/auth/login`],
+    ['GET', `${config.baseUrl}/apis/api.weapp.halo.run/v1alpha1/auth/profile`],
+    ['PATCH', `${config.baseUrl}/apis/api.weapp.halo.run/v1alpha1/auth/profile`],
+    ['DELETE', `${config.baseUrl}/apis/api.weapp.halo.run/v1alpha1/auth/session`],
+    ['DELETE', `${config.baseUrl}/apis/api.weapp.halo.run/v1alpha1/auth/account`]
+  ])
+  assert.strictEqual(captured[2].header['X-WeApp-Client-Version'], '0.4.0')
+  assert.strictEqual(captured[3].header['X-WeApp-Session'], 'memory-token')
+})
