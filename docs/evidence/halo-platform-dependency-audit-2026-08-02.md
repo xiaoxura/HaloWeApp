@@ -14,6 +14,9 @@
 - 审计工具源：`plugin-halo-weapp` `04f3fa78ca2c5bfed8130857c630fe24a0d113ef`，
   工作树为 clean，脚本 SHA-256
   `6b2aaa3fbbd28dc0bded3ef23cf1305085d1b319f2393ee8740dc19fee18c2bb`；
+- 该提交的 GitHub Actions 双 API / 最低 API build
+  [run 30746660243](https://github.com/xiaoxura/plugin-halo-weapp/actions/runs/30746660243)
+  为 success；
 - OSV 请求只包含 Maven package name 和 version，不包含源码、配置、凭据或业务数据。
 
 ## 1. 可复现方法与上游快照

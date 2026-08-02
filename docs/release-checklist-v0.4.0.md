@@ -87,6 +87,9 @@ node --check <全部变更 JS>
 
 最终 Secret 修复提交 `e0fd9e2` 的 GitHub Actions
 [run 30743459795](https://github.com/xiaoxura/plugin-halo-weapp/actions/runs/30743459795) 也已成功。
+平台审计工具提交 `04f3fa7` 的双 API / 最低 API build
+[run 30746660243](https://github.com/xiaoxura/plugin-halo-weapp/actions/runs/30746660243) 同样成功；
+该提交不改插件资源或 Java 源码，本地重建 jar 的大小、SHA 和 class 清单与下述 `e0fd9e2` 证据一致。
 
 插件 jar 证据（源树 `e0fd9e2`，正式 tag 前仍须重建）：
 
