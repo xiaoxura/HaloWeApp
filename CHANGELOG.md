@@ -4,18 +4,6 @@
 
 ## [未发布]
 
-### 变更
-
-- `config/index.js` 收口为客户端版本与 Halo `baseUrl`；插件名/API 路径改为固定协议常量
-- 博客名称、简介、分页大小和字体地址迁移到 `plugin-halo-weapp` Setting 与公开配置的
-  `site` 节点；客户端保留非敏感默认值和缓存降级
-- 移除本地评论开关与远程端点开关，所有运行时业务配置统一由 Halo 插件下发
-
-### 安全
-
-- 明确禁止在小程序配置和公开 DTO 中存放 Halo 管理员 PAT；读者端 Public API 无需 PAT，
-  长期管理凭据只能留在服务端安全边界内
-
 ## [0.3.0] - 2026-08-01
 
 合规互动 Beta。按 [docs/development-plan-v0.3.0.md](docs/development-plan-v0.3.0.md) 实施，
@@ -44,11 +32,11 @@
 - 远程配置 v0.3.0 契约：`commentEnabled` 控制读取、`commentOptions.submitEnabled` /
   `replyEnabled` 单独控制写入口（C-04）；写能力 fail-closed——仅本次冷启动实时
   探测并拉取成功、schema 受支持且版本不低于 `minVersion` 才开放；
-  降级缓存可展示公告/评论但强制关闭写入口；本地 `config.commentEnabled` 最多开启读取
+  降级缓存可展示公告/评论但强制关闭写入口；内置默认配置始终关闭评论
 - 首页公告条：可关闭，关闭状态按 `announcement.version` 保存，版本变化后再次展示（C-06）
 - 最低版本提示：严格 SemVer 比较（含预发布规则），版本过低提示微信更新机制
   但不锁死阅读；非法版本字符串忽略并记录脱敏诊断
-- 测试：107 个用例（新增评论 adapter、会话管理、SemVer、远程配置写能力门禁、
+- 测试：111 个用例（新增评论 adapter、会话管理、SemVer、远程配置写能力门禁、
   请求错误体）；`tests/fixtures/` 收录脱敏评论/回复分页与插件配置样本
 
 ### 变更
@@ -57,9 +45,13 @@
   供稳定业务码分支使用；解析失败不影响错误分类
 - `utils/api.js`：**移除**客户端直连 Halo 的 `addComment` / `addCommentReply`
   写入方法（C-03）；新增配套插件接口（`createPluginSession` / `submitPluginComment` /
-  `submitPluginReply`），前缀由 `remoteConfig.endpoint` 推导
+  `submitPluginReply`），插件名称与 API 前缀由双端固定协议提供
 - 评论列表每页 50 → 10 条，回复 10 → 首屏 5 条 + 按需展开
 - `config.version` 升级至 0.3.0
+- `config/index.js` 收口为客户端版本与 Halo `baseUrl`；插件名/API 路径改为固定协议常量
+- 博客名称、简介、分页大小和字体地址迁移到 `plugin-halo-weapp` Setting 与公开配置的
+  `site` 节点；客户端保留非敏感默认值和缓存降级
+- 移除本地评论开关与远程端点开关，所有运行时业务配置统一由 Halo 插件下发
 
 ### 安全
 
@@ -68,6 +60,8 @@
 - 客户端不得指定 subjectRef group/kind/version、审核状态、HTML、头像、邮箱或网站；
   服务端重新校验并转义
 - 会话 token 不写入 storage；OpenID 仅在插件 90 分钟内存会话中使用
+- 明确禁止在小程序配置和公开 DTO 中存放 Halo 管理员 PAT；读者端 Public API 无需 PAT，
+  长期管理凭据只能留在服务端安全边界内
 
 ## [0.2.0] - 2026-08-01
 
