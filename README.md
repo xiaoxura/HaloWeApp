@@ -110,6 +110,8 @@ identityKey 不出服务端安全边界。完整 API 说明见 [docs/halo-api.md
   `privacyConsentVersion`；缓存 profile 不代表已认证；
 - 服务端 `WeAppUser` 仅持久化昵称和隐私版本；内部名称来自独立密钥 HMAC，不保存原始
   OpenID；
+- 32 字节 identityKey 只保存在配套插件内部 Opaque Secret；早期 RC ConfigMap 会先原值迁移
+  再清除旧 key，避免 Halo 删除审计把 ConfigMap.data 写入日志；
 - 退出会撤销当前 token 并清理本地资料/登录意愿；注销会删除读者资源并撤销全部关联会话；
 - 注销不会自动删除已经公开发表到 Halo 的评论。数据主体请求和已公开评论处置由站点运营者
   按其隐私政策处理。

@@ -63,6 +63,9 @@
 - 插件 `hotfix/v0.1.1` / `cfaa16f` 已在 Halo 2.23.3/2.25.4 完成
   v0.2.0 → v0.1.1 → v0.2.0，本机 ConfigMap/Moment/匿名路由闭环与 GitHub CI 通过；正式
   v0.1.1 tag/Release、目标环境 identityKey/WeAppUser 恢复和旧 v0.3.0 客户端仍待完成
+- 发现 Halo 2.23.3 删除 ConfigMap 会把完整 data 写入 INFO 日志；配套插件 `e0fd9e2` 已将
+  identityKey 改为 Opaque Secret，并通过旧 RC 原值迁移、合成 WeAppUser 完整目录恢复、缺
+  Secret 不轮换、v0.1.1 往返和实际 key 日志零命中。本机证据不替代真实微信/目标环境恢复
 
 ### 未包含
 

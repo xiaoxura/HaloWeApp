@@ -2,9 +2,10 @@
 
 > 文档状态：可执行草案（默认采用“微信读者身份”，不接入 Halo 管理员 / UC 账号）
 > 实施状态（2026-08-02）：V040-00～V040-07 已进入 RC；V040-08 的文档、自动化、包体及
-> Halo 2.23.3/2.25.4 + Moment 1.15/1.16 本机隔离运行时矩阵已完成；双真机、真实微信、
-> 目标环境暗部署/恢复/回滚及依赖风险仍未通过。另已确认 v0.1.0 tag 不是可执行回滚基线；
-> `hotfix/v0.1.1` / `cfaa16f` 已通过双 Halo 本机往返和 CI，但正式维护 tag/Release 尚未完成。详见
+> Halo 2.23.3/2.25.4 + Moment 1.15/1.16 本机隔离运行时矩阵、identity Secret 迁移与合成
+> 备份恢复已完成；双真机、真实微信、目标环境暗部署/恢复/回滚及依赖风险仍未通过。另已确认
+> v0.1.0 tag 不是可执行回滚基线；`hotfix/v0.1.1` / `cfaa16f` 已通过双 Halo 本机往返和 CI，
+> 但正式维护 tag/Release 尚未完成。详见
 > [release-checklist-v0.4.0.md](release-checklist-v0.4.0.md)。未满足 §12 前不得创建 v0.4.0/v0.2.0 tag。
 > 编制日期：2026-08-01
 > 小程序基线：HaloWeApp `v0.3.0`
@@ -129,6 +130,7 @@ Moment 数据保留、再升级后 v0.2.0 Setting 与路由恢复。GitHub Actio
 | D-11 | 旧 API 文档称瞬间可能“登录可见并带 PAT” | 容易诱导把高权限凭据放入客户端 | P0 |
 | D-12 | 外部图片/音视频/CDN 域名无法由代码动态加入微信白名单 | 真机可能出现开发工具正常、生产失败 | P0 |
 | D-13 | v0.1.0 tag 在真实 Halo 中无法加载 Setting/Bean 且 config 匿名授权不足 | 五级回滚不可执行并可能丢失前向配置 | P0 |
+| D-14 | Halo 2.23.3 删除扩展时会在 INFO 日志序列化 ConfigMap.data | 用 ConfigMap 保存 identityKey 会在删除/事故处理时泄露密钥 | P0 |
 
 ## 4. 产品与架构决策
 
@@ -383,8 +385,10 @@ spec:
 
 安全要求：
 
-- 插件首次需要时生成 256-bit `identityKey`，只保存在服务端内部 ConfigMap 字段，不出现在
-  Setting 表单、公开 DTO、日志、jar 或测试快照；
+- 插件首次需要时生成 256-bit `identityKey`，只保存在服务端内部 Opaque Secret 的二进制
+  `data`，不出现在 Setting 表单、公开 DTO、日志、jar 或测试快照；
+- 早期 RC 同名 ConfigMap 必须先原值迁移到 Secret，再清除旧 key；冲突或损坏时阻止启动，
+  禁止直接删除仍含 key 的 ConfigMap；
 - 内部资源名由 HMAC 摘要确定以保证并发幂等，不返回给小程序；
 - AppID 纳入 HMAC 输入，切换 AppID 不复用旧身份；
 - identityKey 必须进入备份/恢复说明；丢失后不可恢复映射，轮换需单独迁移；
@@ -677,7 +681,8 @@ Moment 评论已可用。
 
 ### 阶段 A：插件 v0.2.0 暗部署
 
-1. 备份插件 ConfigMap，并验证 identityKey 自动初始化和恢复说明；
+1. 备份 Setting ConfigMap、identity Secret 和 WeAppUser，并验证 identityKey 按需初始化、
+   旧 ConfigMap 安全迁移和恢复说明；
 2. 安装/升级插件，保持 moments、readerAccount、Moment 评论全部关闭；
 3. 验证旧 v0.3.0 客户端 config、session 和文章评论无回归；
 4. 验证公开配置无内部身份字段。
@@ -734,6 +739,7 @@ Moment 评论已可用。
 | 未知媒体类型导致页面崩溃 | 中/中 | adapter 枚举白名单 + unknown 占位，不执行未知协议 |
 | 身份摘要仍属于可关联标识 | 中/高 | 独立 HMAC key、最小字段、非匿名 RBAC、隐私声明与注销能力 |
 | identityKey 丢失导致账号映射失效 | 中/高 | 自动生成后纳入加密备份；恢复演练；轮换必须走迁移 |
+| ConfigMap 删除日志泄露 identityKey | 高/高 | key 只存 Opaque Secret.data；旧 RC 启动迁移并清除 ConfigMap；用实际 key 扫描 Halo 日志 |
 | 同一用户并发创建重复账号 | 中/中 | 确定性内部 name + create 冲突后 fetch + 并发测试 |
 | 缓存配置误开登录/写入 | 中/高 | canLogin/canWrite 必须 live；缓存只允许只读展示 |
 | 登录恢复拖慢冷启动 | 中/中 | 文章首屏完成后并行恢复；Profile 显式状态；所有请求单飞 |
