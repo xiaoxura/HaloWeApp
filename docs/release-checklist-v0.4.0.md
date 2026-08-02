@@ -17,7 +17,7 @@ v0.4.0 只验收 P0 V040-00～V040-08：公开 Moment 阅读、媒体/搜索/点
 | 仓库 | 候选分支/提交 | 目标版本 | 状态 |
 | --- | --- | --- | --- |
 | HaloWeApp | `develop/v0.4.0`；功能基线 `671246e`、RC 收口基线 `63f5478`，最终文档/门禁以包含本文的提交为准 | 0.4.0 | RC，未打 tag |
-| plugin-halo-weapp | `develop/v0.2.0` / `e0fd9e2` | 0.2.0 | RC；identityKey 已改用 Opaque Secret，未打 tag |
+| plugin-halo-weapp | `develop/v0.2.0` / `04f3fa7`（功能/Secret 基线 `e0fd9e2`） | 0.2.0 | RC；identityKey 已改用 Opaque Secret，新增可复现平台依赖审计，未打 tag |
 | HaloWeApp 回滚 | tag `v0.3.0` / `290ffa8` | 0.3.0 | tag 存在 |
 | plugin 回滚候选 | `hotfix/v0.1.1` / `cfaa16f` | 0.1.1 | 已推送且 CI/双 Halo 闭环通过；未打 tag/Release |
 | plugin 历史 tag | tag `v0.1.0` / `df1dcf3` | 0.1.0 | **禁止回滚**：真实 Halo 加载/装配/RBAC 失败 |
@@ -314,20 +314,30 @@ npm audit --omit=dev --json
 
 ### 6.3 Halo 平台依赖风险（未通过）
 
-对 Gradle `compileClasspath` / `testRuntimeClasspath` 的 Maven 坐标调用 OSV querybatch：
+plugin `04f3fa7` 新增可复现审计：分别解析 Gradle `compileClasspath` 和官方 Halo 镜像的每个
+runtime jar，再调用 OSV querybatch。`testRuntimeClasspath` 只为缺 Maven metadata 的 runtime
+jar 补 group 字典，不混入 compile 结果。完整 JSON、SHA-256、24 个最新 runtime 公告的逐项
+调用边界与处置结论见
+[平台依赖风险审计](evidence/halo-platform-dependency-audit-2026-08-02.md)。
 
-| Halo API platform | compile 坐标 | OSV advisory | 受影响坐标 |
-| --- | ---: | ---: | ---: |
-| 2.23.0 | 208 | 99 | 30 |
-| 2.25.0 | 210 | 20 | 9 |
+| 清单 | jar | 坐标 | 命中行 | 去重公告 | 受影响坐标 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| API platform 2.23.0 compile | — | 208 | 99 | 89 | 30 |
+| API platform 2.25.0 compile | — | 210 | 20 | 19 | 9 |
+| Halo 2.23.3 runtime image | 217 | 220 | 101 | 86 | 32 |
+| Halo 2.25.4 runtime image | 216 | 219 | 29 | 24 | 14 |
 
-2.25.0 的命中包括当日仍处于受影响版本范围的 Jackson Databind、Netty HTTP/HTTP2/HTTP3 和
-Bouncy Castle 公告，例如 CVE-2026-59889（Jackson，固定于 2.21.5）、CVE-2026-55831（Netty，
-固定于 4.2.16.Final）与 CVE-2026-5588（Bouncy Castle，固定于 1.84）。
+审计时官方最新 Halo 仍为 2.25.4、plugin API platform 仍为 2.25.0。2.25.4 除 compile 命中外，
+runtime 还包含 PostgreSQL/OnGres SCRAM 与 Thymeleaf 公告；其中 Thymeleaf 有 3 个 Critical。
+已确认 Jackson 2.21.5 / 3.1.5、Netty 4.2.16.Final、Bouncy Castle 1.84、pgJDBC 42.7.12、
+SCRAM 3.3 和 Thymeleaf 3.1.5.RELEASE 修复产物可用，但当前 Halo 镜像尚未采用。
 
-插件 jar 未内嵌这些 class，它们由 Halo runtime 提供，不能通过把新版本塞入薄插件 jar 安全修补。
-在 Halo 发布包含修复的平台版本，或项目完成逐项可利用性分析和正式风险接受之前，依赖漏洞门禁
-为 **FAIL/PENDING**。这也是当前禁止 tag 的独立原因。
+插件源码不直接使用公告要求的 Jackson 注解组合、SPDY/HTTP3/WebSocket/Bzip2、Bouncy、数据库或
+Thymeleaf API，且 jar 不内嵌第三方 class；这只排除了插件特定触发，不排除 Halo core、主题、
+其他插件或目标协议/数据库。DNS、HTTP/1 压缩队列、模板和数据库场景仍为条件风险，目标环境也未
+完成验证或正式签字。不能通过向 thin plugin 私塞修复库覆盖宿主。因此逐项分析已完成，但在
+官方 Halo 升级并复测，或有权限负责人对目标 digest/补偿控制/期限正式接受前，门禁仍为
+**FAIL/PENDING**，继续独立禁止 tag。
 
 ## 7. 开发者工具 UI 证据边界
 
@@ -412,7 +422,7 @@ identityKey 32 字节/指纹、旧 RC 迁移、恢复顺序和 v0.1.1 回滚约�
 | 登录/恢复/退出/注销真实微信记录 | **PENDING** |
 | 目标环境插件暗部署、真实 identityKey/账号恢复、旧客户端回滚 | **PENDING** |
 | 生产合法域名、弱网、媒体/低内存 | **PENDING** |
-| 依赖漏洞门禁 | **FAIL/PENDING（Halo 平台 advisories）** |
+| 依赖漏洞门禁 | **FAIL/PENDING（逐项归因已完成；Halo 平台升级/目标环境风险签字仍缺失）** |
 | 正式产物/tag 一致 | **PENDING；按规则尚未创建 tag** |
 
 因此当前只能称为 **RC 开发候选**，不能将 V040-08、M4 或完整 v0.4.0 目标标记完成，也不能创建

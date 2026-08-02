@@ -1,0 +1,2223 @@
+{
+  "generatedAt": "2026-08-02T11:30:55+00:00",
+  "haloRuntimeInventories": {
+    "2.23.3": {
+      "advisoryCount": 86,
+      "affectedCoordinateCount": 32,
+      "allJarsIdentified": true,
+      "coordinateCount": 220,
+      "findingRowCount": 101,
+      "findings": [
+        {
+          "advisoryId": "GHSA-jhq6-gfmj-v8fx",
+          "artifact": "logback-core",
+          "files": [
+            "logback-core-1.5.32.jar"
+          ],
+          "group": "ch.qos.logback",
+          "modified": "2026-07-15T22:00:52.732394Z",
+          "version": "1.5.32"
+        },
+        {
+          "advisoryId": "GHSA-p47f-322f-whfh",
+          "artifact": "logback-core",
+          "files": [
+            "logback-core-1.5.32.jar"
+          ],
+          "group": "ch.qos.logback",
+          "modified": "2026-07-03T10:14:36.248327Z",
+          "version": "1.5.32"
+        },
+        {
+          "advisoryId": "GHSA-r7wm-3cxj-wff9",
+          "artifact": "jackson-core",
+          "files": [
+            "jackson-core-2.21.1.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-22T20:59:38.595267Z",
+          "version": "2.21.1"
+        },
+        {
+          "advisoryId": "GHSA-3pjw-73gf-8qr5",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.1.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-25T03:29:37.657238Z",
+          "version": "2.21.1"
+        },
+        {
+          "advisoryId": "GHSA-5gvw-p9qm-jgwh",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.1.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-22T20:59:37.895873Z",
+          "version": "2.21.1"
+        },
+        {
+          "advisoryId": "GHSA-5hh8-q8hv-fr38",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.1.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-20T21:30:31.775056Z",
+          "version": "2.21.1"
+        },
+        {
+          "advisoryId": "GHSA-5jmj-h7xm-6q6v",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.1.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-16T21:30:21.943601Z",
+          "version": "2.21.1"
+        },
+        {
+          "advisoryId": "GHSA-9fxm-vc8v-hj55",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.1.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-20T21:30:34.130614Z",
+          "version": "2.21.1"
+        },
+        {
+          "advisoryId": "GHSA-hgj6-7826-r7m5",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.1.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-20T21:30:31.809711Z",
+          "version": "2.21.1"
+        },
+        {
+          "advisoryId": "GHSA-j3rv-43j4-c7qm",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.1.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-20T21:30:40.174709Z",
+          "version": "2.21.1"
+        },
+        {
+          "advisoryId": "GHSA-mhm7-754m-9p8w",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.1.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-22T20:59:38.271594Z",
+          "version": "2.21.1"
+        },
+        {
+          "advisoryId": "GHSA-rcqc-6cw3-h962",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.1.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-20T21:30:42.517351Z",
+          "version": "2.21.1"
+        },
+        {
+          "advisoryId": "GHSA-rmj7-2vxq-3g9f",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.1.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-30T12:47:07.621763Z",
+          "version": "2.21.1"
+        },
+        {
+          "advisoryId": "GHSA-p9jg-fcr6-3mhf",
+          "artifact": "scram-client",
+          "files": [
+            "scram-client-3.2.jar"
+          ],
+          "group": "com.ongres.scram",
+          "modified": "2026-07-01T22:00:10.323987Z",
+          "version": "3.2"
+        },
+        {
+          "advisoryId": "GHSA-p9jg-fcr6-3mhf",
+          "artifact": "scram-common",
+          "files": [
+            "scram-common-3.2.jar"
+          ],
+          "group": "com.ongres.scram",
+          "modified": "2026-07-01T22:00:10.323987Z",
+          "version": "3.2"
+        },
+        {
+          "advisoryId": "GHSA-cmm3-54f8-px4j",
+          "artifact": "netty-codec-classes-quic",
+          "files": [
+            "netty-codec-classes-quic-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-12T19:45:11.471397Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-cq4q-cv5g-r8q5",
+          "artifact": "netty-codec-classes-quic",
+          "files": [
+            "netty-codec-classes-quic-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-16T14:44:21.038852Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-558v-64gr-wgg4",
+          "artifact": "netty-codec-compression",
+          "files": [
+            "netty-codec-compression-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-23T22:29:34.272229Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-mj4r-2hfc-f8p6",
+          "artifact": "netty-codec-compression",
+          "files": [
+            "netty-codec-compression-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-05-14T20:52:02.730912Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-cm33-6792-r9fm",
+          "artifact": "netty-codec-dns",
+          "files": [
+            "netty-codec-dns-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-05-14T20:50:50.147382Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-mfg7-5gfp-c4w3",
+          "artifact": "netty-codec-dns",
+          "files": [
+            "netty-codec-dns-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-27T21:59:42.275826Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-38f8-5428-x5cv",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-05-14T20:48:37.405742Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-4mp9-239f-g9hg",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T16:01:11.495588Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-57rv-r2g8-2cj3",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-05-14T20:47:30.693204Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-6cqp-g7gg-8hr5",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T16:00:20.409094Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-6jqx-86gh-f27w",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T16:00:30.994967Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-f6hv-jmp6-3vwv",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-05-14T20:50:55.245702Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-gcjf-9mgh-3p7g",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:31.612560Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-hvcg-qmg6-jm4c",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-16T14:44:20.815695Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-jppx-w49h-x2qq",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:31.550506Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-m4cv-j2px-7723",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-05-14T20:52:01.053039Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-mvh2-crg5-v77c",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:30.573268Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-q4f6-jm68-57ww",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T16:01:48.284679Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-v8h7-rr48-vmmv",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-05-08T19:50:55.560203Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-xxqh-mfjm-7mv9",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-05-14T20:47:27.523513Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-563q-j3cm-6jxm",
+          "artifact": "netty-codec-http2",
+          "files": [
+            "netty-codec-http2-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-16T14:44:20.964765Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-5x3r-wrvg-rp6q",
+          "artifact": "netty-codec-http2",
+          "files": [
+            "netty-codec-http2-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-12T19:45:11.465768Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-93wv-jw9v-4972",
+          "artifact": "netty-codec-http2",
+          "files": [
+            "netty-codec-http2-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-08-01T21:44:50.263846Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-c2gf-v879-257j",
+          "artifact": "netty-codec-http2",
+          "files": [
+            "netty-codec-http2-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-30T12:47:07.561738Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-c69g-56f8-xwqj",
+          "artifact": "netty-codec-http2",
+          "files": [
+            "netty-codec-http2-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:30.139580Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-f6hv-jmp6-3vwv",
+          "artifact": "netty-codec-http2",
+          "files": [
+            "netty-codec-http2-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-05-14T20:50:55.245702Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-w9fj-cfpg-grvv",
+          "artifact": "netty-codec-http2",
+          "files": [
+            "netty-codec-http2-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-03-27T22:05:04.574044Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-2c5c-chwr-9hqw",
+          "artifact": "netty-codec-http3",
+          "files": [
+            "netty-codec-http3-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-30T22:30:08.177847Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-4grm-h2qv-h6w6",
+          "artifact": "netty-codec-http3",
+          "files": [
+            "netty-codec-http3-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-16T14:44:21.182343Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-c2rx-5r8w-8xr2",
+          "artifact": "netty-codec-http3",
+          "files": [
+            "netty-codec-http3-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-12T19:30:08.487426Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-hpcc-26xq-25fv",
+          "artifact": "netty-codec-http3",
+          "files": [
+            "netty-codec-http3-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-27T21:59:42.900293Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-3qp7-7mw8-wx86",
+          "artifact": "netty-handler",
+          "files": [
+            "netty-handler-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-12T19:30:08.471567Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-c653-97m9-rcg9",
+          "artifact": "netty-handler",
+          "files": [
+            "netty-handler-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-16T15:44:21.668164Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-x4gw-5cx5-pgmh",
+          "artifact": "netty-handler",
+          "files": [
+            "netty-handler-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-12T19:45:13.007385Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-45q3-82m4-75jr",
+          "artifact": "netty-handler-proxy",
+          "files": [
+            "netty-handler-proxy-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-05-14T20:47:38.979365Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-5pvg-856g-cp85",
+          "artifact": "netty-resolver-dns",
+          "files": [
+            "netty-resolver-dns-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-30T12:47:07.902068Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-676x-f7gg-47vc",
+          "artifact": "netty-resolver-dns",
+          "files": [
+            "netty-resolver-dns-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-30T12:47:07.913685Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-xmv7-r254-6q78",
+          "artifact": "netty-resolver-dns",
+          "files": [
+            "netty-resolver-dns-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-12T19:45:12.897371Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-rwm7-x88c-3g2p",
+          "artifact": "netty-transport-classes-epoll",
+          "files": [
+            "netty-transport-classes-epoll-4.2.10.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T19:15:28.588244Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-w573-9ffj-6ff9",
+          "artifact": "netty-transport-native-epoll",
+          "files": [
+            "netty-transport-native-epoll-4.2.10.Final-linux-x86_64.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-06-12T19:45:13.047513Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-wg6q-6289-32hp",
+          "artifact": "bcpkix-jdk18on",
+          "files": [
+            "bcpkix-jdk18on-1.83.jar"
+          ],
+          "group": "org.bouncycastle",
+          "modified": "2026-04-17T17:29:19.679951Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-574f-3g2m-x479",
+          "artifact": "bcprov-jdk18on",
+          "files": [
+            "bcprov-jdk18on-1.83.jar"
+          ],
+          "group": "org.bouncycastle",
+          "modified": "2026-07-03T18:29:34.748750Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-c3fc-8qff-9hwx",
+          "artifact": "bcprov-jdk18on",
+          "files": [
+            "bcprov-jdk18on-1.83.jar"
+          ],
+          "group": "org.bouncycastle",
+          "modified": "2026-04-18T19:44:23.059931Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-p93r-85wp-75v3",
+          "artifact": "bcprov-jdk18on",
+          "files": [
+            "bcprov-jdk18on-1.83.jar"
+          ],
+          "group": "org.bouncycastle",
+          "modified": "2026-06-19T15:30:13.528521Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-98qh-xjc8-98pq",
+          "artifact": "postgresql",
+          "files": [
+            "postgresql-42.7.10.jar"
+          ],
+          "group": "org.postgresql",
+          "modified": "2026-05-06T20:44:10.284941Z",
+          "version": "42.7.10"
+        },
+        {
+          "advisoryId": "GHSA-j92g-9f8w-j867",
+          "artifact": "postgresql",
+          "files": [
+            "postgresql-42.7.10.jar"
+          ],
+          "group": "org.postgresql",
+          "modified": "2026-07-23T03:14:29.371191Z",
+          "version": "42.7.10"
+        },
+        {
+          "advisoryId": "GHSA-659m-px2c-25wj",
+          "artifact": "spring-core",
+          "files": [
+            "spring-core-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-31T21:29:55.714931Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-9f52-rjqv-25qv",
+          "artifact": "spring-expression",
+          "files": [
+            "spring-expression-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-31T21:29:55.072503Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-r5w3-xv2f-j59q",
+          "artifact": "spring-expression",
+          "files": [
+            "spring-expression-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-31T15:09:20.125259Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-wxpp-56q6-5pcg",
+          "artifact": "spring-expression",
+          "files": [
+            "spring-expression-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-31T15:09:20.058920Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-4hfh-6x8g-gwpp",
+          "artifact": "spring-webflux",
+          "files": [
+            "spring-webflux-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-30T15:31:40.826449Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-5843-p793-ghmm",
+          "artifact": "spring-webflux",
+          "files": [
+            "spring-webflux-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-02T21:46:29.324316Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-6p4f-wcwh-5vvm",
+          "artifact": "spring-webflux",
+          "files": [
+            "spring-webflux-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-05-08T02:14:22.486185Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-72pg-x5f8-j25j",
+          "artifact": "spring-webflux",
+          "files": [
+            "spring-webflux-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-31T21:29:55.009504Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-83f7-v6px-pp3h",
+          "artifact": "spring-webflux",
+          "files": [
+            "spring-webflux-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-30T15:31:40.859245Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-cjpg-rgq5-fr37",
+          "artifact": "spring-webflux",
+          "files": [
+            "spring-webflux-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-31T15:09:20.558337Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-h3qp-gqrc-q736",
+          "artifact": "spring-webflux",
+          "files": [
+            "spring-webflux-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-31T21:29:55.845479Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-mq64-j8f9-9gcj",
+          "artifact": "spring-webflux",
+          "files": [
+            "spring-webflux-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-31T15:09:20.372410Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-wg35-8jpf-2xv3",
+          "artifact": "spring-webflux",
+          "files": [
+            "spring-webflux-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-02T21:30:15.171179Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-x23c-287f-qqv5",
+          "artifact": "spring-webflux",
+          "files": [
+            "spring-webflux-7.0.6.jar"
+          ],
+          "group": "org.springframework",
+          "modified": "2026-07-31T21:29:54.673636Z",
+          "version": "7.0.6"
+        },
+        {
+          "advisoryId": "GHSA-8v8j-3hxp-93wr",
+          "artifact": "spring-boot",
+          "files": [
+            "spring-boot-4.0.4.jar"
+          ],
+          "group": "org.springframework.boot",
+          "modified": "2026-05-13T23:44:30.269054Z",
+          "version": "4.0.4"
+        },
+        {
+          "advisoryId": "GHSA-wwpq-f5c3-7hvx",
+          "artifact": "spring-boot",
+          "files": [
+            "spring-boot-4.0.4.jar"
+          ],
+          "group": "org.springframework.boot",
+          "modified": "2026-05-08T12:14:21.677811Z",
+          "version": "4.0.4"
+        },
+        {
+          "advisoryId": "GHSA-88fw-v6x4-3f58",
+          "artifact": "spring-data-commons",
+          "files": [
+            "spring-data-commons-4.0.4.jar"
+          ],
+          "group": "org.springframework.data",
+          "modified": "2026-08-02T02:59:55.421055Z",
+          "version": "4.0.4"
+        },
+        {
+          "advisoryId": "GHSA-4vrc-j85c-598c",
+          "artifact": "spring-security-config",
+          "files": [
+            "spring-security-config-7.0.4.jar"
+          ],
+          "group": "org.springframework.security",
+          "modified": "2026-05-05T16:03:46.007975Z",
+          "version": "7.0.4"
+        },
+        {
+          "advisoryId": "GHSA-4wrg-8wpc-h923",
+          "artifact": "spring-security-config",
+          "files": [
+            "spring-security-config-7.0.4.jar"
+          ],
+          "group": "org.springframework.security",
+          "modified": "2026-05-05T16:03:44.588584Z",
+          "version": "7.0.4"
+        },
+        {
+          "advisoryId": "GHSA-vxf7-qj7q-83fh",
+          "artifact": "spring-security-core",
+          "files": [
+            "spring-security-core-7.0.4.jar"
+          ],
+          "group": "org.springframework.security",
+          "modified": "2026-05-05T16:11:36.096722Z",
+          "version": "7.0.4"
+        },
+        {
+          "advisoryId": "GHSA-x2wq-9x2f-fhj7",
+          "artifact": "spring-security-core",
+          "files": [
+            "spring-security-core-7.0.4.jar"
+          ],
+          "group": "org.springframework.security",
+          "modified": "2026-07-17T21:00:17.845879Z",
+          "version": "7.0.4"
+        },
+        {
+          "advisoryId": "GHSA-cvc6-q2cp-2xhw",
+          "artifact": "spring-security-oauth2-jose",
+          "files": [
+            "spring-security-oauth2-jose-7.0.4.jar"
+          ],
+          "group": "org.springframework.security",
+          "modified": "2026-05-05T16:05:54.238232Z",
+          "version": "7.0.4"
+        },
+        {
+          "advisoryId": "GHSA-2jrg-rf5x-568g",
+          "artifact": "spring-security-web",
+          "files": [
+            "spring-security-web-7.0.4.jar"
+          ],
+          "group": "org.springframework.security",
+          "modified": "2026-05-05T15:59:51.434087Z",
+          "version": "7.0.4"
+        },
+        {
+          "advisoryId": "GHSA-c9ph-gxww-7744",
+          "artifact": "thymeleaf",
+          "files": [
+            "thymeleaf-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-13T17:02:46.716315Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-r4v4-5mwr-2fwr",
+          "artifact": "thymeleaf",
+          "files": [
+            "thymeleaf-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:10:40.722195Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-xjw8-8c5c-9r79",
+          "artifact": "thymeleaf",
+          "files": [
+            "thymeleaf-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:12:18.897503Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-c9ph-gxww-7744",
+          "artifact": "thymeleaf-spring6",
+          "files": [
+            "thymeleaf-spring6-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-13T17:02:46.716315Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-r4v4-5mwr-2fwr",
+          "artifact": "thymeleaf-spring6",
+          "files": [
+            "thymeleaf-spring6-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:10:40.722195Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-xjw8-8c5c-9r79",
+          "artifact": "thymeleaf-spring6",
+          "files": [
+            "thymeleaf-spring6-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:12:18.897503Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-2m67-wjpj-xhg9",
+          "artifact": "jackson-core",
+          "files": [
+            "jackson-core-3.1.0.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-04-09T18:29:26.441905Z",
+          "version": "3.1.0"
+        },
+        {
+          "advisoryId": "GHSA-r7wm-3cxj-wff9",
+          "artifact": "jackson-core",
+          "files": [
+            "jackson-core-3.1.0.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-07-22T20:59:38.595267Z",
+          "version": "3.1.0"
+        },
+        {
+          "advisoryId": "GHSA-3pjw-73gf-8qr5",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-3.1.0.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-07-25T03:29:37.657238Z",
+          "version": "3.1.0"
+        },
+        {
+          "advisoryId": "GHSA-5gvw-p9qm-jgwh",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-3.1.0.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-07-22T20:59:37.895873Z",
+          "version": "3.1.0"
+        },
+        {
+          "advisoryId": "GHSA-5hh8-q8hv-fr38",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-3.1.0.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-07-20T21:30:31.775056Z",
+          "version": "3.1.0"
+        },
+        {
+          "advisoryId": "GHSA-5jmj-h7xm-6q6v",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-3.1.0.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-07-16T21:30:21.943601Z",
+          "version": "3.1.0"
+        },
+        {
+          "advisoryId": "GHSA-9fxm-vc8v-hj55",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-3.1.0.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-07-20T21:30:34.130614Z",
+          "version": "3.1.0"
+        },
+        {
+          "advisoryId": "GHSA-hgj6-7826-r7m5",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-3.1.0.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-07-20T21:30:31.809711Z",
+          "version": "3.1.0"
+        },
+        {
+          "advisoryId": "GHSA-j3rv-43j4-c7qm",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-3.1.0.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-07-20T21:30:40.174709Z",
+          "version": "3.1.0"
+        },
+        {
+          "advisoryId": "GHSA-rcqc-6cw3-h962",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-3.1.0.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-07-20T21:30:42.517351Z",
+          "version": "3.1.0"
+        },
+        {
+          "advisoryId": "GHSA-rmj7-2vxq-3g9f",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-3.1.0.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-07-30T12:47:07.621763Z",
+          "version": "3.1.0"
+        }
+      ],
+      "image": "halohub/halo:2.23.3",
+      "imageId": "sha256:03f56d5b53f6d5a66cd8a368301430bbb20da355e314adeb9781165f7f86661d",
+      "jarCount": 217,
+      "libraryPath": "/application/BOOT-INF/lib",
+      "repoDigests": [
+        "halohub/halo@sha256:03f56d5b53f6d5a66cd8a368301430bbb20da355e314adeb9781165f7f86661d"
+      ]
+    },
+    "2.25.4": {
+      "advisoryCount": 24,
+      "affectedCoordinateCount": 14,
+      "allJarsIdentified": true,
+      "coordinateCount": 219,
+      "findingRowCount": 29,
+      "findings": [
+        {
+          "advisoryId": "GHSA-5gvw-p9qm-jgwh",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.4.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-22T20:59:37.895873Z",
+          "version": "2.21.4"
+        },
+        {
+          "advisoryId": "GHSA-5jmj-h7xm-6q6v",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.4.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-16T21:30:21.943601Z",
+          "version": "2.21.4"
+        },
+        {
+          "advisoryId": "GHSA-mhm7-754m-9p8w",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-2.21.4.jar"
+          ],
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-22T20:59:38.271594Z",
+          "version": "2.21.4"
+        },
+        {
+          "advisoryId": "GHSA-p9jg-fcr6-3mhf",
+          "artifact": "scram-client",
+          "files": [
+            "scram-client-3.2.jar"
+          ],
+          "group": "com.ongres.scram",
+          "modified": "2026-07-01T22:00:10.323987Z",
+          "version": "3.2"
+        },
+        {
+          "advisoryId": "GHSA-p9jg-fcr6-3mhf",
+          "artifact": "scram-common",
+          "files": [
+            "scram-common-3.2.jar"
+          ],
+          "group": "com.ongres.scram",
+          "modified": "2026-07-01T22:00:10.323987Z",
+          "version": "3.2"
+        },
+        {
+          "advisoryId": "GHSA-558v-64gr-wgg4",
+          "artifact": "netty-codec-compression",
+          "files": [
+            "netty-codec-compression-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-23T22:29:34.272229Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-mfg7-5gfp-c4w3",
+          "artifact": "netty-codec-dns",
+          "files": [
+            "netty-codec-dns-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-27T21:59:42.275826Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-4mp9-239f-g9hg",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T16:01:11.495588Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-6cqp-g7gg-8hr5",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T16:00:20.409094Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-6jqx-86gh-f27w",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T16:00:30.994967Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-gcjf-9mgh-3p7g",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:31.612560Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-jppx-w49h-x2qq",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:31.550506Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-mvh2-crg5-v77c",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:30.573268Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-q4f6-jm68-57ww",
+          "artifact": "netty-codec-http",
+          "files": [
+            "netty-codec-http-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T16:01:48.284679Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-93wv-jw9v-4972",
+          "artifact": "netty-codec-http2",
+          "files": [
+            "netty-codec-http2-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-08-01T21:44:50.263846Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-c69g-56f8-xwqj",
+          "artifact": "netty-codec-http2",
+          "files": [
+            "netty-codec-http2-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:30.139580Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-hpcc-26xq-25fv",
+          "artifact": "netty-codec-http3",
+          "files": [
+            "netty-codec-http3-4.2.15.Final.jar"
+          ],
+          "group": "io.netty",
+          "modified": "2026-07-27T21:59:42.900293Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-wg6q-6289-32hp",
+          "artifact": "bcpkix-jdk18on",
+          "files": [
+            "bcpkix-jdk18on-1.83.jar"
+          ],
+          "group": "org.bouncycastle",
+          "modified": "2026-04-17T17:29:19.679951Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-574f-3g2m-x479",
+          "artifact": "bcprov-jdk18on",
+          "files": [
+            "bcprov-jdk18on-1.83.jar"
+          ],
+          "group": "org.bouncycastle",
+          "modified": "2026-07-03T18:29:34.748750Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-c3fc-8qff-9hwx",
+          "artifact": "bcprov-jdk18on",
+          "files": [
+            "bcprov-jdk18on-1.83.jar"
+          ],
+          "group": "org.bouncycastle",
+          "modified": "2026-04-18T19:44:23.059931Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-p93r-85wp-75v3",
+          "artifact": "bcprov-jdk18on",
+          "files": [
+            "bcprov-jdk18on-1.83.jar"
+          ],
+          "group": "org.bouncycastle",
+          "modified": "2026-06-19T15:30:13.528521Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-j92g-9f8w-j867",
+          "artifact": "postgresql",
+          "files": [
+            "postgresql-42.7.11.jar"
+          ],
+          "group": "org.postgresql",
+          "modified": "2026-07-23T03:14:29.371191Z",
+          "version": "42.7.11"
+        },
+        {
+          "advisoryId": "GHSA-c9ph-gxww-7744",
+          "artifact": "thymeleaf",
+          "files": [
+            "thymeleaf-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-13T17:02:46.716315Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-r4v4-5mwr-2fwr",
+          "artifact": "thymeleaf",
+          "files": [
+            "thymeleaf-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:10:40.722195Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-xjw8-8c5c-9r79",
+          "artifact": "thymeleaf",
+          "files": [
+            "thymeleaf-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:12:18.897503Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-c9ph-gxww-7744",
+          "artifact": "thymeleaf-spring6",
+          "files": [
+            "thymeleaf-spring6-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-13T17:02:46.716315Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-r4v4-5mwr-2fwr",
+          "artifact": "thymeleaf-spring6",
+          "files": [
+            "thymeleaf-spring6-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:10:40.722195Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-xjw8-8c5c-9r79",
+          "artifact": "thymeleaf-spring6",
+          "files": [
+            "thymeleaf-spring6-3.1.3.RELEASE.jar"
+          ],
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:12:18.897503Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-5gvw-p9qm-jgwh",
+          "artifact": "jackson-databind",
+          "files": [
+            "jackson-databind-3.1.4.jar"
+          ],
+          "group": "tools.jackson.core",
+          "modified": "2026-07-22T20:59:37.895873Z",
+          "version": "3.1.4"
+        }
+      ],
+      "image": "halohub/halo:2.25.4",
+      "imageId": "sha256:1299a0e7a849329a9f6a1a8498ec65a63dd6b70d9c74b829a2bbb5ba1ce547e6",
+      "jarCount": 216,
+      "libraryPath": "/application/lib",
+      "repoDigests": [
+        "halohub/halo@sha256:1299a0e7a849329a9f6a1a8498ec65a63dd6b70d9c74b829a2bbb5ba1ce547e6"
+      ]
+    }
+  },
+  "osv": {
+    "dataSent": "Maven package names and versions only",
+    "queryEndpoint": "https://api.osv.dev/v1/querybatch"
+  },
+  "platformCompileClasspaths": {
+    "2.23.0": {
+      "advisoryCount": 89,
+      "affectedCoordinateCount": 30,
+      "coordinateCount": 208,
+      "findingRowCount": 99,
+      "findings": [
+        {
+          "advisoryId": "GHSA-jhq6-gfmj-v8fx",
+          "artifact": "logback-core",
+          "group": "ch.qos.logback",
+          "modified": "2026-07-15T22:00:52.732394Z",
+          "version": "1.5.32"
+        },
+        {
+          "advisoryId": "GHSA-p47f-322f-whfh",
+          "artifact": "logback-core",
+          "group": "ch.qos.logback",
+          "modified": "2026-07-03T10:14:36.248327Z",
+          "version": "1.5.32"
+        },
+        {
+          "advisoryId": "GHSA-72hv-8253-57qq",
+          "artifact": "jackson-core",
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-04-07T16:47:43.107166Z",
+          "version": "2.20.2"
+        },
+        {
+          "advisoryId": "GHSA-r7wm-3cxj-wff9",
+          "artifact": "jackson-core",
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-22T20:59:38.595267Z",
+          "version": "2.20.2"
+        },
+        {
+          "advisoryId": "GHSA-3pjw-73gf-8qr5",
+          "artifact": "jackson-databind",
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-25T03:29:37.657238Z",
+          "version": "2.20.2"
+        },
+        {
+          "advisoryId": "GHSA-5jmj-h7xm-6q6v",
+          "artifact": "jackson-databind",
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-16T21:30:21.943601Z",
+          "version": "2.20.2"
+        },
+        {
+          "advisoryId": "GHSA-hgj6-7826-r7m5",
+          "artifact": "jackson-databind",
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-20T21:30:31.809711Z",
+          "version": "2.20.2"
+        },
+        {
+          "advisoryId": "GHSA-j3rv-43j4-c7qm",
+          "artifact": "jackson-databind",
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-20T21:30:40.174709Z",
+          "version": "2.20.2"
+        },
+        {
+          "advisoryId": "GHSA-rmj7-2vxq-3g9f",
+          "artifact": "jackson-databind",
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-30T12:47:07.621763Z",
+          "version": "2.20.2"
+        },
+        {
+          "advisoryId": "GHSA-cmm3-54f8-px4j",
+          "artifact": "netty-codec-classes-quic",
+          "group": "io.netty",
+          "modified": "2026-06-12T19:45:11.471397Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-cq4q-cv5g-r8q5",
+          "artifact": "netty-codec-classes-quic",
+          "group": "io.netty",
+          "modified": "2026-06-16T14:44:21.038852Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-558v-64gr-wgg4",
+          "artifact": "netty-codec-compression",
+          "group": "io.netty",
+          "modified": "2026-07-23T22:29:34.272229Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-mj4r-2hfc-f8p6",
+          "artifact": "netty-codec-compression",
+          "group": "io.netty",
+          "modified": "2026-05-14T20:52:02.730912Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-cm33-6792-r9fm",
+          "artifact": "netty-codec-dns",
+          "group": "io.netty",
+          "modified": "2026-05-14T20:50:50.147382Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-mfg7-5gfp-c4w3",
+          "artifact": "netty-codec-dns",
+          "group": "io.netty",
+          "modified": "2026-07-27T21:59:42.275826Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-38f8-5428-x5cv",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-05-14T20:48:37.405742Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-4mp9-239f-g9hg",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T16:01:11.495588Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-57rv-r2g8-2cj3",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-05-14T20:47:30.693204Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-6cqp-g7gg-8hr5",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T16:00:20.409094Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-6jqx-86gh-f27w",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T16:00:30.994967Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-f6hv-jmp6-3vwv",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-05-14T20:50:55.245702Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-gcjf-9mgh-3p7g",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:31.612560Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-hvcg-qmg6-jm4c",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-06-16T14:44:20.815695Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-jppx-w49h-x2qq",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:31.550506Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-m4cv-j2px-7723",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-05-14T20:52:01.053039Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-mvh2-crg5-v77c",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:30.573268Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-q4f6-jm68-57ww",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T16:01:48.284679Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-v8h7-rr48-vmmv",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-05-08T19:50:55.560203Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-xxqh-mfjm-7mv9",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-05-14T20:47:27.523513Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-563q-j3cm-6jxm",
+          "artifact": "netty-codec-http2",
+          "group": "io.netty",
+          "modified": "2026-06-16T14:44:20.964765Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-5x3r-wrvg-rp6q",
+          "artifact": "netty-codec-http2",
+          "group": "io.netty",
+          "modified": "2026-06-12T19:45:11.465768Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-93wv-jw9v-4972",
+          "artifact": "netty-codec-http2",
+          "group": "io.netty",
+          "modified": "2026-08-01T21:44:50.263846Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-c2gf-v879-257j",
+          "artifact": "netty-codec-http2",
+          "group": "io.netty",
+          "modified": "2026-07-30T12:47:07.561738Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-c69g-56f8-xwqj",
+          "artifact": "netty-codec-http2",
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:30.139580Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-f6hv-jmp6-3vwv",
+          "artifact": "netty-codec-http2",
+          "group": "io.netty",
+          "modified": "2026-05-14T20:50:55.245702Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-w9fj-cfpg-grvv",
+          "artifact": "netty-codec-http2",
+          "group": "io.netty",
+          "modified": "2026-03-27T22:05:04.574044Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-2c5c-chwr-9hqw",
+          "artifact": "netty-codec-http3",
+          "group": "io.netty",
+          "modified": "2026-06-30T22:30:08.177847Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-4grm-h2qv-h6w6",
+          "artifact": "netty-codec-http3",
+          "group": "io.netty",
+          "modified": "2026-06-16T14:44:21.182343Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-c2rx-5r8w-8xr2",
+          "artifact": "netty-codec-http3",
+          "group": "io.netty",
+          "modified": "2026-06-12T19:30:08.487426Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-hpcc-26xq-25fv",
+          "artifact": "netty-codec-http3",
+          "group": "io.netty",
+          "modified": "2026-07-27T21:59:42.900293Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-3qp7-7mw8-wx86",
+          "artifact": "netty-handler",
+          "group": "io.netty",
+          "modified": "2026-06-12T19:30:08.471567Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-c653-97m9-rcg9",
+          "artifact": "netty-handler",
+          "group": "io.netty",
+          "modified": "2026-06-16T15:44:21.668164Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-x4gw-5cx5-pgmh",
+          "artifact": "netty-handler",
+          "group": "io.netty",
+          "modified": "2026-06-12T19:45:13.007385Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-45q3-82m4-75jr",
+          "artifact": "netty-handler-proxy",
+          "group": "io.netty",
+          "modified": "2026-05-14T20:47:38.979365Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-5pvg-856g-cp85",
+          "artifact": "netty-resolver-dns",
+          "group": "io.netty",
+          "modified": "2026-07-30T12:47:07.902068Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-676x-f7gg-47vc",
+          "artifact": "netty-resolver-dns",
+          "group": "io.netty",
+          "modified": "2026-07-30T12:47:07.913685Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-xmv7-r254-6q78",
+          "artifact": "netty-resolver-dns",
+          "group": "io.netty",
+          "modified": "2026-06-12T19:45:12.897371Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-rwm7-x88c-3g2p",
+          "artifact": "netty-transport-classes-epoll",
+          "group": "io.netty",
+          "modified": "2026-07-24T19:15:28.588244Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-w573-9ffj-6ff9",
+          "artifact": "netty-transport-native-epoll",
+          "group": "io.netty",
+          "modified": "2026-06-12T19:45:13.047513Z",
+          "version": "4.2.10.Final"
+        },
+        {
+          "advisoryId": "GHSA-wg6q-6289-32hp",
+          "artifact": "bcpkix-jdk18on",
+          "group": "org.bouncycastle",
+          "modified": "2026-04-17T17:29:19.679951Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-574f-3g2m-x479",
+          "artifact": "bcprov-jdk18on",
+          "group": "org.bouncycastle",
+          "modified": "2026-07-03T18:29:34.748750Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-c3fc-8qff-9hwx",
+          "artifact": "bcprov-jdk18on",
+          "group": "org.bouncycastle",
+          "modified": "2026-04-18T19:44:23.059931Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-p93r-85wp-75v3",
+          "artifact": "bcprov-jdk18on",
+          "group": "org.bouncycastle",
+          "modified": "2026-06-19T15:30:13.528521Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-659m-px2c-25wj",
+          "artifact": "spring-core",
+          "group": "org.springframework",
+          "modified": "2026-07-31T21:29:55.714931Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-9f52-rjqv-25qv",
+          "artifact": "spring-expression",
+          "group": "org.springframework",
+          "modified": "2026-07-31T21:29:55.072503Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-r5w3-xv2f-j59q",
+          "artifact": "spring-expression",
+          "group": "org.springframework",
+          "modified": "2026-07-31T15:09:20.125259Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-wxpp-56q6-5pcg",
+          "artifact": "spring-expression",
+          "group": "org.springframework",
+          "modified": "2026-07-31T15:09:20.058920Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-4773-3jfm-qmx3",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-03-26T18:29:19.494354Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-4hfh-6x8g-gwpp",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-07-30T15:31:40.826449Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-5843-p793-ghmm",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-07-02T21:46:29.324316Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-6hcq-hmm3-jj3c",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-03-26T18:29:19.981865Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-6p4f-wcwh-5vvm",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-05-08T02:14:22.486185Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-72pg-x5f8-j25j",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-07-31T21:29:55.009504Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-83f7-v6px-pp3h",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-07-30T15:31:40.859245Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-cjpg-rgq5-fr37",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-07-31T15:09:20.558337Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-h3qp-gqrc-q736",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-07-31T21:29:55.845479Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-mq64-j8f9-9gcj",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-07-31T15:09:20.372410Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-wg35-8jpf-2xv3",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-07-02T21:30:15.171179Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-x23c-287f-qqv5",
+          "artifact": "spring-webflux",
+          "group": "org.springframework",
+          "modified": "2026-07-31T21:29:54.673636Z",
+          "version": "7.0.5"
+        },
+        {
+          "advisoryId": "GHSA-8v8j-3hxp-93wr",
+          "artifact": "spring-boot",
+          "group": "org.springframework.boot",
+          "modified": "2026-05-13T23:44:30.269054Z",
+          "version": "4.0.3"
+        },
+        {
+          "advisoryId": "GHSA-wwpq-f5c3-7hvx",
+          "artifact": "spring-boot",
+          "group": "org.springframework.boot",
+          "modified": "2026-05-08T12:14:21.677811Z",
+          "version": "4.0.3"
+        },
+        {
+          "advisoryId": "GHSA-8hfc-fq58-r658",
+          "artifact": "spring-boot-starter-actuator",
+          "group": "org.springframework.boot",
+          "modified": "2026-04-16T22:48:01.615347Z",
+          "version": "4.0.3"
+        },
+        {
+          "advisoryId": "GHSA-mgvc-8q2h-5pgc",
+          "artifact": "spring-boot-starter-actuator",
+          "group": "org.springframework.boot",
+          "modified": "2026-04-01T15:44:18.344622Z",
+          "version": "4.0.3"
+        },
+        {
+          "advisoryId": "GHSA-88fw-v6x4-3f58",
+          "artifact": "spring-data-commons",
+          "group": "org.springframework.data",
+          "modified": "2026-08-02T02:59:55.421055Z",
+          "version": "4.0.3"
+        },
+        {
+          "advisoryId": "GHSA-4vrc-j85c-598c",
+          "artifact": "spring-security-config",
+          "group": "org.springframework.security",
+          "modified": "2026-05-05T16:03:46.007975Z",
+          "version": "7.0.3"
+        },
+        {
+          "advisoryId": "GHSA-4wrg-8wpc-h923",
+          "artifact": "spring-security-config",
+          "group": "org.springframework.security",
+          "modified": "2026-05-05T16:03:44.588584Z",
+          "version": "7.0.3"
+        },
+        {
+          "advisoryId": "GHSA-vxf7-qj7q-83fh",
+          "artifact": "spring-security-core",
+          "group": "org.springframework.security",
+          "modified": "2026-05-05T16:11:36.096722Z",
+          "version": "7.0.3"
+        },
+        {
+          "advisoryId": "GHSA-x2wq-9x2f-fhj7",
+          "artifact": "spring-security-core",
+          "group": "org.springframework.security",
+          "modified": "2026-07-17T21:00:17.845879Z",
+          "version": "7.0.3"
+        },
+        {
+          "advisoryId": "GHSA-cvc6-q2cp-2xhw",
+          "artifact": "spring-security-oauth2-jose",
+          "group": "org.springframework.security",
+          "modified": "2026-05-05T16:05:54.238232Z",
+          "version": "7.0.3"
+        },
+        {
+          "advisoryId": "GHSA-2jrg-rf5x-568g",
+          "artifact": "spring-security-web",
+          "group": "org.springframework.security",
+          "modified": "2026-05-05T15:59:51.434087Z",
+          "version": "7.0.3"
+        },
+        {
+          "advisoryId": "GHSA-mf92-479x-3373",
+          "artifact": "spring-security-web",
+          "group": "org.springframework.security",
+          "modified": "2026-03-25T19:59:15.827722Z",
+          "version": "7.0.3"
+        },
+        {
+          "advisoryId": "GHSA-c9ph-gxww-7744",
+          "artifact": "thymeleaf",
+          "group": "org.thymeleaf",
+          "modified": "2026-05-13T17:02:46.716315Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-r4v4-5mwr-2fwr",
+          "artifact": "thymeleaf",
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:10:40.722195Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-xjw8-8c5c-9r79",
+          "artifact": "thymeleaf",
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:12:18.897503Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-c9ph-gxww-7744",
+          "artifact": "thymeleaf-spring6",
+          "group": "org.thymeleaf",
+          "modified": "2026-05-13T17:02:46.716315Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-r4v4-5mwr-2fwr",
+          "artifact": "thymeleaf-spring6",
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:10:40.722195Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-xjw8-8c5c-9r79",
+          "artifact": "thymeleaf-spring6",
+          "group": "org.thymeleaf",
+          "modified": "2026-05-05T16:12:18.897503Z",
+          "version": "3.1.3.RELEASE"
+        },
+        {
+          "advisoryId": "GHSA-2m67-wjpj-xhg9",
+          "artifact": "jackson-core",
+          "group": "tools.jackson.core",
+          "modified": "2026-04-09T18:29:26.441905Z",
+          "version": "3.0.4"
+        },
+        {
+          "advisoryId": "GHSA-6v53-7c9g-w56r",
+          "artifact": "jackson-core",
+          "group": "tools.jackson.core",
+          "modified": "2026-03-09T14:43:57.526468Z",
+          "version": "3.0.4"
+        },
+        {
+          "advisoryId": "GHSA-72hv-8253-57qq",
+          "artifact": "jackson-core",
+          "group": "tools.jackson.core",
+          "modified": "2026-04-07T16:47:43.107166Z",
+          "version": "3.0.4"
+        },
+        {
+          "advisoryId": "GHSA-r7wm-3cxj-wff9",
+          "artifact": "jackson-core",
+          "group": "tools.jackson.core",
+          "modified": "2026-07-22T20:59:38.595267Z",
+          "version": "3.0.4"
+        },
+        {
+          "advisoryId": "GHSA-3pjw-73gf-8qr5",
+          "artifact": "jackson-databind",
+          "group": "tools.jackson.core",
+          "modified": "2026-07-25T03:29:37.657238Z",
+          "version": "3.0.4"
+        },
+        {
+          "advisoryId": "GHSA-5gvw-p9qm-jgwh",
+          "artifact": "jackson-databind",
+          "group": "tools.jackson.core",
+          "modified": "2026-07-22T20:59:37.895873Z",
+          "version": "3.0.4"
+        },
+        {
+          "advisoryId": "GHSA-5hh8-q8hv-fr38",
+          "artifact": "jackson-databind",
+          "group": "tools.jackson.core",
+          "modified": "2026-07-20T21:30:31.775056Z",
+          "version": "3.0.4"
+        },
+        {
+          "advisoryId": "GHSA-9fxm-vc8v-hj55",
+          "artifact": "jackson-databind",
+          "group": "tools.jackson.core",
+          "modified": "2026-07-20T21:30:34.130614Z",
+          "version": "3.0.4"
+        },
+        {
+          "advisoryId": "GHSA-hgj6-7826-r7m5",
+          "artifact": "jackson-databind",
+          "group": "tools.jackson.core",
+          "modified": "2026-07-20T21:30:31.809711Z",
+          "version": "3.0.4"
+        },
+        {
+          "advisoryId": "GHSA-j3rv-43j4-c7qm",
+          "artifact": "jackson-databind",
+          "group": "tools.jackson.core",
+          "modified": "2026-07-20T21:30:40.174709Z",
+          "version": "3.0.4"
+        },
+        {
+          "advisoryId": "GHSA-rcqc-6cw3-h962",
+          "artifact": "jackson-databind",
+          "group": "tools.jackson.core",
+          "modified": "2026-07-20T21:30:42.517351Z",
+          "version": "3.0.4"
+        },
+        {
+          "advisoryId": "GHSA-rmj7-2vxq-3g9f",
+          "artifact": "jackson-databind",
+          "group": "tools.jackson.core",
+          "modified": "2026-07-30T12:47:07.621763Z",
+          "version": "3.0.4"
+        }
+      ],
+      "resolvedConfiguration": "compileClasspath"
+    },
+    "2.25.0": {
+      "advisoryCount": 19,
+      "affectedCoordinateCount": 9,
+      "coordinateCount": 210,
+      "findingRowCount": 20,
+      "findings": [
+        {
+          "advisoryId": "GHSA-5gvw-p9qm-jgwh",
+          "artifact": "jackson-databind",
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-22T20:59:37.895873Z",
+          "version": "2.21.4"
+        },
+        {
+          "advisoryId": "GHSA-5jmj-h7xm-6q6v",
+          "artifact": "jackson-databind",
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-16T21:30:21.943601Z",
+          "version": "2.21.4"
+        },
+        {
+          "advisoryId": "GHSA-mhm7-754m-9p8w",
+          "artifact": "jackson-databind",
+          "group": "com.fasterxml.jackson.core",
+          "modified": "2026-07-22T20:59:38.271594Z",
+          "version": "2.21.4"
+        },
+        {
+          "advisoryId": "GHSA-558v-64gr-wgg4",
+          "artifact": "netty-codec-compression",
+          "group": "io.netty",
+          "modified": "2026-07-23T22:29:34.272229Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-mfg7-5gfp-c4w3",
+          "artifact": "netty-codec-dns",
+          "group": "io.netty",
+          "modified": "2026-07-27T21:59:42.275826Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-4mp9-239f-g9hg",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T16:01:11.495588Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-6cqp-g7gg-8hr5",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T16:00:20.409094Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-6jqx-86gh-f27w",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T16:00:30.994967Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-gcjf-9mgh-3p7g",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:31.612560Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-jppx-w49h-x2qq",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:31.550506Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-mvh2-crg5-v77c",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:30.573268Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-q4f6-jm68-57ww",
+          "artifact": "netty-codec-http",
+          "group": "io.netty",
+          "modified": "2026-07-24T16:01:48.284679Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-93wv-jw9v-4972",
+          "artifact": "netty-codec-http2",
+          "group": "io.netty",
+          "modified": "2026-08-01T21:44:50.263846Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-c69g-56f8-xwqj",
+          "artifact": "netty-codec-http2",
+          "group": "io.netty",
+          "modified": "2026-07-24T09:14:30.139580Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-hpcc-26xq-25fv",
+          "artifact": "netty-codec-http3",
+          "group": "io.netty",
+          "modified": "2026-07-27T21:59:42.900293Z",
+          "version": "4.2.15.Final"
+        },
+        {
+          "advisoryId": "GHSA-wg6q-6289-32hp",
+          "artifact": "bcpkix-jdk18on",
+          "group": "org.bouncycastle",
+          "modified": "2026-04-17T17:29:19.679951Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-574f-3g2m-x479",
+          "artifact": "bcprov-jdk18on",
+          "group": "org.bouncycastle",
+          "modified": "2026-07-03T18:29:34.748750Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-c3fc-8qff-9hwx",
+          "artifact": "bcprov-jdk18on",
+          "group": "org.bouncycastle",
+          "modified": "2026-04-18T19:44:23.059931Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-p93r-85wp-75v3",
+          "artifact": "bcprov-jdk18on",
+          "group": "org.bouncycastle",
+          "modified": "2026-06-19T15:30:13.528521Z",
+          "version": "1.83"
+        },
+        {
+          "advisoryId": "GHSA-5gvw-p9qm-jgwh",
+          "artifact": "jackson-databind",
+          "group": "tools.jackson.core",
+          "modified": "2026-07-22T20:59:37.895873Z",
+          "version": "3.1.4"
+        }
+      ],
+      "resolvedConfiguration": "compileClasspath"
+    }
+  },
+  "schemaVersion": 1,
+  "source": {
+    "repositoryCommit": "04f3fa78ca2c5bfed8130857c630fe24a0d113ef",
+    "repositoryDirty": false,
+    "script": "scripts/security/audit-halo-platform.py",
+    "scriptSha256": "6b2aaa3fbbd28dc0bded3ef23cf1305085d1b319f2393ee8740dc19fee18c2bb"
+  },
+  "upstream": {
+    "haloRelease": {
+      "jarAssets": [
+        {
+          "digest": "sha256:537756c406ff013db34d47a3740093ed2cd1cbdedf5b3da34ca8017de61aa04e",
+          "name": "halo-2.25.4.jar",
+          "size": 119219344,
+          "url": "https://github.com/halo-dev/halo/releases/download/v2.25.4/halo-2.25.4.jar"
+        }
+      ],
+      "publishedAt": "2026-06-24T10:03:04Z",
+      "source": "https://api.github.com/repos/halo-dev/halo/releases/latest",
+      "tag": "v2.25.4",
+      "url": "https://github.com/halo-dev/halo/releases/tag/v2.25.4"
+    },
+    "pluginApiPlatform": {
+      "lastUpdated": "20260612084730",
+      "latest": "2.25.0",
+      "release": "2.25.0",
+      "source": "https://repo1.maven.org/maven2/run/halo/tools/platform/plugin/maven-metadata.xml"
+    }
+  }
+}

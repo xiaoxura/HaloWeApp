@@ -38,6 +38,11 @@
 在真实 Halo 中无法正常启动，禁止使用。v0.1.1 正式维护 tag/Release 与目标环境演练完成前，
 v0.4.0 RC 回滚门禁仍未关闭。
 
+当前官方 Halo 2.25.4 宿主镜像的逐 jar OSV 审计仍有 24 个去重公告；插件 thin jar 不内嵌这些
+依赖，也不能替 Halo 私自覆盖。逐项调用边界已经记录，但 Halo 平台升级或目标环境正式风险接受
+仍缺失，因此依赖门禁同样为 FAIL/PENDING。详见
+[平台依赖风险审计](docs/evidence/halo-platform-dependency-audit-2026-08-02.md)。
+
 ## 快速开始
 
 1. 部署自己的 Halo 2.x 博客（HTTPS + 已备案域名）。
@@ -173,6 +178,7 @@ v0.4.0 RC 当前有 162 项 Node 测试，覆盖文章/评论/搜索/Moment adap
 
 - [变更日志](CHANGELOG.md)
 - [v0.4.0 RC 发布清单](docs/release-checklist-v0.4.0.md)
+- [Halo 平台依赖风险审计](docs/evidence/halo-platform-dependency-audit-2026-08-02.md)
 - [Halo / Moment / 配套插件 API](docs/halo-api.md)
 - [v0.4.0 开发计划](docs/development-plan-v0.4.0.md)
 - [UI 原型与设计规范](docs/prototype/index.html)
