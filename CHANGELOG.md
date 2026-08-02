@@ -4,19 +4,65 @@
 
 ## [未发布]
 
+目标版本：HaloWeApp v0.4.0，配套 `plugin-halo-weapp` v0.2.0。当前为 RC 开发分支；双真机、
+真实登录/注销、生产暗部署与回滚演练完成前不创建 v0.4.0 tag。
+
 ### 新增
 
-- 固定 `PluginMoments` 名称、Public API 与 available 探测路径；冷启动能力探测仅内存缓存并发单飞
-- 运行时配置增加 `features.moments` / `features.readerAccount` 白名单与安全默认值
-- `canReadMoments()`、`canLogin()` 和 Moment 评论预留门禁；缓存不能开启身份或写能力
+- 固定 `PluginMoments` 名称、Public API 与 available 探测路径；冷启动能力探测仅内存缓存、
+  并发单飞，插件缺失/停用/超时/HTML/非法响应时隐藏入口且不影响文章首屏
+- 首页异步“最新瞬间”模块、Moment 列表/详情/标签、下拉刷新、分页、分享深链和独立错误状态
 - Moment v1.15/v1.16 adapter 与脱敏/合成夹具，覆盖列表、详情、字段缺失及
   PHOTO/VIDEO/AUDIO/POST/未知媒体；匿名列表防御性过滤私有、未审核和已删除内容
-- Moment 列表/详情 API、固定插件白名单探测和通用 tracker 点赞接口
+- Moment 媒体闭环：最多九图预览、视频不自动播放、单一音频上下文、音视频互斥、页面卸载释放；
+  仅接受 HTTPS，POST 与未知媒体提供不可执行降级
+- 文章/Moment 混合搜索与正确详情分流；Moment 插件不可用时过滤陈旧索引命中
+- Post / Moment 通用 tracker 点赞和本地 `post:` / `moment:` 命名空间；自动迁移 v0.3.0
+  裸 Post key
+- 运行时配置增加 `features.moments` / `features.readerAccount` 白名单、安全默认值及
+  `canReadMoments()` / `canLogin()` 门禁；缓存不能开启身份或写能力
+- `utils/auth-session.js` 微信读者内存状态机：主动登录、冷启动恢复、资料刷新/修改、退出、
+  注销、临近过期单飞恢复和一次性 401 重试
+- Profile 微信读者 UI：默认文字头像、缓存/认证状态区分、昵称与当前隐私同意、保持登录意愿、
+  退出确认和注销二次确认；明确既有公开评论不会自动删除
+- 配套插件 auth API 客户端：`POST /auth/login`、`GET/PATCH /auth/profile`、
+  `DELETE /auth/session`、`DELETE /auth/account`，以及 PATCH/DELETE/204 请求层支持
 
 ### 变更
 
 - `config.version`、npm package 与 lockfile 开发版本同步为 0.4.0
 - 评论与 Moment 摘要共用 HTML 转安全纯文本实现；Moment 详情复用既有富文本清理与资源补全管线
+- 首页文章首屏不等待 Moment 能力探测或读者身份恢复；App 不进行后台主动续期
+- 文章评论优先复用真实认证的读者账号 token 与昵称；认证恢复失败才回落 v0.3.0 匿名临时会话，
+  评论业务失败不会自动重提
+- 微信合法域名校验的共享项目配置改为开启；开发者私有覆盖不能作为发布验证证据
+
+### 安全
+
+- session token、expiresAt、OpenID、身份摘要和内部 readerName 不进入客户端 storage、URL、
+  请求体或公开 UI；可缓存 profile 仅重建 `{displayName, privacyPolicyVersion}` 白名单
+- 首次账号创建要求页面主动操作、明确同意当前隐私版本和合法昵称；冷启动恢复不携带昵称，
+  因而不能静默创建账号
+- readerAccount 关闭、实时配置失败、隐私版本变化、版本不满足或二次 401 时全部 fail-closed；
+  缓存资料绝不伪造 authenticated 状态
+- 注销成功或服务端已不存在时清理全部本地身份数据；普通退出即使网络失败也清理 token、资料
+  和登录意愿，同时保留与匿名评论共用的既有隐私同意版本
+- Moment 读取不携带 Halo PAT/UC/Console 身份；HTML 继续清理 script/iframe/style/事件属性和
+  `javascript:` 链接，未知媒体不执行未知协议
+
+### 验证
+
+- Node 自动化测试 162 项全部通过；覆盖 Moment adapter/能力探测/媒体生命周期、混合搜索、
+  点赞迁移、auth-session、评论会话复用及远程配置门禁
+- 微信开发者工具 preview 成功：v0.3.0 tag 为 162,533 bytes，v0.4.0 RC 实现基线为
+  236,493 bytes，增加 73,960 bytes（45.50%）；1 MiB `docs`/`tests/fixtures` canary 对比证明
+  pack ignore 生效
+- 自动化和开发者工具结果不替代 iOS/Android 真机、弱网、合法域名、真实账号、插件暗部署或
+  回滚证据；未完成项目见 `docs/release-checklist-v0.4.0.md`
+
+### 未包含
+
+- Moment 评论/回复留到 v0.4.1；v0.4.0 不开放相关写入 UI，也不接受客户端自定义主体 GVK
 
 ## [0.3.0] - 2026-08-01
 
