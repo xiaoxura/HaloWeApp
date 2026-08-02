@@ -16,8 +16,8 @@ v0.4.0 只验收 P0 V040-00～V040-08：公开 Moment 阅读、媒体/搜索/点
 
 | 仓库 | 候选分支/提交 | 目标版本 | 状态 |
 | --- | --- | --- | --- |
-| HaloWeApp | `develop/v0.4.0`；功能基线 `671246e`，最终文档/门禁以包含本文的提交为准 | 0.4.0 | RC，未打 tag |
-| plugin-halo-weapp | `develop/v0.2.0` / `2fa870c` | 0.2.0 | RC，未打 tag |
+| HaloWeApp | `develop/v0.4.0`；功能基线 `671246e`、RC 收口基线 `63f5478`，最终文档/门禁以包含本文的提交为准 | 0.4.0 | RC，未打 tag |
+| plugin-halo-weapp | `develop/v0.2.0` / `c27429e` | 0.2.0 | RC，未打 tag |
 | HaloWeApp 回滚 | tag `v0.3.0` / `290ffa8` | 0.3.0 | tag 存在 |
 | plugin 回滚 | tag `v0.1.0` / `df1dcf3` | 0.1.0 | tag 存在 |
 
@@ -40,6 +40,8 @@ v0.4.0 只验收 P0 V040-00～V040-08：公开 Moment 阅读、媒体/搜索/点
 - Gradle Wrapper 9.4.0；
 - 微信开发者工具 CLI：`/opt/wechat-devtools/bin/wechat-devtools-cli`，基础库 3.8.0；
 - Gitleaks 8.30.1；OpenAPI lint 使用 `@redocly/cli`；
+- Docker 隔离 H2 runtime：官方 `halohub/halo:2.23.3`（镜像 digest `03f56d5b…f86661d`）与
+  `halohub/halo:2.25.4`（镜像 digest `1299a0e7…ce547e6`）；
 - 小程序 release 共享配置 `project.config.json setting.urlCheck=true`；本次本机私有覆盖也改为
   true，但这只证明配置，没有证明微信后台已登记域名。
 
@@ -57,7 +59,7 @@ node --check <全部变更 JS>
 | --- | --- | --- |
 | Node 测试 | PASS：162/162，0 fail/skip | 纯函数、状态机、请求 Mock；非真机 |
 | auth-session | PASS：13 个场景（包含新增异常隐私响应与 READER_NOT_FOUND 收口） | 模拟微信/API/storage |
-| Moment 适配/能力/媒体 | PASS | v1.15 合成官方类型 + v1.16 脱敏夹具；非实际插件矩阵 |
+| Moment 适配/能力/媒体 | PASS | v1.15 合成官方类型 + v1.16 脱敏夹具；本行仅自动化，实际矩阵见 §5.2 |
 | JS 语法 / whitespace | PASS | 不覆盖 WXML/WXSS 运行时 |
 | 微信开发者工具 preview | PASS | 编译/打包成功；非真机网络与交互 |
 
@@ -73,20 +75,20 @@ node --check <全部变更 JS>
 
 | 项目 | 结果 | 证据边界 |
 | --- | --- | --- |
-| API 2.23.0 测试 | PASS：97/97，0 fail/skip | 最低 API 编译 + Mock 单测 |
-| API 2.25.0 测试 | PASS：97/97，0 fail/skip | Halo 2.25.4 对应已发布 API platform；非 runtime |
+| API 2.23.0 测试 | PASS：100/100，0 fail/skip | 最低 API 编译 + Mock 单测 |
+| API 2.25.0 测试 | PASS：100/100，0 fail/skip | Halo 2.25.4 对应已发布 API platform |
 | 正式兼容 jar build | PASS | 以最低 API 2.23.0 构建 |
 | OpenAPI | PASS：Redocly 结构有效 | 仅剩 1 个样式 warning：公开 GET `/config` 没有伪造 4xx 响应 |
 | YAML 解析 | PASS | workflow/settings/plugin/roles 均可解析 |
 | feature 默认值 | PASS | moments、Moment 评论、readerAccount 均为 false |
 
-插件 jar 证据（源树 `2fa870c`）：
+插件 jar 证据（源树 `c27429e`，正式 tag 前仍须重建）：
 
 - 文件：`plugin-halo-weapp-0.2.0.jar`；
-- 大小：158,264 bytes；
-- SHA-256：`f7db9853513eb5c5f70055915ed5cb98effb2d37793f53c7630d452a57fb2c4e`；
+- 大小：158,713 bytes；
+- SHA-256：`85f64f388e06e82f94e3056e888cbba8c2c4954e73d3eef0d92cef643f0652b3`；
 - 72 个 class 全部位于 `run/halo/weapp/`，未内嵌第三方 class；
-- `plugin.yaml`、`settings.yaml`、`extensions/roles.yaml`、AuthEndpoint、WeAppUser 和
+- `plugin.yaml`、`extensions/settings.yaml`、`extensions/roles.yaml`、AuthEndpoint、WeAppUser 和
   IdentityKeyService 均存在。
 
 > jar SHA 只对应本次本地构建。正式 GitHub Release 必须从最终 tag 重新构建并记录新的、可下载
@@ -117,14 +119,14 @@ TOTAL 仍为 236,493 bytes，与无 canary 完全一致。因此 `docs/`、`test
 
 | 组合/场景 | 证据 | 结论 |
 | --- | --- | --- |
-| Moment 1.15.x 契约 | 官方类型合成夹具的列表/详情/媒体测试 | PARTIAL：adapter PASS，未部署真实 1.15.x |
-| Moment 1.16.1 契约 | 脱敏真实响应夹具测试 | PARTIAL：adapter PASS，未核验来源实例当前版本 |
-| Halo API 2.23.0 | 插件 97 项测试 | PARTIAL：编译/Mock PASS，未启动 2.23.x runtime |
-| Halo API 2.25.0 | 插件 97 项测试 | PARTIAL：编译/Mock PASS，未完成 Halo 2.25.4 runtime |
+| Moment 1.15.0 契约 | 官方 jar 在 Halo 2.23.3/2.25.4 的真实 Public API 列表/详情 + 客户端 adapter | PASS（本机服务器/adapter 范围） |
+| Moment 1.16.1 契约 | 两个 Halo runtime 从 1.15.0 停用升级，数据保留并重新启用 | PASS（本机服务器/adapter 范围） |
+| Halo API 2.23.0 / runtime 2.23.3 | 插件 100 项测试 + 官方 2.23.3 镜像 | PASS（编译/Mock + 本机 H2 runtime） |
+| Halo API 2.25.0 / runtime 2.25.4 | 插件 100 项测试 + 官方 2.25.4 镜像 | PASS（编译/Mock + 本机 H2 runtime） |
 | Moment 插件缺失/停用/超时/HTML/非法 JSON | capabilities/runtime/search 自动化 | PASS（自动化范围） |
-| PHOTO/VIDEO/AUDIO/POST/未知媒体 | adapter + media-session 自动化 | PASS（模型/生命周期范围），真机 PENDING |
-| PRIVATE/未审核/已删除 | v1.15/v1.16 fixture 防御性过滤 | PASS（客户端防御）；真实匿名响应 PENDING |
-| 登录/恢复/401/隐私变化/退出/注销 | 双端 162 + 97 项测试 | PASS（自动化范围），真实微信 PENDING |
+| PHOTO/VIDEO/AUDIO/POST/未知媒体 | 两版真实 Public API 响应 + adapter/media-session 自动化 | PASS（服务器契约/模型范围），真机播放 PENDING |
+| PRIVATE/未审核/已删除 | PRIVATE 在两版实际匿名列表排除且详情 404；其余 fixture 防御性过滤 | PARTIAL：未审核/已删除真实场景 PENDING |
+| 登录/恢复/401/隐私变化/退出/注销 | 双端 162 + 100 项测试 | PASS（自动化范围），真实微信 PENDING |
 | 旧 v0.3.0 客户端 + v0.2.0 插件 | 路径/DTO 向后兼容测试和静态契约 | PARTIAL，实际暗部署回归 PENDING |
 
 2026-08-02 对当前 `config.baseUrl` 做了不保存正文的匿名探测：
@@ -137,17 +139,41 @@ TOTAL 仍为 236,493 bytes，与无 canary 完全一致。因此 `docs/`、`test
 这只能作为“当前异常配置不会被接受”和生产域名盘点的辅助证据，不能证明 Moment 版本、配套
 插件暗部署或读者登录成功。
 
-### 5.2 未完成的实际矩阵
+### 5.2 本机隔离 runtime 直接证据
 
-| Halo runtime | Moment | iOS | Android | 状态 |
-| --- | --- | --- | --- | --- |
-| 2.23.x | 1.15.x | 无记录 | 无记录 | PENDING |
-| 2.23.x | 1.16.1 | 无记录 | 无记录 | PENDING |
-| 2.25.4 | 1.15.x | 无记录 | 无记录 | PENDING |
-| 2.25.4 | 1.16.1 | 无记录 | 无记录 | PENDING |
+| Halo runtime | Moment | 本机服务器证据 | iOS | Android | 状态 |
+| --- | --- | --- | --- | --- | --- |
+| 2.23.3 | 1.15.0 | 安装/启用、available、列表/详情、停用均通过 | 无记录 | 无记录 | PARTIAL：服务器 PASS，真机 PENDING |
+| 2.23.3 | 1.16.1 | 停用升级、数据保留、重新启用、冷重启均通过 | 无记录 | 无记录 | PARTIAL：服务器 PASS，真机 PENDING |
+| 2.25.4 | 1.15.0 | 安装/启用、available、列表/详情、停用均通过 | 无记录 | 无记录 | PARTIAL：服务器 PASS，真机 PENDING |
+| 2.25.4 | 1.16.1 | 停用升级、数据保留、重新启用、冷重启均通过 | 无记录 | 无记录 | PARTIAL：服务器 PASS，真机 PENDING |
 
-曾执行 `./gradlew haloServer -PhaloDevVersion=2.25.4`，构建阶段成功但环境停在
-`pullHaloImage`，未启动容器、未获得健康检查或插件加载证据，故保持 PENDING。
+2026-08-02 在两个独立数据目录和端口完成上述矩阵。两个 Halo 均使用官方 amd64 镜像与内置 H2，
+只用于隔离 RC 验证，不等同生产数据库、反向代理、子路径或真实数据。配套插件运行时 jar SHA-256
+均为 `85f64f38…f0652b3`；Moment 1.15.0 / 1.16.1 jar SHA-256 分别为
+`b38e5975…5b6136` / `6b953e91…54b1f`，冷重启前后运行时 jar 集合和哈希不变。
+
+配套插件在两个 Halo 版本的直接结果一致：
+
+| 匿名 route | 结果 |
+| --- | --- |
+| `GET /config` | 200 JSON；Moment、Moment 评论、readerAccount、评论提交/回复均为 false |
+| `POST /session` | 503 JSON `HALO_UNAVAILABLE`（未配置真实微信） |
+| `GET/PATCH /auth/profile` | 401 JSON `SESSION_REQUIRED` |
+| `POST /auth/login` | 403 JSON `READER_ACCOUNT_DISABLED` |
+| `DELETE /auth/session`、`DELETE /auth/account` | 401 JSON `SESSION_REQUIRED` |
+| `POST /comments`、`POST /comments/{name}/replies` | 401 JSON `SESSION_REQUIRED` |
+
+安装和整容器重启后，`plugin-halo-weapp` 均为 `STARTED`，Setting
+`plugin-halo-weapp-settings` 与 ConfigMap `plugin-halo-weapp-configmap` 均被初始化；上述请求没有
+一次跳转到 `/login`，公开 config 也未出现 AppSecret、OpenID、token 或 identityKey 字段。
+
+Moment 直接证据还包括：1.15.0 停用后 `available=false` 且 Moment API 不可访问，同时配套插件
+`/config` 和文章 Public API 仍为 200；在停用状态升级 1.16.1 后，先前 PUBLIC/PRIVATE 数据保留；
+两版匿名列表均排除 PRIVATE 且其详情返回 404。实际 Public API 中合成的 HTTPS
+PHOTO/VIDEO/AUDIO/POST 媒体经当前客户端 adapter 转换后均为 `supported=true`。这些 URL 只验证
+服务器契约和 adapter，不替代真机媒体播放。尝试由管理员创建 `approved=false` Moment 时会被
+Moment reconciler 自动批准，因此“真实未审核过滤”仍只有 fixture 证据，不能标记为已完成。
 
 ## 6. 凭据、日志与依赖审计
 
@@ -158,7 +184,7 @@ Gitleaks 8.30.1 结果：
 | 仓库 | Git 全历史 | 当前工作树 |
 | --- | ---: | ---: |
 | HaloWeApp | PASS：候选分支完整历史，0 leak | PASS：0 leak |
-| plugin-halo-weapp | PASS：8 commits，0 leak | PASS：0 leak |
+| plugin-halo-weapp | PASS：11 commits，0 leak | PASS：0 leak |
 
 插件 `.gitleaks.toml` 只允许 v0.1.0 以前两个已审查的确定性文档/测试占位值；当前 OpenAPI 和测试
 已改为 `example` / `test-...-placeholder`。本地 JDK、Gradle cache 和 build 输出按 `.gitignore`
@@ -230,7 +256,7 @@ AppSecret 或 identityKey。
 
 ## 9. 暗部署、备份与回滚（待执行）
 
-文档已在 plugin `2fa870c` 补齐，包含两个 ConfigMap、WeAppUser、identityKey 32 字节/指纹、恢复
+文档已在 plugin `c27429e` 补齐，包含两个 ConfigMap、WeAppUser、identityKey 32 字节/指纹、恢复
 顺序和 v0.1.0 回滚约束。但以下必须在隔离/生产等价环境实际演练：
 
 - [ ] 备份 `plugin-halo-weapp-configmap`、`plugin-halo-weapp-identity`、全部 WeAppUser 和评论；
@@ -258,7 +284,8 @@ AppSecret 或 identityKey。
 | --- | --- |
 | V040-00～V040-07 实现与自动化 | PASS（现有证据范围） |
 | V040-08 文档、版本、包体、pack ignore、双端 build | PASS |
-| Halo/Moment 双版本实际 runtime + 双真机 | **PENDING** |
+| Halo/Moment 双版本本机隔离 runtime | PASS（H2 服务器范围） |
+| iOS/Android 双真机 | **PENDING** |
 | 登录/恢复/退出/注销真实微信记录 | **PENDING** |
 | 插件暗部署、identityKey 恢复、旧客户端回滚 | **PENDING** |
 | 生产合法域名、弱网、媒体/低内存 | **PENDING** |
