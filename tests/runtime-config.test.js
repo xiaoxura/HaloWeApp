@@ -193,6 +193,10 @@ test('runtime: ready 前可同步读取未过期站点缓存，但写能力保�
   const cached = {
     data: {
       site: { blogName: '缓存博客', pageSize: 20 },
+      features: {
+        moments: { enabled: true, commentEnabled: true },
+        readerAccount: { enabled: true }
+      },
       commentEnabled: true,
       commentOptions: { submitEnabled: true, replyEnabled: true }
     },
@@ -208,10 +212,15 @@ test('runtime: ready 前可同步读取未过期站点缓存，但写能力保�
   assert.strictEqual(rc.getConfig().site.blogName, '缓存博客')
   assert.strictEqual(rc.getConfig().site.blogDesc, DEFAULT_CONFIG.site.blogDesc)
   assert.strictEqual(rc.getConfig().commentEnabled, true)
+  assert.strictEqual(rc.canReadMoments(), true, '只读 Moment 展示可使用未过期缓存')
+  assert.strictEqual(rc.canLogin(), false, '缓存不能恢复或创建读者账号')
+  assert.strictEqual(rc.canSubmitMomentComment(), false, '缓存不能开启 Moment 写入')
   assert.strictEqual(rc.isLive(), false)
   assert.strictEqual(rc.canSubmit(), false)
   assert.deepStrictEqual(DEFAULT_CONFIG.commentEnabled, false)
   assert.deepStrictEqual(DEFAULT_CONFIG.commentOptions.submitEnabled, false)
+  assert.deepStrictEqual(DEFAULT_CONFIG.features.moments.enabled, false)
+  assert.deepStrictEqual(DEFAULT_CONFIG.features.readerAccount.enabled, false)
 })
 
 // ===== v0.3.0：写能力与读取分离（C-04） =====
@@ -224,6 +233,10 @@ const FULL_CONFIG = {
     blogDesc: 'Halo 驱动',
     pageSize: 20,
     fontUrl: 'https://cdn.example.com/font.woff2'
+  },
+  features: {
+    moments: { enabled: true, commentEnabled: false },
+    readerAccount: { enabled: true }
   },
   commentEnabled: true,
   commentOptions: { submitEnabled: true, replyEnabled: true, maxLength: 500, nicknameRequired: true },
@@ -271,12 +284,37 @@ test('validate: site 非法字段被剔除，不能下发客户端凭据', () =>
   assert.deepStrictEqual(out, { site: { blogDesc: 'ok' } })
 })
 
+test('validate: features 仅接受固定嵌套布尔字段', () => {
+  assert.deepStrictEqual(
+    validateRemoteConfig({
+      features: {
+        moments: { enabled: true, commentEnabled: false, endpoint: '/evil' },
+        readerAccount: { enabled: true, identityKey: 'leak' },
+        arbitraryPlugin: { enabled: true }
+      }
+    }),
+    {
+      features: {
+        moments: { enabled: true, commentEnabled: false },
+        readerAccount: { enabled: true }
+      }
+    }
+  )
+  assert.strictEqual(
+    validateRemoteConfig({ features: { moments: { enabled: 'yes' } } }),
+    null
+  )
+})
+
 test('runtime: 实时拉取成功且开关全开时允许写入', async () => {
   const rc = createWithRemote(FULL_CONFIG)
   await rc.ready()
   assert.strictEqual(rc.isLive(), true)
   assert.strictEqual(rc.canSubmit(), true)
   assert.strictEqual(rc.canReply(), true)
+  assert.strictEqual(rc.canReadMoments(), true)
+  assert.strictEqual(rc.canLogin(), true)
+  assert.strictEqual(rc.canSubmitMomentComment(), false)
   assert.strictEqual(rc.getConfig().commentOptions.maxLength, 500)
   assert.strictEqual(rc.getConfig().privacyPolicyVersion, '2026-08-01')
 })
@@ -292,6 +330,9 @@ test('runtime: 内置默认配置不能开启评论读取或写入', async () =>
   assert.strictEqual(rc.getConfig().commentEnabled, false)
   assert.strictEqual(rc.canSubmit(), false)
   assert.strictEqual(rc.canReply(), false)
+  assert.strictEqual(rc.canReadMoments(), false)
+  assert.strictEqual(rc.canLogin(), false)
+  assert.strictEqual(rc.canSubmitMomentComment(), false)
 })
 
 test('runtime: 降级缓存只读，强制关闭写入口', async () => {
@@ -306,6 +347,33 @@ test('runtime: 降级缓存只读，强制关闭写入口', async () => {
   assert.strictEqual(rc.isLive(), false)
   assert.strictEqual(rc.canSubmit(), false)
   assert.strictEqual(rc.canReply(), false)
+  assert.strictEqual(rc.canLogin(), false)
+  assert.strictEqual(rc.canSubmitMomentComment(), false)
+})
+
+test('runtime: Moment 评论预留门禁要求实时配置与全部相关开关', async () => {
+  const rc = createWithRemote({
+    ...FULL_CONFIG,
+    features: {
+      ...FULL_CONFIG.features,
+      moments: { enabled: true, commentEnabled: true }
+    }
+  })
+  await rc.ready()
+  assert.strictEqual(rc.canSubmitMomentComment(), true)
+})
+
+test('runtime: readerAccount 必须实时开启且隐私契约完整', async () => {
+  for (const remote of [
+    { ...FULL_CONFIG, features: { ...FULL_CONFIG.features, readerAccount: { enabled: false } } },
+    { ...FULL_CONFIG, privacyPolicyVersion: '' },
+    { ...FULL_CONFIG, privacyPolicyUrl: 'http://unsafe.example/privacy' }
+  ]) {
+    const rc = createWithRemote(remote)
+    await rc.ready()
+    assert.strictEqual(rc.canLogin(), false)
+    assert.strictEqual(rc.canReadMoments(), true, '身份门禁不得影响 Moment 阅读')
+  }
 })
 
 test('runtime: submitEnabled 关闭时评论可读不可写', async () => {
@@ -313,6 +381,7 @@ test('runtime: submitEnabled 关闭时评论可读不可写', async () => {
   await rc.ready()
   assert.strictEqual(rc.getConfig().commentEnabled, true)
   assert.strictEqual(rc.canSubmit(), false)
+  assert.strictEqual(rc.canLogin(), true, '文章评论开关不得影响读者身份登录')
 })
 
 test('runtime: replyEnabled 单独控制回复', async () => {
@@ -354,8 +423,10 @@ test('runtime: minVersion 高于客户端版本时关闭写能力', async () => 
   await rc.ready()
   assert.strictEqual(rc.isVersionOk(), false)
   assert.strictEqual(rc.canSubmit(), false)
+  assert.strictEqual(rc.canLogin(), false)
   // 读取不受影响
   assert.strictEqual(rc.getConfig().commentEnabled, true)
+  assert.strictEqual(rc.canReadMoments(), true)
 })
 
 test('runtime: minVersion 非法时忽略，不影响写能力', async () => {
@@ -385,6 +456,11 @@ test('runtime: 插件配置夹具可完整转换并开放写能力', async () =>
   assert.strictEqual(cfg.site.blogName, '技术博客')
   assert.strictEqual(cfg.site.pageSize, 20)
   assert.strictEqual(cfg.site.fontUrl, 'https://cdn.example.com/font.woff2')
+  assert.strictEqual(cfg.features.moments.enabled, true)
+  assert.strictEqual(cfg.features.moments.commentEnabled, false)
+  assert.strictEqual(cfg.features.readerAccount.enabled, true)
+  assert.strictEqual(rc.canReadMoments(), true)
+  assert.strictEqual(rc.canLogin(), true)
   assert.strictEqual(cfg.announcement.version, '2026-08-01')
   assert.strictEqual(cfg.privacyPolicyVersion, '2026-08-01')
 })

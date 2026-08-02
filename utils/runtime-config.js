@@ -40,6 +40,15 @@ const DEFAULT_CONFIG = Object.freeze({
     pageSize: 10,
     fontUrl: ''
   }),
+  features: Object.freeze({
+    moments: Object.freeze({
+      enabled: false,
+      commentEnabled: false
+    }),
+    readerAccount: Object.freeze({
+      enabled: false
+    })
+  }),
   commentEnabled: false,
   commentOptions: Object.freeze({
     submitEnabled: false,
@@ -91,6 +100,35 @@ function validateRemoteConfig(data) {
     }
     if (Object.keys(site).length > 0) out.site = site
   }
+  if (data.features && typeof data.features === 'object' && !Array.isArray(data.features)) {
+    const features = {}
+    if (
+      data.features.moments &&
+      typeof data.features.moments === 'object' &&
+      !Array.isArray(data.features.moments)
+    ) {
+      const moments = {}
+      if (typeof data.features.moments.enabled === 'boolean') {
+        moments.enabled = data.features.moments.enabled
+      }
+      if (typeof data.features.moments.commentEnabled === 'boolean') {
+        moments.commentEnabled = data.features.moments.commentEnabled
+      }
+      if (Object.keys(moments).length > 0) features.moments = moments
+    }
+    if (
+      data.features.readerAccount &&
+      typeof data.features.readerAccount === 'object' &&
+      !Array.isArray(data.features.readerAccount)
+    ) {
+      const readerAccount = {}
+      if (typeof data.features.readerAccount.enabled === 'boolean') {
+        readerAccount.enabled = data.features.readerAccount.enabled
+      }
+      if (Object.keys(readerAccount).length > 0) features.readerAccount = readerAccount
+    }
+    if (Object.keys(features).length > 0) out.features = features
+  }
   if (typeof data.commentEnabled === 'boolean') out.commentEnabled = data.commentEnabled
   if (typeof data.minVersion === 'string') out.minVersion = data.minVersion
   if (typeof data.schemaVersion === 'number') out.schemaVersion = data.schemaVersion
@@ -131,10 +169,15 @@ function validateRemoteConfig(data) {
   return Object.keys(out).length > 0 ? out : null
 }
 
-/** 浅合并 + 嵌套对象（site / commentOptions / announcement）与默认值合并 */
+/** 浅合并 + 嵌套对象与默认值合并；未知字段已经在 validate 阶段剔除。 */
 function mergeConfig(base, extra) {
   const out = { ...base, ...(extra || {}) }
+  const extraFeatures = (extra && extra.features) || {}
   out.site = { ...base.site, ...((extra && extra.site) || {}) }
+  out.features = {
+    moments: { ...base.features.moments, ...(extraFeatures.moments || {}) },
+    readerAccount: { ...base.features.readerAccount, ...(extraFeatures.readerAccount || {}) }
+  }
   out.commentOptions = { ...base.commentOptions, ...((extra && extra.commentOptions) || {}) }
   out.announcement = { ...base.announcement, ...((extra && extra.announcement) || {}) }
   return out
@@ -269,6 +312,26 @@ function createRuntimeConfig(deps) {
     isVersionOk() {
       return checkVersion(current)
     },
+    /** Moment 展示开关；允许由未过期缓存恢复，只读能力还必须通过实时插件探测。 */
+    canReadMoments() {
+      return current.features.moments.enabled === true
+    },
+    /**
+     * 微信读者登录门禁：必须是实时配置、开关开启、版本满足且隐私契约完整。
+     * 缓存配置永远不能创建账号或恢复认证会话。
+     */
+    canLogin() {
+      return (
+        live &&
+        current.features.readerAccount.enabled === true &&
+        checkVersion(current) &&
+        typeof current.privacyPolicyVersion === 'string' &&
+        current.privacyPolicyVersion.length > 0 &&
+        current.privacyPolicyVersion.length <= 100 &&
+        typeof current.privacyPolicyUrl === 'string' &&
+        /^https:\/\//i.test(current.privacyPolicyUrl)
+      )
+    },
     /**
      * 是否允许发表评论（fail-closed）：
      * 实时拉取成功 + 评论区开启 + 提交开关开启 + 版本满足门槛
@@ -284,6 +347,14 @@ function createRuntimeConfig(deps) {
     /** 是否允许回复（在 canSubmit 基础上要求回复开关） */
     canReply() {
       return this.canSubmit() && current.commentOptions.replyEnabled === true
+    },
+    /** v0.4.1 预留门禁；v0.4.0 没有对应写入路由或 UI。 */
+    canSubmitMomentComment() {
+      return (
+        this.canSubmit() &&
+        current.features.moments.enabled === true &&
+        current.features.moments.commentEnabled === true
+      )
     }
   }
 }

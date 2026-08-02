@@ -4,6 +4,16 @@
 
 ## [未发布]
 
+### 新增
+
+- 固定 `PluginMoments` 名称、Public API 与 available 探测路径；冷启动能力探测仅内存缓存并发单飞
+- 运行时配置增加 `features.moments` / `features.readerAccount` 白名单与安全默认值
+- `canReadMoments()`、`canLogin()` 和 Moment 评论预留门禁；缓存不能开启身份或写能力
+
+### 变更
+
+- `config.version`、npm package 与 lockfile 开发版本同步为 0.4.0
+
 ## [0.3.0] - 2026-08-01
 
 合规互动 Beta。按 [docs/development-plan-v0.3.0.md](docs/development-plan-v0.3.0.md) 实施，

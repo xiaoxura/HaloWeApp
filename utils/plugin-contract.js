@@ -9,9 +9,20 @@ const PLUGIN_API_BASE = '/apis/api.weapp.halo.run/v1alpha1'
 const PLUGIN_CONFIG_ENDPOINT = `${PLUGIN_API_BASE}/config`
 const CONFIG_CACHE_TTL = 21600000 // 6 小时
 
+// Halo 官方 Moment 插件公开契约。固定名称阻止部署配置把客户端导向任意探测路径。
+const MOMENTS_PLUGIN_NAME = 'PluginMoments'
+const MOMENTS_API_BASE = '/apis/api.moment.halo.run/v1alpha1'
+const MOMENTS_LIST_ENDPOINT = `${MOMENTS_API_BASE}/moments`
+const MOMENTS_AVAILABLE_ENDPOINT =
+  `/apis/api.plugin.halo.run/v1alpha1/plugins/${MOMENTS_PLUGIN_NAME}/available`
+
 module.exports = {
   PLUGIN_NAME,
   PLUGIN_API_BASE,
   PLUGIN_CONFIG_ENDPOINT,
-  CONFIG_CACHE_TTL
+  CONFIG_CACHE_TTL,
+  MOMENTS_PLUGIN_NAME,
+  MOMENTS_API_BASE,
+  MOMENTS_LIST_ENDPOINT,
+  MOMENTS_AVAILABLE_ENDPOINT
 }

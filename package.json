@@ -1,6 +1,6 @@
 {
   "name": "halo-weapp",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Halo 博客微信小程序端",
   "private": true,
   "scripts": {

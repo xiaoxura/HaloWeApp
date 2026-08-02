@@ -5,7 +5,7 @@
 // plugin-halo-weapp 的服务端安全边界中。当前读者端全部使用 Public API，不需要管理员 PAT。
 module.exports = {
   // 小程序版本号（“我的”页面等展示位置统一从这里读取）
-  version: '0.3.0',
+  version: '0.4.0',
 
   // 你的 Halo 博客地址（必须 HTTPS，且已加入小程序 request 合法域名）
   baseUrl: 'https://www.uomn.cn'

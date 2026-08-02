@@ -7,6 +7,15 @@
     "pageSize": 20,
     "fontUrl": "https://cdn.example.com/font.woff2"
   },
+  "features": {
+    "moments": {
+      "enabled": true,
+      "commentEnabled": false
+    },
+    "readerAccount": {
+      "enabled": true
+    }
+  },
   "commentEnabled": true,
   "commentOptions": {
     "submitEnabled": true,
