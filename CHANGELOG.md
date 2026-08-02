@@ -5,7 +5,8 @@
 ## [未发布]
 
 目标版本：HaloWeApp v0.4.0，配套 `plugin-halo-weapp` v0.2.0。当前为 RC 开发分支；双真机、
-真实登录/注销、生产暗部署与回滚演练完成前不创建 v0.4.0 tag。
+真实登录/注销、生产暗部署与回滚演练完成前不创建 v0.4.0 tag。已确认插件 v0.1.0 tag
+不可执行；必须先正式发布并核验 v0.1.1 维护基线。
 
 ### 新增
 
@@ -59,6 +60,9 @@
   pack ignore 生效
 - 自动化和开发者工具结果不替代 iOS/Android 真机、弱网、合法域名、真实账号、插件暗部署或
   回滚证据；未完成项目见 `docs/release-checklist-v0.4.0.md`
+- 插件 `hotfix/v0.1.1` / `cfaa16f` 已在 Halo 2.23.3/2.25.4 完成
+  v0.2.0 → v0.1.1 → v0.2.0，本机 ConfigMap/Moment/匿名路由闭环与 GitHub CI 通过；正式
+  v0.1.1 tag/Release、目标环境 identityKey/WeAppUser 恢复和旧 v0.3.0 客户端仍待完成
 
 ### 未包含
 

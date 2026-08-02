@@ -17,9 +17,10 @@ v0.4.0 只验收 P0 V040-00～V040-08：公开 Moment 阅读、媒体/搜索/点
 | 仓库 | 候选分支/提交 | 目标版本 | 状态 |
 | --- | --- | --- | --- |
 | HaloWeApp | `develop/v0.4.0`；功能基线 `671246e`、RC 收口基线 `63f5478`，最终文档/门禁以包含本文的提交为准 | 0.4.0 | RC，未打 tag |
-| plugin-halo-weapp | `develop/v0.2.0` / `c27429e` | 0.2.0 | RC，未打 tag |
+| plugin-halo-weapp | `develop/v0.2.0` / `eb98ee0` | 0.2.0 | RC，未打 tag |
 | HaloWeApp 回滚 | tag `v0.3.0` / `290ffa8` | 0.3.0 | tag 存在 |
-| plugin 回滚 | tag `v0.1.0` / `df1dcf3` | 0.1.0 | tag 存在 |
+| plugin 回滚候选 | `hotfix/v0.1.1` / `cfaa16f` | 0.1.1 | 已推送且 CI/双 Halo 闭环通过；未打 tag/Release |
+| plugin 历史 tag | tag `v0.1.0` / `df1dcf3` | 0.1.0 | **禁止回滚**：真实 Halo 加载/装配/RBAC 失败 |
 
 版本静态核验：
 
@@ -31,6 +32,8 @@ v0.4.0 只验收 P0 V040-00～V040-08：公开 Moment 阅读、媒体/搜索/点
 | 插件 `gradle.properties` | 0.2.0 | PASS |
 | 插件 OpenAPI `info.version` | 0.2.0 | PASS |
 | 插件 jar `plugin.yaml requires` | `>=2.23.0` | PASS |
+| 回滚候选 `gradle.properties` / OpenAPI | 0.1.1 | PASS |
+| 回滚候选 jar `plugin.yaml requires` | `>=2.23.0` | PASS |
 
 ## 2. 验证环境
 
@@ -82,6 +85,9 @@ node --check <全部变更 JS>
 | YAML 解析 | PASS | workflow/settings/plugin/roles 均可解析 |
 | feature 默认值 | PASS | moments、Moment 评论、readerAccount 均为 false |
 
+最终插件文档更正提交 `eb98ee0` 的 GitHub Actions
+[run 30741191083](https://github.com/xiaoxura/plugin-halo-weapp/actions/runs/30741191083) 也已成功。
+
 插件 jar 证据（源树 `c27429e`，正式 tag 前仍须重建）：
 
 - 文件：`plugin-halo-weapp-0.2.0.jar`；
@@ -93,6 +99,24 @@ node --check <全部变更 JS>
 
 > jar SHA 只对应本次本地构建。正式 GitHub Release 必须从最终 tag 重新构建并记录新的、可下载
 > 产物 SHA，不能直接把本文哈希当作永久供应链证明。
+
+### 3.3 plugin-halo-weapp v0.1.1 维护候选
+
+v0.1.0 tag 在真实 Halo 回滚时暴露四项 P0：Setting 不在 `extensions/`、两个多构造器组件未
+选择生产注入构造器、config 缺少 anonymous `list`、旧 Setting schema 会删除 v0.2.0
+`features` ConfigMap 组。`hotfix/v0.1.1` / `cfaa16f` 已全部修复。
+
+| 项目 | 结果 |
+| --- | --- |
+| Halo API 2.23.0 / 2.25.0 | PASS：71/71，0 fail/skip |
+| GitHub Actions | PASS：[run 30741013676](https://github.com/xiaoxura/plugin-halo-weapp/actions/runs/30741013676) |
+| jar | 117572 bytes；SHA-256 `6c2cfc04ff883fe823eb64a69a0d47dc4ffbaac07e2744ce0cc548c79634c40c` |
+| 资源布局 | 根 `settings.yaml` 不存在；`extensions/settings.yaml`、Role 与 manifest 引用一致 |
+| class | 50，全部位于 `run/halo/weapp/`，无第三方 class |
+| OpenAPI / YAML / Gitleaks | 有效；OpenAPI 仅既有 1 个 style warning；Git 历史与目录 0 leak |
+
+候选验证记录位于
+[`hotfix/v0.1.1/docs/release-validation-v0.1.1.md`](https://github.com/xiaoxura/plugin-halo-weapp/blob/hotfix/v0.1.1/docs/release-validation-v0.1.1.md)。正式维护发布仍须从最终 tag 重建并核验 Release 产物。
 
 ## 4. 包体与 pack ignore
 
@@ -128,6 +152,7 @@ TOTAL 仍为 236,493 bytes，与无 canary 完全一致。因此 `docs/`、`test
 | PRIVATE/未审核/已删除 | PRIVATE 在两版实际匿名列表排除且详情 404；其余 fixture 防御性过滤 | PARTIAL：未审核/已删除真实场景 PENDING |
 | 登录/恢复/401/隐私变化/退出/注销 | 双端 162 + 100 项测试 | PASS（自动化范围），真实微信 PENDING |
 | 旧 v0.3.0 客户端 + v0.2.0 插件 | 路径/DTO 向后兼容测试和静态契约 | PARTIAL，实际暗部署回归 PENDING |
+| v0.2.0 → v0.1.1 → v0.2.0 | Halo 2.23.3/2.25.4 真实插件协调、旧路由、ConfigMap/Setting/Moment 哈希 | PASS（本机 H2 二进制范围），目标环境/旧客户端 PENDING |
 
 2026-08-02 对当前 `config.baseUrl` 做了不保存正文的匿名探测：
 
@@ -175,6 +200,38 @@ PHOTO/VIDEO/AUDIO/POST 媒体经当前客户端 adapter 转换后均为 `support
 服务器契约和 adapter，不替代真机媒体播放。尝试由管理员创建 `approved=false` Moment 时会被
 Moment reconciler 自动批准，因此“真实未审核过滤”仍只有 fixture 证据，不能标记为已完成。
 
+### 5.3 本机备份恢复与 v0.1.1 回滚直接证据
+
+停止 Halo 2.23.3 后对完整数据目录制作 tar（SHA-256
+`2981b94f254be5bb1dfe64b8e5fe085e3c82afc534dbd4ee33981d966e47c395`），恢复到独立
+`halo-weapp-rc-2233-rollback` 容器。副本 readiness、v0.2.0/Moment 1.16.1 jar 哈希、全部匿名
+路由、PUBLIC/PRIVATE Moment 数据均与源运行时一致。这证明本机 H2 完整目录可恢复，但不证明
+目标数据库、反向代理、identityKey 与已有 WeAppUser 恢复。
+
+随后在恢复副本 2.23.3 和原隔离 2.25.4 分别执行相同二进制闭环：
+
+```text
+v0.2.0 STARTED
+→ 停用并卸载（Setting 404，ConfigMap 保留）
+→ 安装/启用 v0.1.1
+→ 升级回 v0.2.0
+```
+
+两个运行时直接结果一致：
+
+- v0.1.1 均为 `STARTED` / Ready；运行时 jar SHA 与第 3.3 节候选相同；
+- `GET /config` 为 200 JSON；`/session` 为 503 `HALO_UNAVAILABLE`；评论/回复为 401
+  `SESSION_REQUIRED`，均无 `/login` 302；
+- ConfigMap 规范化数据 SHA-256 全程保持
+  `e562f8b79645e188dcf855c6b47780c89bb573d096b26af90bc0f28a2309d351`；
+- v0.1.1 Setting 携带明确不生效的前向 `features` 组；升级回 v0.2.0 后 Setting spec SHA-256
+  恢复为 `a4023633a1c241c9cd469085d50700ebddeb5933aabbae42fd8ec8706eb049f0`；
+- Moment 始终 `available=true`，PUBLIC 列表/详情保留，PRIVATE 不进入列表且详情 404；
+- 恢复后的 v0.2.0 全部九条匿名 route 再次通过，运行时 jar SHA 恢复为 `85f64f38…f0652b3`。
+
+因此 v0.1.0 已被直接证据否定；v0.1.1 是唯一可继续签发的维护回滚候选。但本段没有已有
+WeAppUser/identityKey、真实微信、v0.3.0 客户端 UI 或目标环境证据，不能据此关闭 §9/§11 全部门禁。
+
 ## 6. 凭据、日志与依赖审计
 
 ### 6.1 凭据/真实资料
@@ -184,7 +241,7 @@ Gitleaks 8.30.1 结果：
 | 仓库 | Git 全历史 | 当前工作树 |
 | --- | ---: | ---: |
 | HaloWeApp | PASS：候选分支完整历史，0 leak | PASS：0 leak |
-| plugin-halo-weapp | PASS：11 commits，0 leak | PASS：0 leak |
+| plugin-halo-weapp | PASS：仓库全部 refs 共 13 个提交（含 develop/hotfix），0 leak | PASS：两个工作树均 0 leak |
 
 插件 `.gitleaks.toml` 只允许 v0.1.0 以前两个已审查的确定性文档/测试占位值；当前 OpenAPI 和测试
 已改为 `example` / `test-...-placeholder`。本地 JDK、Gradle cache 和 build 输出按 `.gitignore`
@@ -254,18 +311,22 @@ AppSecret 或 identityKey。
 | 退出与注销二次确认 | PENDING | PENDING | token 失效；公开评论说明可见 |
 | 注销后二次查询/全部会话 | PENDING | PENDING | 资源不存在，全部账号 token 失效 |
 
-## 9. 暗部署、备份与回滚（待执行）
+## 9. 暗部署、备份与回滚（本机二进制部分通过，目标环境待执行）
 
-文档已在 plugin `c27429e` 补齐，包含两个 ConfigMap、WeAppUser、identityKey 32 字节/指纹、恢复
-顺序和 v0.1.0 回滚约束。但以下必须在隔离/生产等价环境实际演练：
+文档已在 plugin `eb98ee0` 修正，包含两个 ConfigMap、WeAppUser、identityKey 32 字节/指纹、
+恢复顺序和 v0.1.1 回滚约束。第 5.3 节已证明本机完整 H2 目录恢复与双 Halo 二进制往返，但
+以下仍必须在目标隔离/生产等价环境实际演练：
 
+- [x] 本机 Halo 2.23.3 完整数据目录备份/独立恢复，v0.2.0/Moment/匿名数据通过；
+- [x] 本机 Halo 2.23.3/2.25.4 执行 v0.2.0 → v0.1.1 → v0.2.0，ConfigMap/Setting/Moment 通过；
+- [ ] 完成 v0.1.1 最终审查、tag、GitHub Release jar 与 SHA-256 核验；
 - [ ] 备份 `plugin-halo-weapp-configmap`、`plugin-halo-weapp-identity`、全部 WeAppUser 和评论；
 - [ ] 使用同一恢复点恢复，并验证 identityKey SHA-256 指纹一致；
 - [ ] 已有 WeAppUser 时删除/清空 identity ConfigMap，确认返回 HALO_UNAVAILABLE 且不生成 key；
 - [ ] 恢复 key 后，已有账号不携带昵称恢复到原 profile；
 - [ ] v0.2.0 所有新开关关闭暗部署，旧 v0.3.0 config/session/文章评论无回归；
 - [ ] 按 readerAccount → 评论写入 → moments → PluginMoments 顺序关闭；
-- [ ] 回滚插件 v0.1.0 + 小程序 v0.3.0，保留 identity ConfigMap/WeAppUser；
+- [ ] 在目标环境回滚插件 v0.1.1 + 小程序 v0.3.0，保留 identity ConfigMap/WeAppUser；
 - [ ] 再升级 v0.2.0 并恢复已有账号。
 
 ## 10. 隐私与审核（待签字）
@@ -285,6 +346,8 @@ AppSecret 或 identityKey。
 | V040-00～V040-07 实现与自动化 | PASS（现有证据范围） |
 | V040-08 文档、版本、包体、pack ignore、双端 build | PASS |
 | Halo/Moment 双版本本机隔离 runtime | PASS（H2 服务器范围） |
+| v0.1.1 双 Halo 二进制回滚闭环 | PASS（本机 H2/无真实身份数据范围） |
+| v0.1.1 正式维护 tag/Release | **PENDING；v0.1.0 明确禁止使用** |
 | iOS/Android 双真机 | **PENDING** |
 | 登录/恢复/退出/注销真实微信记录 | **PENDING** |
 | 插件暗部署、identityKey 恢复、旧客户端回滚 | **PENDING** |
@@ -295,8 +358,9 @@ AppSecret 或 identityKey。
 因此当前只能称为 **RC 开发候选**，不能将 V040-08、M4 或完整 v0.4.0 目标标记完成，也不能创建
 HaloWeApp `v0.4.0` / plugin `v0.2.0` tag。完成上述直接证据并确认 P0 缺陷为 0 后，才可：
 
-1. 从最终提交重新执行全部测试、Gitleaks、依赖审计、OpenAPI 和 preview/build；
-2. 记录最终小程序 TOTAL 与 jar SHA-256；
-3. 合并到 release 分支并创建两个带注释 tag；
-4. 推送 tag，核对 GitHub Release 产物来源与校验和；
-5. 按“插件暗部署 → 小程序只读 → Moment → 读者登录 → 文章评论”的顺序灰度。
+1. 先完成 v0.1.1 最终审查、测试、带注释 tag 与 GitHub Release jar/SHA-256 核验；
+2. 从 v0.4.0/v0.2.0 最终提交重新执行全部测试、Gitleaks、依赖审计、OpenAPI 和 preview/build；
+3. 记录最终小程序 TOTAL 与 v0.2.0 jar SHA-256；
+4. 合并到 release 分支并创建 v0.4.0/v0.2.0 两个带注释 tag；
+5. 推送 tag，核对 GitHub Release 产物来源与校验和；
+6. 按“插件暗部署 → 小程序只读 → Moment → 读者登录 → 文章评论”的顺序灰度。
