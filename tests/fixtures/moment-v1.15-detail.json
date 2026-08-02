@@ -1,0 +1,34 @@
+{
+  "_fixtureSource": "按 PluginMoments v1.15.0 MomentVo 官方类型定义合成",
+  "metadata": {
+    "creationTimestamp": "2025-11-01T08:00:00Z",
+    "name": "moment-v115-photo"
+  },
+  "owner": {
+    "avatar": "/upload/v115-avatar.png",
+    "displayName": "v1.15 作者",
+    "name": "v115-owner"
+  },
+  "spec": {
+    "approved": true,
+    "content": {
+      "html": "<p>v1.15 详情正文</p>",
+      "medium": [
+        {
+          "originType": "image/png",
+          "type": "PHOTO",
+          "url": "/upload/v115-photo.png"
+        }
+      ],
+      "raw": "<p>v1.15 详情正文</p>"
+    },
+    "owner": "v115-owner",
+    "releaseTime": "2025-11-01T08:00:00Z",
+    "tags": ["v1.15"],
+    "visible": "PUBLIC"
+  },
+  "stats": {
+    "approvedComment": 1,
+    "upvote": 2
+  }
+}

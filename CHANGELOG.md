@@ -9,10 +9,14 @@
 - 固定 `PluginMoments` 名称、Public API 与 available 探测路径；冷启动能力探测仅内存缓存并发单飞
 - 运行时配置增加 `features.moments` / `features.readerAccount` 白名单与安全默认值
 - `canReadMoments()`、`canLogin()` 和 Moment 评论预留门禁；缓存不能开启身份或写能力
+- Moment v1.15/v1.16 adapter 与脱敏/合成夹具，覆盖列表、详情、字段缺失及
+  PHOTO/VIDEO/AUDIO/POST/未知媒体；匿名列表防御性过滤私有、未审核和已删除内容
+- Moment 列表/详情 API、固定插件白名单探测和通用 tracker 点赞接口
 
 ### 变更
 
 - `config.version`、npm package 与 lockfile 开发版本同步为 0.4.0
+- 评论与 Moment 摘要共用 HTML 转安全纯文本实现；Moment 详情复用既有富文本清理与资源补全管线
 
 ## [0.3.0] - 2026-08-01
 

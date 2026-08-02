@@ -1,5 +1,20 @@
 const { get, post } = require('./request')
-const { PLUGIN_API_BASE } = require('./plugin-contract')
+const {
+  PLUGIN_API_BASE,
+  MOMENTS_PLUGIN_NAME,
+  MOMENTS_LIST_ENDPOINT,
+  MOMENTS_AVAILABLE_ENDPOINT
+} = require('./plugin-contract')
+
+const AVAILABLE_ENDPOINTS = Object.freeze({
+  [MOMENTS_PLUGIN_NAME]: MOMENTS_AVAILABLE_ENDPOINT
+})
+
+function invalidArgument(message) {
+  const error = new TypeError(message)
+  error.type = 'validation'
+  return Promise.reject(error)
+}
 
 /**
  * Halo API 接口层
@@ -24,6 +39,26 @@ module.exports = {
 
   getTagPostList: (name, params) =>
     get(`/apis/api.content.halo.run/v1alpha1/tags/${name}/posts`, params),
+
+  // ===== 瞬间（PluginMoments >= 1.15.0 Public API）=====
+  getMomentList: (params) => get(MOMENTS_LIST_ENDPOINT, params),
+
+  getMomentByName: (name) => {
+    if (typeof name !== 'string' || !name.trim() || name.length > 128) {
+      return invalidArgument('Moment name 不合法')
+    }
+    return get(`${MOMENTS_LIST_ENDPOINT}/${encodeURIComponent(name.trim())}`)
+  },
+
+  // 通用调用面只接受编译期白名单中的固定插件名，页面不能提供任意探测路径。
+  getPluginAvailability(pluginName) {
+    const endpoint = AVAILABLE_ENDPOINTS[pluginName]
+    return endpoint ? get(endpoint, null, { timeout: 5000 }) : invalidArgument('不支持的插件能力')
+  },
+
+  getMomentsPluginAvailability() {
+    return module.exports.getPluginAvailability(MOMENTS_PLUGIN_NAME)
+  },
 
   // ===== 评论（读取走 Halo Public API；写入必须经配套插件安全网关） =====
   getCommentList: (params) => get('/apis/api.halo.run/v1alpha1/comments', params),
@@ -58,12 +93,24 @@ module.exports = {
   getStats: () => get('/apis/api.halo.run/v1alpha1/stats/-'),
 
   // 点赞 / 浏览计数（tracker 形式）
-  upvote: (name) =>
-    post('/apis/api.halo.run/v1alpha1/trackers/upvote', {
-      group: 'content.halo.run',
-      plural: 'posts',
-      name
-    }),
+  upvoteSubject(subject) {
+    const it = subject && typeof subject === 'object' ? subject : {}
+    const validPart = (value, max) =>
+      typeof value === 'string' && value.length > 0 && value.length <= max && /^[A-Za-z0-9.-]+$/.test(value)
+    if (!validPart(it.group, 100) || !validPart(it.plural, 100) || !validPart(it.name, 128)) {
+      return invalidArgument('点赞主体不合法')
+    }
+    return post('/apis/api.halo.run/v1alpha1/trackers/upvote', {
+      group: it.group,
+      plural: it.plural,
+      name: it.name
+    })
+  },
+
+  // 文章兼容 wrapper，旧页面无需变更。
+  upvote(name) {
+    return module.exports.upvoteSubject({ group: 'content.halo.run', plural: 'posts', name })
+  },
 
   reportCounter: (name) =>
     post('/apis/api.halo.run/v1alpha1/trackers/counter', {

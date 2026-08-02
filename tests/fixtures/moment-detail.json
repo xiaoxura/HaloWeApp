@@ -1,0 +1,36 @@
+{
+  "_fixtureSource": "脱敏自测试站 PluginMoments v1.16.1 详情，并加入安全回归标签",
+  "metadata": {
+    "creationTimestamp": "2026-01-20T06:41:27.421Z",
+    "name": "moment-fixture-photo",
+    "version": 25
+  },
+  "owner": {
+    "avatar": "/upload/fixture-avatar.png",
+    "displayName": "示例作者",
+    "name": "fixture-owner"
+  },
+  "spec": {
+    "approved": true,
+    "content": {
+      "html": "<style>page{display:none}</style><p onclick=\"evil()\">详情正文 &amp; 安全测试</p><script>alert(1)</script><iframe src=\"https://evil.example\"></iframe><p><a href=\"javascript:alert(1)\">危险链接</a><img src=\"/upload/moment-inline.png\"></p>",
+      "medium": [
+        {
+          "originType": "image/jpeg",
+          "type": "PHOTO",
+          "url": "/upload/moment-photo.jpg"
+        }
+      ],
+      "raw": "<p>详情正文 &amp; 安全测试</p>"
+    },
+    "owner": "fixture-owner",
+    "releaseTime": "2026-01-20T06:41:23.019Z",
+    "tags": ["安全回归"],
+    "visible": "PUBLIC"
+  },
+  "stats": {
+    "approvedComment": 2,
+    "totalComment": 2,
+    "upvote": 3
+  }
+}

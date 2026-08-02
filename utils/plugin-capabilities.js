@@ -1,4 +1,4 @@
-const request = require('./request')
+const api = require('./api')
 const { MOMENTS_AVAILABLE_ENDPOINT } = require('./plugin-contract')
 
 /**
@@ -52,7 +52,7 @@ function createPluginCapabilities(deps) {
 }
 
 const pluginCapabilities = createPluginCapabilities({
-  get: (path) => request.get(path, null, { timeout: 5000 })
+  get: () => api.getMomentsPluginAvailability()
 })
 
 module.exports = {

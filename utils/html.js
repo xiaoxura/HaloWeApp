@@ -134,6 +134,26 @@ function decodeEntities(text) {
   return text.replace(/&(lt|gt|amp|quot|#39|nbsp);/g, (m, name) => HTML_ENTITIES[name] || m)
 }
 
+/**
+ * 受控 HTML => 纯文本摘要。评论与 Moment 列表共用，避免在长列表批量实例化 mp-html。
+ * 危险/不可见标签连同内容移除，块级标签转换行，其余标签全部剥离。
+ */
+function htmlToText(html) {
+  if (!html || typeof html !== 'string') return ''
+  return html
+    .replace(/<(script|iframe|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '')
+    .replace(/<(script|iframe|style)\b[^>]*\/?>/gi, '')
+    .replace(/<br\b[^>]*\/?>/gi, '\n')
+    .replace(/<\/(p|div|li|blockquote|h[1-6])\s*>/gi, '\n')
+    .replace(/<[^>]*>/g, '')
+    .replace(/\r/g, '')
+    .split('\n')
+    .map((line) => decodeEntities(line).trim())
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
 function stripTags(html) {
   return html.replace(/<[^>]*>/g, '')
 }
@@ -170,6 +190,7 @@ module.exports = {
   downgradeCustomTags,
   applyLayoutFixes,
   decodeEntities,
+  htmlToText,
   extractCodeBlocks,
   preparePostContent
 }

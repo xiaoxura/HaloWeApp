@@ -1,0 +1,35 @@
+{
+  "_fixtureSource": "字段缺失、非法值与匿名可见性边界合成样本",
+  "page": 1,
+  "size": 10,
+  "total": 5,
+  "items": [
+    {
+      "metadata": { "name": "moment-minimal-public" },
+      "spec": {
+        "approved": true,
+        "visible": "PUBLIC",
+        "content": null,
+        "tags": ["", "有效标签", "有效标签", 123]
+      }
+    },
+    {
+      "metadata": { "name": "moment-private" },
+      "spec": { "approved": true, "visible": "PRIVATE", "content": { "html": "私有" } }
+    },
+    {
+      "metadata": { "name": "moment-unapproved" },
+      "spec": { "approved": false, "visible": "PUBLIC", "content": { "html": "未审核" } }
+    },
+    {
+      "metadata": { "name": "moment-deleted", "deletionTimestamp": "2026-02-01T00:00:00Z" },
+      "spec": { "approved": true, "visible": "PUBLIC", "content": { "html": "已删除" } }
+    },
+    {
+      "metadata": {},
+      "owner": "invalid",
+      "spec": { "approved": true, "visible": "PUBLIC" },
+      "stats": { "upvote": -1, "approvedComment": "many" }
+    }
+  ]
+}

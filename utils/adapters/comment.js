@@ -1,5 +1,5 @@
 const { resolveUrl } = require('../asset')
-const { decodeEntities } = require('../html')
+const { htmlToText } = require('../html')
 const { formatDate } = require('../util')
 
 /**
@@ -8,31 +8,6 @@ const { formatDate } = require('../util')
  * 兼容 Halo 2.25 的分页 replies 对象与旧版本的 replies 数组（C-01），
  * 评论 HTML 统一转为安全纯文本展示（C-02），不使用富文本渲染用户输入。
  */
-
-/**
- * 评论 HTML => 安全纯文本：
- * - 移除 script / iframe / style 标签及其内容（不可见内容不进入文本）
- * - <br> 与块级标签（p / div / li）转为换行
- * - 其余标签全部剥离（事件属性随标签一并消失）
- * - 解码常见 HTML 实体（单遍，不二次解码）
- */
-function htmlToText(html) {
-  if (!html || typeof html !== 'string') return ''
-  return (
-    html
-      .replace(/<(script|iframe|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '')
-      .replace(/<(script|iframe|style)\b[^>]*\/?>/gi, '')
-      .replace(/<br\b[^>]*\/?>/gi, '\n')
-      .replace(/<\/(p|div|li|blockquote|h[1-6])\s*>/gi, '\n')
-      .replace(/<[^>]*>/g, '')
-      .replace(/\r/g, '')
-      .split('\n')
-      .map((line) => decodeEntities(line).trim())
-      .join('\n')
-      .replace(/\n{3,}/g, '\n\n')
-      .trim()
-  )
-}
 
 /**
  * 回复对象 => ReplyView

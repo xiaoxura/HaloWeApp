@@ -1,0 +1,89 @@
+{
+  "_fixtureSource": "按 PluginMoments v1.16.1 MomentMediaType 官方定义合成",
+  "page": 1,
+  "size": 10,
+  "total": 5,
+  "items": [
+    {
+      "metadata": { "name": "moment-media-photo", "creationTimestamp": "2026-02-01T00:00:00Z" },
+      "owner": { "displayName": "媒体作者", "name": "media-owner" },
+      "spec": {
+        "approved": true,
+        "visible": "PUBLIC",
+        "releaseTime": "2026-02-01T00:00:00Z",
+        "content": {
+          "html": "<p>十张图片，客户端最多保留九张。</p>",
+          "medium": [
+            { "type": "PHOTO", "originType": "image/jpeg", "url": "/media/photo-1.jpg" },
+            { "type": "PHOTO", "originType": "image/jpeg", "url": "/media/photo-2.jpg" },
+            { "type": "PHOTO", "originType": "image/jpeg", "url": "/media/photo-3.jpg" },
+            { "type": "PHOTO", "originType": "image/jpeg", "url": "/media/photo-4.jpg" },
+            { "type": "PHOTO", "originType": "image/jpeg", "url": "/media/photo-5.jpg" },
+            { "type": "PHOTO", "originType": "image/jpeg", "url": "/media/photo-6.jpg" },
+            { "type": "PHOTO", "originType": "image/jpeg", "url": "/media/photo-7.jpg" },
+            { "type": "PHOTO", "originType": "image/jpeg", "url": "/media/photo-8.jpg" },
+            { "type": "PHOTO", "originType": "image/jpeg", "url": "/media/photo-9.jpg" },
+            { "type": "PHOTO", "originType": "image/jpeg", "url": "/media/photo-10.jpg" }
+          ]
+        },
+        "tags": ["PHOTO"]
+      },
+      "stats": { "approvedComment": 0, "upvote": 0 }
+    },
+    {
+      "metadata": { "name": "moment-media-video" },
+      "owner": { "displayName": "媒体作者" },
+      "spec": {
+        "approved": true,
+        "visible": "PUBLIC",
+        "content": {
+          "html": "<p>视频样本</p>",
+          "medium": [{ "type": "VIDEO", "originType": "video/mp4", "url": "/media/video.mp4" }]
+        }
+      },
+      "stats": {}
+    },
+    {
+      "metadata": { "name": "moment-media-audio" },
+      "owner": { "displayName": "媒体作者" },
+      "spec": {
+        "approved": true,
+        "visible": "PUBLIC",
+        "content": {
+          "html": "<p>音频样本</p>",
+          "medium": [{ "type": "AUDIO", "originType": "audio/mpeg", "url": "https://cdn.example.com/audio.mp3" }]
+        }
+      },
+      "stats": {}
+    },
+    {
+      "metadata": { "name": "moment-media-post" },
+      "owner": { "displayName": "媒体作者" },
+      "spec": {
+        "approved": true,
+        "visible": "PUBLIC",
+        "content": {
+          "html": "<p>文章链接样本</p>",
+          "medium": [{ "type": "POST", "originType": "text/html", "url": "https://example.com/archives/post-slug" }]
+        }
+      },
+      "stats": {}
+    },
+    {
+      "metadata": { "name": "moment-media-unknown" },
+      "owner": { "displayName": "媒体作者" },
+      "spec": {
+        "approved": true,
+        "visible": "PUBLIC",
+        "content": {
+          "html": "<p>未来媒体类型</p>",
+          "medium": [
+            { "type": "LIVE", "originType": "application/x-future", "url": "https://cdn.example.com/live" },
+            { "type": "VIDEO", "originType": "video/mp4", "url": "http://unsafe.example/video.mp4" }
+          ]
+        }
+      },
+      "stats": {}
+    }
+  ]
+}
