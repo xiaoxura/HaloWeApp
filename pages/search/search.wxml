@@ -5,7 +5,7 @@
     <input
       class="search-input"
       value="{{keyword}}"
-      placeholder="搜索文章…"
+      placeholder="搜索文章与瞬间…"
       confirm-type="search"
       focus="{{true}}"
       bindinput="onInput"
@@ -62,8 +62,12 @@
     class="result-card card"
     bindtap="goDetail"
     data-name="{{item.metadataName}}"
+    data-kind="{{item.kind}}"
     hover-class="post-card-hover"
   >
+    <view class="result-kind {{item.kind === 'moment' ? 'result-kind-moment' : ''}}">
+      {{item.kind === 'moment' ? '瞬间' : '文章'}}
+    </view>
     <view class="result-title text-clamp-2">
       <text
         wx:for="{{item.titleSegments}}"

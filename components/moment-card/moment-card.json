@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "moment-media": "/components/moment-media/moment-media"
+  }
+}

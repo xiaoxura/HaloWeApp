@@ -1,8 +1,10 @@
 const api = require('../../utils/api')
-const { normalizeSearchResult } = require('../../utils/adapters/search')
+const { MOMENT_TYPE, normalizeSearchResult } = require('../../utils/adapters/search')
+const { pluginCapabilities } = require('../../utils/plugin-capabilities')
 const historyStore = require('../../utils/search-history')
 
 const SEARCH_LIMIT = 20
+const app = getApp()
 
 // 页面级存储适配（search-history 模块本身不依赖 wx，便于测试）
 const storage = {
@@ -51,10 +53,21 @@ Page({
     this.setData({ status: 'searching', searchedKeyword: keyword })
 
     try {
+      // 搜索请求立即开始；仅当响应真的包含 Moment 命中时才等待可选插件能力探测，
+      // 文章-only 搜索不被 PluginMoments 的网络状态拖慢。
       const res = await api.search(keyword, SEARCH_LIMIT)
+      let includeMoments = false
+      const hasMomentHit =
+        res && Array.isArray(res.hits) && res.hits.some((hit) => hit && hit.type === MOMENT_TYPE)
+      if (hasMomentHit) {
+        await app.runtimeReady()
+        if (app.runtimeConfig.canReadMoments()) {
+          includeMoments = await pluginCapabilities.momentsAvailable()
+        }
+      }
       // 只处理最后一次提交的响应；页面卸载后不再 setData
       if (seq !== this._searchSeq || this._unloaded) return
-      const { items, total } = normalizeSearchResult(res)
+      const { items, total } = normalizeSearchResult(res, { includeMoments })
       this.setData({
         status: items.length ? 'done' : 'empty',
         results: items,
@@ -79,7 +92,8 @@ Page({
   },
 
   goDetail(e) {
-    const { name } = e.currentTarget.dataset
-    wx.navigateTo({ url: `/pages/post-detail/post-detail?name=${encodeURIComponent(name)}` })
+    const { name, kind } = e.currentTarget.dataset
+    const page = kind === 'moment' ? 'moment-detail/moment-detail' : 'post-detail/post-detail'
+    wx.navigateTo({ url: `/pages/${page}?name=${encodeURIComponent(name)}` })
   }
 })

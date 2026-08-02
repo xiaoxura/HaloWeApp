@@ -1,0 +1,82 @@
+<view class="moment-media {{compact ? 'moment-media-compact' : ''}}" catchtap="noop">
+  <view wx:if="{{photos.length}}" class="photo-grid photo-count-{{photos.length}}">
+    <view
+      wx:for="{{photos}}"
+      wx:key="index"
+      class="photo-item"
+      data-position="{{index}}"
+      catchtap="previewPhoto"
+    >
+      <image
+        wx:if="{{!item.failed}}"
+        class="photo"
+        src="{{item.url}}"
+        mode="aspectFill"
+        lazy-load
+        data-position="{{index}}"
+        binderror="onPhotoError"
+      />
+      <view wx:else class="media-error">图片加载失败</view>
+      <view wx:if="{{hiddenPhotoCount && index === photos.length - 1}}" class="photo-more">+{{hiddenPhotoCount}}</view>
+    </view>
+  </view>
+
+  <block wx:for="{{videos}}" wx:key="index">
+    <view wx:if="{{compact}}" class="media-link media-summary">
+      <text class="media-symbol">▶</text>
+      <text>视频 · 进入详情播放</text>
+    </view>
+    <view wx:elif="{{item.failed}}" class="media-error media-error-block">视频加载失败，请稍后重试</view>
+    <video
+      wx:else
+      id="{{item.id}}"
+      class="moment-video"
+      src="{{item.url}}"
+      controls
+      autoplay="{{false}}"
+      object-fit="contain"
+      show-center-play-btn
+      enable-progress-gesture
+      data-position="{{index}}"
+      bindplay="onVideoPlay"
+      bindpause="onVideoPause"
+      bindended="onVideoEnded"
+      binderror="onVideoError"
+    />
+  </block>
+
+  <block wx:for="{{audios}}" wx:key="index">
+    <view wx:if="{{compact}}" class="media-link media-summary">
+      <text class="media-symbol">♫</text>
+      <text>音频 · 进入详情播放</text>
+    </view>
+    <view
+      wx:else
+      class="audio-card {{item.failed ? 'media-link-disabled' : ''}}"
+      data-position="{{index}}"
+      catchtap="toggleAudio"
+    >
+      <view class="audio-button">{{item.failed ? '!' : item.loading ? '…' : item.playing ? 'Ⅱ' : '▶'}}</view>
+      <view class="audio-copy">
+        <view class="audio-title">{{item.failed ? '音频加载失败' : item.playing ? '正在播放' : '播放音频'}}</view>
+        <view class="audio-tip">{{item.failed ? '点击重试' : '同一时间仅播放一个媒体'}}</view>
+      </view>
+    </view>
+  </block>
+
+  <view
+    wx:for="{{links}}"
+    wx:key="index"
+    class="media-link {{item.canCopy ? '' : 'media-link-disabled'}}"
+    data-position="{{index}}"
+    catchtap="copyMediaLink"
+  >
+    <text class="media-symbol">{{item.type === 'POST' ? '↗' : '?'}}</text>
+    <view class="media-link-copy">
+      <view class="media-link-title">{{item.label}}</view>
+      <view class="media-link-tip">
+        {{item.canCopy ? (item.type === 'POST' ? '点击复制安全链接' : '点击复制媒体地址') : '没有可用的 HTTPS 地址'}}
+      </view>
+    </view>
+  </view>
+</view>

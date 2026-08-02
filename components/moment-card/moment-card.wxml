@@ -1,0 +1,47 @@
+<view
+  wx:if="{{moment}}"
+  class="moment-card {{compact ? 'moment-card-compact' : ''}}"
+  bindtap="openDetail"
+  hover-class="moment-card-hover"
+>
+  <view class="moment-owner">
+    <image
+      wx:if="{{moment.owner.avatar}}"
+      class="owner-avatar"
+      src="{{moment.owner.avatar}}"
+      mode="aspectFill"
+      lazy-load
+    />
+    <view wx:else class="owner-avatar owner-placeholder">博</view>
+    <view class="owner-copy">
+      <view class="owner-name text-ellipsis">{{moment.owner.displayName || '博主'}}</view>
+      <view class="owner-time">{{moment.releaseTime || '刚刚'}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{moment.text}}" class="moment-text {{compact ? 'moment-text-compact' : ''}}">{{moment.text}}</view>
+  <view wx:elif="{{moment.media.length}}" class="moment-text moment-text-placeholder">分享了一条媒体动态</view>
+
+  <moment-media
+    wx:if="{{moment.media.length}}"
+    moment-name="{{moment.name}}"
+    media="{{moment.media}}"
+    compact="{{compact}}"
+  />
+
+  <view wx:if="{{showTags && moment.tags.length}}" class="moment-tags" catchtap="noop">
+    <text
+      wx:for="{{moment.tags}}"
+      wx:key="*this"
+      class="moment-tag"
+      data-tag="{{item}}"
+      catchtap="selectTag"
+    ># {{item}}</text>
+  </view>
+
+  <view class="moment-stats">
+    <text>♡ {{moment.stats.upvote}}</text>
+    <text>评论 {{moment.stats.approvedComment}}</text>
+    <text wx:if="{{moment.hasMoreContent}}" class="read-more">查看全文</text>
+  </view>
+</view>

@@ -1,5 +1,8 @@
 const api = require('../../utils/api')
 const { normalizePostSummary } = require('../../utils/adapters/post')
+const { normalizeMomentList } = require('../../utils/adapters/moment')
+const { pluginCapabilities } = require('../../utils/plugin-capabilities')
+const { momentMediaSession } = require('../../utils/moment-media-session')
 
 const app = getApp()
 
@@ -17,14 +20,30 @@ Page({
     loadFailed: false,
     showBackTop: false,
     // 远程公告（null = 不展示）
-    announcement: null
+    announcement: null,
+    // 可选 Moment 首页模块；任何依赖失败时静默隐藏，不占用文章状态。
+    latestMoments: []
   },
 
   onLoad() {
+    this._unloaded = false
+    this._momentSequence = 0
     // 不阻塞首屏：先用内置默认值/有效缓存加载；首次拿到插件配置后，如分页大小不同，
     // 自动重载第一页，确保管理员在插件中配置的 pageSize 当次启动即可生效。
     const initialLoad = this.fetchPosts(true)
     this.applyRuntimeConfig(initialLoad)
+    // Moment 分支只能在文章首屏请求已经启动后运行，并等待该请求结束；失败不影响文章。
+    this.loadLatestMoments(initialLoad)
+  },
+
+  onHide() {
+    momentMediaSession.destroy()
+  },
+
+  onUnload() {
+    this._unloaded = true
+    this._momentSequence += 1
+    momentMediaSession.destroy()
   },
 
   // 远程配置消费：公告条与最低版本提示（C-06）
@@ -83,7 +102,9 @@ Page({
       wx.stopPullDownRefresh()
       return
     }
-    this.fetchPosts(true).finally(() => wx.stopPullDownRefresh())
+    const posts = this.fetchPosts(true)
+    const moments = this.loadLatestMoments(posts)
+    Promise.allSettled([posts, moments]).finally(() => wx.stopPullDownRefresh())
   },
 
   onReachBottom() {
@@ -145,6 +166,39 @@ Page({
     }
   },
 
+  async loadLatestMoments(afterPosts) {
+    const sequence = ++this._momentSequence
+    try {
+      // Promise.resolve 同时兼容 fetchPosts 因单飞而返回 undefined 的分支。
+      await Promise.resolve(afterPosts)
+      if (this._unloaded || sequence !== this._momentSequence) return
+      await app.runtimeReady()
+      if (this._unloaded || sequence !== this._momentSequence) return
+      if (!app.runtimeConfig.canReadMoments()) {
+        this.setData({ latestMoments: [] })
+        return
+      }
+      const available = await pluginCapabilities.momentsAvailable()
+      if (this._unloaded || sequence !== this._momentSequence) return
+      if (!available) {
+        this.setData({ latestMoments: [] })
+        return
+      }
+      const response = await api.getMomentList({
+        page: 1,
+        size: 3,
+        sort: ['spec.releaseTime,desc']
+      })
+      if (this._unloaded || sequence !== this._momentSequence) return
+      this.setData({ latestMoments: normalizeMomentList(response).moments.slice(0, 3) })
+    } catch (err) {
+      // 可选依赖 fail-soft：不弹 toast、不修改文章 loading/error 状态。
+      if (!this._unloaded && sequence === this._momentSequence) {
+        this.setData({ latestMoments: [] })
+      }
+    }
+  },
+
   goDetail(e) {
     const { name } = e.currentTarget.dataset
     wx.navigateTo({ url: `/pages/post-detail/post-detail?name=${encodeURIComponent(name)}` })
@@ -157,5 +211,21 @@ Page({
 
   goSearch() {
     wx.navigateTo({ url: '/pages/search/search' })
+  },
+
+  goMoments() {
+    wx.navigateTo({ url: '/pages/moments/moments' })
+  },
+
+  goMomentDetail(e) {
+    const name = e.detail && e.detail.name
+    if (!name) return
+    wx.navigateTo({ url: `/pages/moment-detail/moment-detail?name=${encodeURIComponent(name)}` })
+  },
+
+  goMomentTag(e) {
+    const tag = e.detail && e.detail.tag
+    if (!tag) return
+    wx.navigateTo({ url: `/pages/moments/moments?tag=${encodeURIComponent(tag)}` })
   }
 })

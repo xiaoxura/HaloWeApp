@@ -1,0 +1,162 @@
+.moment-media {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8rpx;
+  overflow: hidden;
+  border-radius: 20rpx;
+}
+
+.photo-count-1 {
+  grid-template-columns: minmax(0, 1fr);
+  width: 72%;
+}
+
+.photo-count-2,
+.photo-count-4 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.photo-item {
+  position: relative;
+  aspect-ratio: 1;
+  height: 204rpx;
+  min-width: 0;
+  overflow: hidden;
+  background: #eef1f5;
+}
+
+.photo-count-1 .photo-item {
+  height: 380rpx;
+}
+
+.photo-count-2 .photo-item,
+.photo-count-4 .photo-item {
+  height: 292rpx;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  animation: media-fade 0.25s ease-out;
+}
+
+.photo-more {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.42);
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.moment-media-compact .photo-grid {
+  max-height: 360rpx;
+}
+
+.moment-video {
+  width: 100%;
+  height: 360rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+  background: #111;
+}
+
+.audio-card,
+.media-link {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  min-height: 92rpx;
+  padding: 18rpx 22rpx;
+  box-sizing: border-box;
+  border-radius: 18rpx;
+  background: #f5f7fa;
+}
+
+.audio-button {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #1e80ff;
+  color: #fff;
+  font-size: 22rpx;
+}
+
+.audio-copy,
+.media-link-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.audio-title,
+.media-link-title {
+  color: #333;
+  font-size: 25rpx;
+  font-weight: 500;
+}
+
+.audio-tip,
+.media-link-tip {
+  margin-top: 4rpx;
+  color: #999;
+  font-size: 20rpx;
+}
+
+.media-symbol {
+  width: 48rpx;
+  color: #1e80ff;
+  font-size: 34rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.media-summary {
+  min-height: 76rpx;
+  color: #666;
+  font-size: 23rpx;
+}
+
+.media-link-disabled {
+  opacity: 0.72;
+}
+
+.media-error {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 16rpx;
+  color: #999;
+  background: #eef1f5;
+  font-size: 20rpx;
+  text-align: center;
+}
+
+.media-error-block {
+  min-height: 160rpx;
+  border-radius: 20rpx;
+}
+
+@keyframes media-fade {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
+}

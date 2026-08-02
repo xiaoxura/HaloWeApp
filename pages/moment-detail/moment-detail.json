@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "瞬间详情",
+  "usingComponents": {
+    "mp-html": "mp-html",
+    "moment-media": "/components/moment-media/moment-media"
+  }
+}

@@ -9,6 +9,8 @@ const { formatDate } = require('../util')
 // 只识别服务端约定的 <B> / </B> 高亮标记（大小写不敏感）；
 // 其他一切字符（包括其他 HTML 标签）按纯文本处理，由 WXML 插值自动转义。
 const B_TAG = /<(\/?)B>/gi
+const POST_TYPE = 'post.content.halo.run'
+const MOMENT_TYPE = 'moment.moment.halo.run'
 
 /**
  * 将含 <B> 标记的文本解析为受控高亮片段。
@@ -52,10 +54,16 @@ function pushSegment(segments, text, highlight) {
  */
 function normalizeSearchHit(hit) {
   const h = hit && typeof hit === 'object' ? hit : {}
+  const kind = h.type === MOMENT_TYPE ? 'moment' : 'post'
+  // Moment 索引的 title 通常是“发表于…… by ……”的生成文本，不适合作为内容标题。
+  // 优先展示正文摘要；文章仍沿用文章标题和摘要。
+  const title = kind === 'moment' ? h.description || h.content || '瞬间' : h.title
+  const description = kind === 'moment' ? '' : h.description || h.content
   return {
     metadataName: h.metadataName || '',
-    titleSegments: parseHighlight(h.title),
-    descSegments: parseHighlight(h.description || h.content),
+    kind,
+    titleSegments: parseHighlight(title),
+    descSegments: parseHighlight(description),
     updateTime: formatDate(h.updateTimestamp || h.creationTimestamp, true),
     permalink: h.permalink || ''
   }
@@ -63,17 +71,19 @@ function normalizeSearchHit(hit) {
 
 /**
  * 搜索响应 => SearchResult。
- * 仅保留已发布的文章命中（过滤回收站、非文章类型）。
+ * 仅保留已发布、未回收的文章，以及调用方明确允许时的 Moment 命中。
+ * Moment 是可选插件，默认不开放，避免旧调用方或陈旧索引制造详情死链。
  */
-function normalizeSearchResult(res) {
+function normalizeSearchResult(res, options = {}) {
   const r = res && typeof res === 'object' ? res : {}
   const hits = Array.isArray(r.hits) ? r.hits : []
+  const includeMoments = options && options.includeMoments === true
   const items = hits
     .filter(
       (h) =>
         h &&
         h.metadataName &&
-        h.type === 'post.content.halo.run' &&
+        (h.type === POST_TYPE || (includeMoments && h.type === MOMENT_TYPE)) &&
         h.published !== false &&
         h.recycled !== true
     )
@@ -87,6 +97,8 @@ function normalizeSearchResult(res) {
 }
 
 module.exports = {
+  POST_TYPE,
+  MOMENT_TYPE,
   parseHighlight,
   normalizeSearchHit,
   normalizeSearchResult

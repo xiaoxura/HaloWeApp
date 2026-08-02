@@ -1,0 +1,94 @@
+<view wx:if="{{status === 'loading'}}" class="state-wrap">
+  <view class="state-text">加载瞬间中…</view>
+</view>
+
+<view wx:elif="{{status === 'unavailable'}}" class="state-wrap">
+  <view class="icon i-alert"></view>
+  <view class="state-text">瞬间功能暂不可用</view>
+  <view class="state-subtext">可能是功能已关闭或 Moment 插件不可用</view>
+  <button class="state-btn" bindtap="retry">重新检测</button>
+  <button class="state-link" bindtap="goBack">返回</button>
+</view>
+
+<view wx:elif="{{status === 'notfound'}}" class="state-wrap">
+  <view class="icon i-file"></view>
+  <view class="state-text">该瞬间不存在、已删除或不再公开</view>
+  <button class="state-btn" bindtap="retry">重新加载</button>
+  <button class="state-link" bindtap="goBack">返回</button>
+</view>
+
+<view wx:elif="{{status === 'error'}}" class="state-wrap">
+  <view class="icon i-alert"></view>
+  <view class="state-text">加载失败，请检查网络</view>
+  <button class="state-btn" bindtap="retry">重新加载</button>
+  <button class="state-link" bindtap="goBack">返回</button>
+</view>
+
+<block wx:else>
+  <view class="moment-detail">
+    <view class="detail-owner">
+      <image
+        wx:if="{{moment.owner.avatar}}"
+        class="owner-avatar"
+        src="{{moment.owner.avatar}}"
+        mode="aspectFill"
+      />
+      <view wx:else class="owner-avatar owner-placeholder">博</view>
+      <view class="owner-copy">
+        <view class="owner-name">{{moment.owner.displayName || '博主'}}</view>
+        <view class="owner-time">{{moment.releaseTime || '刚刚'}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{status === 'empty'}}" class="inline-empty">该瞬间暂无可展示的正文或媒体</view>
+    <view wx:else class="moment-content">
+      <mp-html
+        wx:if="{{moment.html}}"
+        content="{{moment.html}}"
+        tag-style="{{tagStyle}}"
+        lazy-load
+        preview-img
+        scroll-table
+        selectable
+        copy-link
+        loading-img="/images/img-loading.png"
+        error-img="/images/img-error.png"
+        bindlinktap="handleLinkTap"
+      />
+      <view wx:elif="{{moment.text}}" class="moment-plain">{{moment.text}}</view>
+    </view>
+
+    <moment-media
+      wx:if="{{moment.media.length}}"
+      moment-name="{{moment.name}}"
+      media="{{moment.media}}"
+    />
+
+    <view wx:if="{{moment.tags.length}}" class="detail-tags">
+      <text
+        wx:for="{{moment.tags}}"
+        wx:key="*this"
+        class="tag-chip"
+        data-tag="{{item}}"
+        bindtap="openTag"
+      ># {{item}}</text>
+    </view>
+
+    <view class="detail-stats">
+      <text>{{moment.stats.upvote}} 个赞</text>
+      <text>{{moment.stats.approvedComment}} 条评论</text>
+    </view>
+    <view class="bottom-spacer"></view>
+  </view>
+
+  <view class="action-bar">
+    <view class="act {{upvoted ? 'act-on' : ''}}" bindtap="handleUpvote" hover-class="act-hover">
+      <view class="act-icon icon {{upvoted ? 'i-heart-on' : 'i-heart'}}"></view>
+      <text>{{upvoting ? '处理中' : moment.stats.upvote}}</text>
+    </view>
+    <view class="act" bindtap="handleShare" hover-class="act-hover">
+      <view class="act-icon icon i-share"></view>
+      <text>分享</text>
+    </view>
+  </view>
+</block>

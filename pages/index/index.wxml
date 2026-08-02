@@ -1,7 +1,7 @@
 <!-- 搜索胶囊 -->
 <view class="search-pill" bindtap="goSearch">
   <view class="icon i-search"></view>
-  <text class="placeholder">搜索文章…</text>
+  <text class="placeholder">搜索文章与瞬间…</text>
 </view>
 
 <!-- 远程公告条（可关闭，关闭状态按版本保存） -->
@@ -32,6 +32,25 @@
     </view>
   </swiper-item>
 </swiper>
+
+<!-- 最新瞬间：可选插件能力失败时整个模块静默隐藏 -->
+<view wx:if="{{latestMoments.length}}" class="moments-module">
+  <view class="section-head moments-head">
+    <view>
+      <text class="title">最新瞬间</text>
+      <text class="section-subtitle">轻量记录与动态</text>
+    </view>
+    <text class="section-more" bindtap="goMoments">查看全部</text>
+  </view>
+  <moment-card
+    wx:for="{{latestMoments}}"
+    wx:key="name"
+    moment="{{item}}"
+    compact="{{true}}"
+    bind:detail="goMomentDetail"
+    bind:tagtap="goMomentTag"
+  />
+</view>
 
 <!-- 文章列表 -->
 <view class="section-head">

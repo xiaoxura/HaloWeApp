@@ -5,7 +5,9 @@
     "pages/profile/profile",
     "pages/post-detail/post-detail",
     "pages/posts/posts",
-    "pages/search/search"
+    "pages/search/search",
+    "pages/moments/moments",
+    "pages/moment-detail/moment-detail"
   ],
   "window": {
     "navigationBarBackgroundColor": "#f7f8fa",

@@ -98,3 +98,68 @@ test('search: hit 更新时间格式化', () => {
   })
   assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(h.updateTime), h.updateTime)
 })
+
+const postHit = {
+  metadataName: 'post-1',
+  type: 'post.content.halo.run',
+  published: true,
+  recycled: false,
+  title: '文章<B>命中</B>',
+  description: '文章摘要'
+}
+
+const momentHit = {
+  metadataName: 'moment-1',
+  type: 'moment.moment.halo.run',
+  published: true,
+  recycled: false,
+  title: '发表于：2026-01-20 by 作者',
+  description: '瞬间<B>正文</B>',
+  content: '瞬间正文'
+}
+
+test('search: 仅文章结果输出 post kind', () => {
+  const result = normalizeSearchResult({ hits: [postHit], total: 1 })
+  assert.strictEqual(result.items.length, 1)
+  assert.strictEqual(result.items[0].kind, 'post')
+})
+
+test('search: 仅瞬间结果在能力开启时输出 moment kind，并以正文而非生成标题展示', () => {
+  const result = normalizeSearchResult({ hits: [momentHit], total: 1 }, { includeMoments: true })
+  assert.strictEqual(result.items.length, 1)
+  assert.strictEqual(result.items[0].kind, 'moment')
+  assert.deepStrictEqual(result.items[0].titleSegments, [
+    { text: '瞬间', highlight: false },
+    { text: '正文', highlight: true }
+  ])
+  assert.deepStrictEqual(result.items[0].descSegments, [])
+  assert.ok(!result.items[0].titleSegments.some((segment) => segment.text.includes('发表于')))
+})
+
+test('search: 混合结果保持服务端顺序并区分文章与瞬间', () => {
+  const result = normalizeSearchResult({ hits: [momentHit, postHit], total: 2 }, { includeMoments: true })
+  assert.deepStrictEqual(
+    result.items.map((item) => `${item.kind}:${item.metadataName}`),
+    ['moment:moment-1', 'post:post-1']
+  )
+})
+
+test('search: Moment 功能或插件停用时过滤瞬间命中', () => {
+  const result = normalizeSearchResult({ hits: [momentHit, postHit], total: 2 }, { includeMoments: false })
+  assert.deepStrictEqual(result.items.map((item) => item.metadataName), ['post-1'])
+})
+
+test('search: 陈旧索引中的未发布、回收或未知 Moment 不制造死链', () => {
+  const result = normalizeSearchResult(
+    {
+      hits: [
+        { ...momentHit, metadataName: 'draft', published: false },
+        { ...momentHit, metadataName: 'recycled', recycled: true },
+        { ...momentHit, metadataName: '', published: true },
+        { ...momentHit, metadataName: 'visible' }
+      ]
+    },
+    { includeMoments: true }
+  )
+  assert.deepStrictEqual(result.items.map((item) => item.metadataName), ['visible'])
+})

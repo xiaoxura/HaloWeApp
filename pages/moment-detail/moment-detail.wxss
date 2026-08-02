@@ -1,0 +1,150 @@
+.moment-detail {
+  margin: 24rpx 28rpx 0;
+  padding: 32rpx 32rpx 0;
+  border-radius: 28rpx;
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+
+.detail-owner {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 1rpx solid #f0f1f3;
+}
+
+.owner-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #eef1f5;
+}
+
+.owner-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(135deg, #ff9f5a, #ff6f61);
+  font-size: 24rpx;
+}
+
+.owner-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.owner-name {
+  color: #222;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.owner-time {
+  margin-top: 5rpx;
+  color: #999;
+  font-size: 21rpx;
+}
+
+.moment-content,
+.moment-plain {
+  padding-top: 26rpx;
+  color: #333;
+  font-size: 28rpx;
+  line-height: 1.8;
+  word-break: break-word;
+}
+
+.moment-plain {
+  padding-top: 0;
+  white-space: pre-wrap;
+}
+
+.inline-empty {
+  padding: 90rpx 0;
+  color: #999;
+  font-size: 25rpx;
+  text-align: center;
+}
+
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  padding: 28rpx 0 8rpx;
+}
+
+.tag-chip {
+  padding: 7rpx 18rpx;
+  border-radius: 999rpx;
+  color: #1e80ff;
+  background: #e8f2ff;
+  font-size: 22rpx;
+}
+
+.detail-stats {
+  display: flex;
+  gap: 28rpx;
+  padding: 24rpx 0 8rpx;
+  color: #999;
+  font-size: 22rpx;
+}
+
+.bottom-spacer {
+  height: 130rpx;
+}
+
+.action-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 48rpx;
+  padding: 0 42rpx env(safe-area-inset-bottom);
+  background: #fff;
+  box-shadow: 0 -4rpx 32rpx rgba(0, 0, 0, 0.05);
+}
+
+.act {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #666;
+  font-size: 17rpx;
+}
+
+.act-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.act-on {
+  color: #ef4444;
+}
+
+.state-subtext {
+  max-width: 560rpx;
+  color: #aaa;
+  font-size: 22rpx;
+  text-align: center;
+}
+
+.state-link {
+  margin: 0;
+  padding: 10rpx 30rpx;
+  border: 0;
+  color: #1e80ff;
+  background: transparent;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.state-link::after {
+  border: 0;
+}

@@ -1,7 +1,7 @@
 {
-  "navigationBarTitleText": "我的博客",
+  "navigationBarTitleText": "瞬间",
   "enablePullDownRefresh": true,
-  "onReachBottomDistance": 100,
+  "onReachBottomDistance": 120,
   "usingComponents": {
     "moment-card": "/components/moment-card/moment-card"
   }

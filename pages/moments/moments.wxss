@@ -1,0 +1,47 @@
+.moments-page {
+  padding-top: 16rpx;
+}
+
+.tag-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  margin: 0 32rpx 20rpx;
+  padding: 18rpx 24rpx;
+  border-radius: 18rpx;
+  background: #e8f2ff;
+}
+
+.tag-filter-label {
+  min-width: 0;
+  overflow: hidden;
+  color: #1e80ff;
+  font-size: 24rpx;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tag-filter-clear,
+.state-link {
+  flex-shrink: 0;
+  color: #1e80ff;
+  font-size: 23rpx;
+}
+
+.state-subtext {
+  color: #b0b0b0;
+  font-size: 22rpx;
+}
+
+.state-link {
+  margin: 0;
+  padding: 10rpx 24rpx;
+  border: 0;
+  background: transparent;
+  line-height: 1.5;
+}
+
+.state-link::after {
+  border: 0;
+}

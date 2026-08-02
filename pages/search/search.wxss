@@ -75,6 +75,20 @@
   margin: 0 32rpx 24rpx;
   padding: 28rpx 32rpx 24rpx;
 }
+.result-kind {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+  padding: 4rpx 14rpx;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 20rpx;
+}
+.result-kind-moment {
+  background: #fff3e8;
+  color: #e66a20;
+}
 .result-title {
   font-size: 30rpx;
   font-weight: 600;

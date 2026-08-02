@@ -1,0 +1,48 @@
+<view class="moments-page">
+  <view wx:if="{{selectedTag}}" class="tag-filter">
+    <text class="tag-filter-label">正在查看 # {{selectedTag}}</text>
+    <text class="tag-filter-clear" bindtap="clearTag">清除筛选</text>
+  </view>
+
+  <view wx:if="{{status === 'loading' && !moments.length}}" class="state-wrap">
+    <view class="state-text">加载瞬间中…</view>
+  </view>
+
+  <view wx:elif="{{status === 'unavailable'}}" class="state-wrap">
+    <view class="icon i-alert"></view>
+    <view class="state-text">瞬间功能暂不可用</view>
+    <view class="state-subtext">文章阅读不受影响，可稍后重试</view>
+    <button class="state-btn" bindtap="retry">重新检测</button>
+    <button class="state-link" bindtap="goHome">返回首页</button>
+  </view>
+
+  <view wx:elif="{{status === 'error' && !moments.length}}" class="state-wrap">
+    <view class="icon i-alert"></view>
+    <view class="state-text">加载失败，请检查网络</view>
+    <button class="state-btn" bindtap="retry">重新加载</button>
+  </view>
+
+  <view wx:elif="{{status === 'empty'}}" class="state-wrap">
+    <view class="icon i-inbox"></view>
+    <view class="state-text">{{selectedTag ? '该标签下暂无公开瞬间' : '暂无公开瞬间'}}</view>
+    <button wx:if="{{selectedTag}}" class="state-btn" bindtap="clearTag">查看全部</button>
+  </view>
+
+  <block wx:else>
+    <moment-card
+      wx:for="{{moments}}"
+      wx:key="name"
+      moment="{{item}}"
+      bind:detail="goDetail"
+      bind:tagtap="selectTag"
+    />
+    <view wx:if="{{moments.length}}" class="load-status">
+      <text wx:if="{{loading}}">加载中…</text>
+      <text wx:elif="{{!hasMore}}">— 没有更多了 —</text>
+    </view>
+  </block>
+
+  <view wx:if="{{showBackTop}}" class="back-top" bindtap="backTop" hover-class="back-top-hover">
+    <view class="icon i-top"></view>
+  </view>
+</view>

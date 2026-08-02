@@ -75,6 +75,26 @@
   font-weight: 600;
 }
 
+.moments-module {
+  margin-bottom: 36rpx;
+}
+
+.moments-head > view {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+}
+
+.section-subtitle {
+  color: var(--color-text-3);
+  font-size: 21rpx;
+}
+
+.section-more {
+  color: var(--color-primary);
+  font-size: 24rpx;
+}
+
 /* 文章卡片样式见 app.wxss（与列表页共用） */
 
 /* ===== v0.3.0 公告条 ===== */

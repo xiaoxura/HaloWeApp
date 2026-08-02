@@ -1,0 +1,104 @@
+.moment-card {
+  margin: 0 32rpx 24rpx;
+  padding: 28rpx 30rpx 24rpx;
+  border-radius: 28rpx;
+  background: #fff;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.04);
+}
+
+.moment-card-hover {
+  opacity: 0.88;
+}
+
+.moment-owner {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.owner-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #eef1f5;
+}
+
+.owner-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(135deg, #ff9f5a, #ff6f61);
+  font-size: 23rpx;
+}
+
+.owner-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.owner-name {
+  color: #333;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.owner-time {
+  margin-top: 4rpx;
+  color: #999;
+  font-size: 20rpx;
+}
+
+.moment-text {
+  margin-top: 20rpx;
+  color: #333;
+  font-size: 27rpx;
+  line-height: 1.7;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.moment-text-compact {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.moment-text-placeholder {
+  color: #777;
+}
+
+.moment-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 20rpx;
+}
+
+.moment-tag {
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  color: #1e80ff;
+  background: #e8f2ff;
+  font-size: 21rpx;
+}
+
+.moment-stats {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  margin-top: 20rpx;
+  color: #999;
+  font-size: 21rpx;
+}
+
+.read-more {
+  margin-left: auto;
+  color: #1e80ff;
+}
+
+.moment-card-compact {
+  padding-top: 24rpx;
+}
