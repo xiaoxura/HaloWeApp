@@ -44,6 +44,7 @@ test('likes: 旧 Post wrapper 保持兼容', () => {
 test('likes: 非法 kind/name 不写入且 LRU 上限不变', () => {
   likes.markUpvotedSubject('arbitrary', 'x')
   likes.markUpvotedSubject('post', '')
+  likes.markUpvotedSubject('moment', 'moment/invalid')
   assert.strictEqual(store[likes.KEY], undefined)
 
   const originalNow = Date.now

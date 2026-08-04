@@ -32,8 +32,8 @@ Page({
     // 自动重载第一页，确保管理员在插件中配置的 pageSize 当次启动即可生效。
     const initialLoad = this.fetchPosts(true)
     this.applyRuntimeConfig(initialLoad)
-    // Moment 分支只能在文章首屏请求已经启动后运行，并等待该请求结束；失败不影响文章。
-    this.loadLatestMoments(initialLoad)
+    // Moment 分支在文章首屏请求启动后立即运行；失败不影响文章首屏。
+    this.loadLatestMoments()
   },
 
   onHide() {
@@ -49,14 +49,17 @@ Page({
   // 远程配置消费：公告条与最低版本提示（C-06）
   applyRuntimeConfig(initialLoad) {
     app.runtimeReady().then(async () => {
+      if (this._unloaded) return
       const rc = app.runtimeConfig
       const cfg = rc.getConfig()
 
       if (this._pageSize !== cfg.site.pageSize) {
         await initialLoad
+        if (this._unloaded) return
         this._pageSize = cfg.site.pageSize
         await this.fetchPosts(true)
       }
+      if (this._unloaded) return
 
       // 公告：可关闭，关闭状态按版本记录；降级缓存可展示公告但写入口仍关闭
       const ann = cfg.announcement || {}
@@ -82,7 +85,7 @@ Page({
           confirmText: '我知道了'
         })
       }
-    })
+    }).catch(() => {})
   },
 
   dismissAnnouncement() {
@@ -103,7 +106,7 @@ Page({
       return
     }
     const posts = this.fetchPosts(true)
-    const moments = this.loadLatestMoments(posts)
+    const moments = this.loadLatestMoments()
     Promise.allSettled([posts, moments]).finally(() => wx.stopPullDownRefresh())
   },
 
@@ -140,8 +143,9 @@ Page({
         size: this._pageSize,
         sort: ['spec.pinned,desc', 'spec.publishTime,desc']
       })
+      if (this._unloaded) return
 
-      const items = (res.items || []).map(normalizePostSummary)
+      const items = (res.items || []).map(normalizePostSummary).filter((item) => item.name)
 
       this.setData({
         postList: refresh ? items : [...this.data.postList, ...items],
@@ -153,6 +157,7 @@ Page({
           : this.data.bannerList
       })
     } catch (err) {
+      if (this._unloaded) return
       console.error('加载文章失败', err.type || '', err.statusCode || '')
       if (refresh && !this.data.postList.length) {
         // 首屏失败：整页错误态，可重试
@@ -162,15 +167,13 @@ Page({
         wx.showToast({ title: '加载失败，请检查网络', icon: 'none' })
       }
     } finally {
-      this.setData({ loading: false })
+      if (!this._unloaded) this.setData({ loading: false })
     }
   },
 
-  async loadLatestMoments(afterPosts) {
+  async loadLatestMoments() {
     const sequence = ++this._momentSequence
     try {
-      // Promise.resolve 同时兼容 fetchPosts 因单飞而返回 undefined 的分支。
-      await Promise.resolve(afterPosts)
       if (this._unloaded || sequence !== this._momentSequence) return
       await app.runtimeReady()
       if (this._unloaded || sequence !== this._momentSequence) return
@@ -227,5 +230,11 @@ Page({
     const tag = e.detail && e.detail.tag
     if (!tag) return
     wx.navigateTo({ url: `/pages/moments/moments?tag=${encodeURIComponent(tag)}` })
+  },
+
+  goPostDetail(e) {
+    const name = e.detail && e.detail.name
+    if (!name) return
+    wx.navigateTo({ url: `/pages/post-detail/post-detail?name=${encodeURIComponent(name)}` })
   }
 })

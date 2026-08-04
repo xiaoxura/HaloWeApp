@@ -35,6 +35,7 @@
       moment="{{item}}"
       bind:detail="goDetail"
       bind:tagtap="selectTag"
+      bind:posttap="goPostDetail"
     />
     <view wx:if="{{moments.length}}" class="load-status">
       <text wx:if="{{loading}}">加载中…</text>

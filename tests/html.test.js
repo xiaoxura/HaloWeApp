@@ -56,6 +56,40 @@ test('sanitizeHtml: 移除事件属性与 javascript: 协议', () => {
   assert.ok(!/javascript:/i.test(out))
 })
 
+test('sanitizeHtml: 未加引号和控制空白协议同样安全降级', () => {
+  const out = sanitizeHtml(
+    '<a href=javascript:alert(1)>a</a><img src="java\nscript:alert(2)"><a href="vbscript:evil">b</a>'
+  )
+  assert.ok(!/(?:javascript|vbscript):/i.test(out), out)
+  assert.ok(!/href\s*=\s*javascript/i.test(out), out)
+  assert.ok(!/src\s*=\s*java/i.test(out), out)
+  assert.match(out, /href="#"/)
+  assert.match(out, /src="#"/)
+})
+
+test('sanitizeHtml: HTML 实体不能隐藏危险协议', () => {
+  const out = sanitizeHtml(
+    '<a href="java&#x0a;script:alert(1)">a</a>' +
+      '<a href="javascript&colon;alert(2)">b</a>' +
+      '<img src="data&#x3a;text/html,<svg onload=alert(3)">' +
+      '<div style="background:url( java&#x0a;script:alert(4) )">css</div>' +
+      '<div style="background:url(data&#x3a;text/html,evil)">data</div>'
+  )
+  assert.ok(!/(?:javascript|vbscript):/i.test(out), out)
+  assert.ok(!/data:text\/html/i.test(out), out)
+  assert.strictEqual((out.match(/href="#"/g) || []).length, 2)
+  assert.match(out, /src="#"/)
+  assert.ok(!/style=/i.test(out), out)
+  const cssOut = sanitizeHtml(
+    '<div style="background:url(java/**/script:alert(1))">comment</div>' +
+      '<div style="background:url(j\\61vascript:alert(2))">escape</div>' +
+      '<div style="background:url(\\000064ata:text/html,evil)">data</div>'
+  )
+  assert.ok(!/style=/i.test(cssOut), cssOut)
+  assert.ok(!/(?:javascript|vbscript):/i.test(cssOut), cssOut)
+  assert.ok(!/data:text\/html/i.test(cssOut), cssOut)
+})
+
 test('downgradeCustomTags: shiki-code 降级为 div 并保留 pre', () => {
   const html =
     '<shiki-code variant="mac" light-theme="github-light"><pre><code class="language-js">x=1</code></pre></shiki-code>'

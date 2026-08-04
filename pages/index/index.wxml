@@ -49,6 +49,7 @@
     compact="{{true}}"
     bind:detail="goMomentDetail"
     bind:tagtap="goMomentTag"
+    bind:posttap="goPostDetail"
   />
 </view>
 

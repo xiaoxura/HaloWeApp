@@ -7,22 +7,25 @@ const config = require('../config/index')
  *
  * 规则：
  * - 空值 => ''
- * - http(s)://、data:、wxfile:、blob: 等已完成地址 => 原样返回
+ * - https:// 已完成地址 => 原样返回
  * - //cdn.x.com/... 协议相对地址 => 补 https:
  * - /upload/... => baseUrl + 路径
  * - 其他相对路径（upload/...） => baseUrl + '/' + 路径
+ * - http://、data:、wxfile:、blob:、file: 及其他 scheme => 拒绝
  */
 function resolveUrl(url) {
   if (!url || typeof url !== 'string') return ''
   const trimmed = url.trim()
   if (!trimmed) return ''
-  if (/^(https?:)?\/\//i.test(trimmed)) {
-    return trimmed.startsWith('//') ? `https:${trimmed}` : trimmed
-  }
-  if (/^(data:|wxfile:|blob:|file:)/i.test(trimmed)) return trimmed
+  if (/^https:\/\//i.test(trimmed)) return trimmed
+  if (/^\/\//.test(trimmed)) return `https:${trimmed}`
+  // Never reinterpret an explicit scheme (including javascript:, data:, file:)
+  // as a relative path.
+  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return ''
   const base = (config.baseUrl || '').replace(/\/+$/, '')
-  if (!base) return trimmed
-  return trimmed.startsWith('/') ? `${base}${trimmed}` : `${base}/${trimmed}`
+  if (!/^https:\/\//i.test(base)) return ''
+  const resolved = trimmed.startsWith('/') ? `${base}${trimmed}` : `${base}/${trimmed}`
+  return /^https:\/\//i.test(resolved) ? resolved : ''
 }
 
 /**
@@ -31,9 +34,19 @@ function resolveUrl(url) {
  */
 function resolveHtmlAssets(html) {
   if (!html || typeof html !== 'string') return ''
-  return html.replace(/(<img\b[^>]*?\bsrc=)(["'])([^"']*)\2/gi, (match, prefix, quote, src) => {
-    return `${prefix}${quote}${resolveUrl(src)}${quote}`
-  })
+  return html.replace(
+    /(<img\b[^>]*?\bsrc\s*=\s*)(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi,
+    (match, prefix, doubleQuoted, singleQuoted, bare) => {
+      const quote = doubleQuoted !== undefined ? '"' : singleQuoted !== undefined ? "'" : ''
+      const src = doubleQuoted !== undefined
+        ? doubleQuoted
+        : singleQuoted !== undefined
+          ? singleQuoted
+          : bare
+      const resolved = resolveUrl(src)
+      return quote ? `${prefix}${quote}${resolved}${quote}` : `${prefix}${resolved}`
+    }
+  )
 }
 
 module.exports = {

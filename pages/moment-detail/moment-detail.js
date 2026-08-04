@@ -1,36 +1,63 @@
 const api = require('../../utils/api')
-const { normalizeMomentDetail } = require('../../utils/adapters/moment')
+const { normalizeMomentDetail, safeMomentName } = require('../../utils/adapters/moment')
 const { pluginCapabilities } = require('../../utils/plugin-capabilities')
 const { momentMediaSession } = require('../../utils/moment-media-session')
 const { tagStyle } = require('../../utils/rich-text-style')
+const { createCommentThread } = require('../../utils/comment-thread')
 const likes = require('../../utils/likes')
+const { decodeRouteParam } = require('../../utils/route')
 
 const app = getApp()
 
 function safeName(options) {
-  if (!options || typeof options.name !== 'string' || !options.name) return ''
-  try {
-    const name = decodeURIComponent(options.name).trim()
-    return name.length <= 128 ? name : ''
-  } catch (e) {
-    return ''
-  }
+  return safeMomentName(decodeRouteParam(options && options.name))
 }
+
+const commentThread = createCommentThread({
+  isMoment: true,
+  getSubject: (page) => ({
+    group: 'moment.halo.run',
+    kind: 'Moment',
+    version: 'v1alpha1',
+    name: page.data.name
+  })
+})
 
 Page({
   data: {
     name: '',
     moment: null,
     status: 'loading', // loading | ready | unavailable | notfound | empty | error
+    detailLoadError: false,
     tagStyle,
     upvoted: false,
-    upvoting: false
+    upvoting: false,
+    commentEnabled: false,
+    commentSubmitEnabled: false,
+    commentReplyEnabled: false,
+    commentMaxLength: 500,
+    comments: [],
+    commentTotal: 0,
+    commentPage: 1,
+    commentHasNext: false,
+    commentLoading: false,
+    commentLoadError: false,
+    sheetVisible: false,
+    sheetReplyTo: '',
+    initialNickname: '',
+    privacyUrl: '',
+    privacyVersion: '',
+    consentGiven: false
   },
 
   onLoad(options) {
     this._unloaded = false
     this._loadSequence = 0
     this._upvotePromise = null
+    this._commentsLoading = false
+    this._repliesLoading = {}
+    this._replyTarget = null
+    this._idempotencyKey = ''
     const name = safeName(options)
     if (!name) {
       this.setData({ status: 'notfound' })
@@ -41,18 +68,30 @@ Page({
   },
 
   onHide() {
+    const media = typeof this.selectComponent === 'function'
+      ? this.selectComponent('#momentMedia')
+      : null
+    if (media && typeof media.resetPlayback === 'function') media.resetPlayback()
     momentMediaSession.destroy()
   },
 
   onUnload() {
     this._unloaded = true
     this._loadSequence += 1
+    const sheet = this.selectComponent('#commentSheet')
+    if (sheet) sheet.close()
+    this._replyTarget = null
+    this._idempotencyKey = ''
     momentMediaSession.destroy()
   },
 
   async loadMoment() {
     const sequence = ++this._loadSequence
-    this.setData({ status: 'loading' })
+    const existingMoment = this.data.moment
+    this.setData({
+      status: existingMoment ? (existingMoment.contentEmpty ? 'empty' : 'ready') : 'loading',
+      detailLoadError: false
+    })
     try {
       await app.runtimeReady()
       if (this._unloaded || sequence !== this._loadSequence) return
@@ -75,17 +114,32 @@ Page({
       }
       this.setData({
         moment,
-        status: moment.contentEmpty ? 'empty' : 'ready'
+        status: moment.contentEmpty ? 'empty' : 'ready',
+        detailLoadError: false
       })
+      this.configureComments(app.runtimeConfig)
+      if (this.data.commentEnabled) this.fetchComments(1)
     } catch (err) {
       if (this._unloaded || sequence !== this._loadSequence) return
-      console.error('加载瞬间详情失败', err.type || '', err.statusCode || '')
-      this.setData({ status: err && err.statusCode === 404 ? 'notfound' : 'error', moment: null })
+      console.error('加载瞬间详情失败', err && err.type || '', err && err.statusCode || '')
+      const notfound = err && err.statusCode === 404
+      const currentMoment = this.data.moment
+      if (notfound || !currentMoment) {
+        this.setData({ status: notfound ? 'notfound' : 'error', moment: null, detailLoadError: false })
+      } else {
+        this.setData({
+          status: currentMoment.contentEmpty ? 'empty' : 'ready',
+          detailLoadError: true
+        })
+      }
     }
   },
 
+  // Shared with article comments; the helper owns the state machine above.
+  ...commentThread,
+
   retry() {
-    this.loadMoment()
+    return this.loadMoment()
   },
 
   goBack() {
@@ -98,6 +152,12 @@ Page({
     const tag = e.currentTarget.dataset.tag
     if (!tag) return
     wx.navigateTo({ url: `/pages/moments/moments?tag=${encodeURIComponent(tag)}` })
+  },
+
+  goPostDetail(e) {
+    const name = e.detail && e.detail.name
+    if (!name) return
+    wx.navigateTo({ url: `/pages/post-detail/post-detail?name=${encodeURIComponent(name)}` })
   },
 
   handleLinkTap(e) {

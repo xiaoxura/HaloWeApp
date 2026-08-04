@@ -26,6 +26,10 @@
       "spec": { "approved": true, "visible": "PUBLIC", "content": { "html": "已删除" } }
     },
     {
+      "metadata": { "name": "moment-spec-deleted" },
+      "spec": { "approved": true, "visible": "PUBLIC", "deleted": true, "content": { "html": "已删除" } }
+    },
+    {
       "metadata": {},
       "owner": "invalid",
       "spec": { "approved": true, "visible": "PUBLIC" },

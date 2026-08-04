@@ -2,6 +2,7 @@
   "navigationBarTitleText": "瞬间详情",
   "usingComponents": {
     "mp-html": "mp-html",
-    "moment-media": "/components/moment-media/moment-media"
+    "moment-media": "/components/moment-media/moment-media",
+    "comment-sheet": "/components/comment-sheet/comment-sheet"
   }
 }

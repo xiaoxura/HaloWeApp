@@ -9,7 +9,8 @@ const {
   secureAssetUrl,
   normalizeMomentSummary,
   normalizeMomentDetail,
-  normalizeMomentList
+  normalizeMomentList,
+  safeMomentName
 } = require('../utils/adapters/moment')
 
 function fixture(name) {
@@ -94,6 +95,32 @@ test('moment media: PHOTO 最多九张，VIDEO/AUDIO/POST 支持，未知和 HTT
   assert.strictEqual(unknown[1].supported, false)
 })
 
+test('moment POST 媒体: 仅接受服务端明确提供的文章 metadata.name 作为内部目标', () => {
+  const withTarget = normalizeMomentSummary({
+    metadata: { name: 'moment-post-target' },
+    spec: {
+      approved: true,
+      visible: 'PUBLIC',
+      content: {
+        medium: [{ type: 'POST', url: 'https://example.com/archives/a', postName: 'post-123' }]
+      }
+    }
+  })
+  assert.strictEqual(withTarget.media[0].postName, 'post-123')
+
+  const guessedTarget = normalizeMomentSummary({
+    metadata: { name: 'moment-post-no-target' },
+    spec: {
+      approved: true,
+      visible: 'PUBLIC',
+      content: {
+        medium: [{ type: 'POST', url: 'https://example.com/archives/post-123' }]
+      }
+    }
+  })
+  assert.strictEqual(Object.prototype.hasOwnProperty.call(guessedTarget.media[0], 'postName'), false)
+})
+
 test('moment degraded: PRIVATE、未审核、已删除和缺少名称的数据不进入匿名列表', () => {
   const out = normalizeMomentList(fixture('moments-degraded.json'))
   assert.strictEqual(out.moments.length, 1)
@@ -102,7 +129,22 @@ test('moment degraded: PRIVATE、未审核、已删除和缺少名称的数据�
   assert.strictEqual(out.moments[0].owner.avatar, '')
   assert.deepStrictEqual(out.moments[0].tags, ['有效标签'])
   assert.deepStrictEqual(out.moments[0].stats, { upvote: 0, approvedComment: 0 })
-  assert.strictEqual(normalizeMomentDetail(fixture('moments-degraded.json').items[1]), null)
+  const degraded = fixture('moments-degraded.json').items
+  assert.strictEqual(normalizeMomentDetail(degraded[1]), null)
+  assert.strictEqual(normalizeMomentDetail(degraded[2]), null)
+  assert.strictEqual(normalizeMomentDetail(degraded[3]), null)
+  assert.strictEqual(normalizeMomentDetail(degraded[4]), null)
+})
+
+test('moment degraded: 与 tracker 不兼容的主体名称不进入匿名列表或详情', () => {
+  const invalid = {
+    metadata: { name: 'moment/invalid' },
+    spec: { visible: 'PUBLIC', approved: true, content: { html: '<p>不应展示</p>' } }
+  }
+  assert.strictEqual(safeMomentName('moment/invalid'), '')
+  assert.strictEqual(safeMomentName('moment-valid.1'), 'moment-valid.1')
+  assert.deepStrictEqual(normalizeMomentList({ items: [invalid] }).moments, [])
+  assert.strictEqual(normalizeMomentDetail(invalid), null)
 })
 
 test('moment summary: Unicode 摘要按 code point 截断且缺失字段不抛错', () => {

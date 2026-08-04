@@ -1,6 +1,7 @@
 const { resolveUrl } = require('../asset')
 const { pickContent, preparePostContent } = require('../html')
 const { formatDate, formatCount } = require('../util')
+const { safeResourceName } = require('../resource-name')
 
 /**
  * 文章数据适配层。
@@ -22,7 +23,7 @@ function normalizePostSummary(item) {
   const firstCat = categories[0] && categories[0].spec
 
   return {
-    name: (it.metadata && it.metadata.name) || '',
+    name: safeResourceName(it.metadata && it.metadata.name),
     title: spec.title || '无标题',
     cover: resolveUrl(spec.cover),
     pinned: !!spec.pinned,
@@ -50,7 +51,7 @@ function normalizePostDetail(res) {
   const rawContent = pickContent(it.content)
 
   return {
-    name: (it.metadata && it.metadata.name) || '',
+    name: safeResourceName(it.metadata && it.metadata.name),
     title: spec.title || '无标题',
     cover: resolveUrl(spec.cover),
     publishTime: formatDate(spec.publishTime, true),
@@ -64,7 +65,7 @@ function normalizePostDetail(res) {
     upvotes: stats.upvote || 0,
     commentCount: stats.comment || 0,
     tags: tags.map((t) => ({
-      name: (t.metadata && t.metadata.name) || '',
+      name: safeResourceName(t.metadata && t.metadata.name),
       displayName: (t.spec && t.spec.displayName) || ''
     }))
   }

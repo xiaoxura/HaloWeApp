@@ -34,6 +34,13 @@ function errorMessage(err, fallback = '操作失败，请稍后重试') {
   return (err && err.data && err.data.message) || (err && err.message) || fallback
 }
 
+function safeErrorDetails(reason) {
+  return {
+    type: reason && typeof reason.type === 'string' ? reason.type : '',
+    statusCode: reason && Number.isInteger(reason.statusCode) ? reason.statusCode : 0
+  }
+}
+
 Page({
   data: {
     blogName: initialSite.blogName,
@@ -77,7 +84,7 @@ Page({
     })
     app.runtimeReady().then((runtime) => {
       if (!this._unloaded) this.applyRuntime(runtime)
-    })
+    }).catch(() => {})
     this.fetchStats()
   },
 
@@ -153,12 +160,12 @@ Page({
       next.categoryCount = formatCount(res.categoryCount ?? res.category ?? 0)
       next.visitCount = formatCount(res.visitCount ?? res.visit ?? 0)
     } else {
-      console.error('加载统计失败', statsRes.reason)
+      console.error('加载统计失败', safeErrorDetails(statsRes.reason))
     }
     if (tagRes.status === 'fulfilled') {
       next.tagCount = formatCount((tagRes.value && tagRes.value.total) || 0)
     } else {
-      console.error('加载标签数失败', tagRes.reason)
+      console.error('加载标签数失败', safeErrorDetails(tagRes.reason))
     }
     if (Object.keys(next).length && !this._unloaded) {
       this.setData({ stats: { ...this.data.stats, ...next } })

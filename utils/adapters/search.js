@@ -1,4 +1,5 @@
 const { formatDate } = require('../util')
+const { safeResourceName } = require('../resource-name')
 
 /**
  * 搜索结果适配层。
@@ -48,6 +49,30 @@ function pushSegment(segments, text, highlight) {
   }
 }
 
+function normalizedMetadataName(value) {
+  return safeResourceName(value)
+}
+
+function isExplicitlyHiddenMoment(hit) {
+  if (!hit || hit.type !== MOMENT_TYPE) return false
+  const spec = hit.spec && typeof hit.spec === 'object' && !Array.isArray(hit.spec) ? hit.spec : {}
+  const metadata =
+    hit.metadata && typeof hit.metadata === 'object' && !Array.isArray(hit.metadata)
+      ? hit.metadata
+      : {}
+  return (
+    hit.exposed === false ||
+    hit.visible === 'PRIVATE' ||
+    spec.visible === 'PRIVATE' ||
+    hit.approved === false ||
+    spec.approved === false ||
+    hit.deleted === true ||
+    spec.deleted === true ||
+    hit.deletionTimestamp != null ||
+    metadata.deletionTimestamp != null
+  )
+}
+
 /**
  * 单条搜索命中 => SearchHit
  * 页面通过 metadataName 进入文章详情。
@@ -60,7 +85,7 @@ function normalizeSearchHit(hit) {
   const title = kind === 'moment' ? h.description || h.content || '瞬间' : h.title
   const description = kind === 'moment' ? '' : h.description || h.content
   return {
-    metadataName: h.metadataName || '',
+    metadataName: normalizedMetadataName(h.metadataName),
     kind,
     titleSegments: parseHighlight(title),
     descSegments: parseHighlight(description),
@@ -78,19 +103,23 @@ function normalizeSearchResult(res, options = {}) {
   const r = res && typeof res === 'object' ? res : {}
   const hits = Array.isArray(r.hits) ? r.hits : []
   const includeMoments = options && options.includeMoments === true
+  const filteredMomentHit = !includeMoments && hits.some((h) => h && h.type === MOMENT_TYPE)
   const items = hits
     .filter(
       (h) =>
         h &&
-        h.metadataName &&
+        normalizedMetadataName(h.metadataName) &&
         (h.type === POST_TYPE || (includeMoments && h.type === MOMENT_TYPE)) &&
         h.published !== false &&
-        h.recycled !== true
+        h.recycled !== true &&
+        !isExplicitlyHiddenMoment(h)
     )
     .map(normalizeSearchHit)
 
   return {
-    total: typeof r.total === 'number' ? r.total : items.length,
+    // 服务端 total 也包含被能力门禁过滤的 Moment 命中；此时只能报告当前可导航结果数，
+    // 避免页面显示一个用户无法打开的“总数”。
+    total: filteredMomentHit ? items.length : typeof r.total === 'number' ? r.total : items.length,
     keyword: r.keyword || '',
     items
   }

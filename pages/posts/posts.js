@@ -1,5 +1,6 @@
 const api = require('../../utils/api')
 const { normalizePostSummary } = require('../../utils/adapters/post')
+const { decodeRouteParam } = require('../../utils/route')
 
 const app = getApp()
 
@@ -18,14 +19,14 @@ Page({
 
   onLoad(options) {
     const type = options && options.type
-    const name = options && options.name ? decodeURIComponent(options.name) : ''
+    const name = decodeRouteParam(options && options.name)
     // 参数合法性检查：类型或名称缺失/非法时进入独立错误态
     if ((type !== 'category' && type !== 'tag') || !name) {
       wx.setNavigationBarTitle({ title: '文章列表' })
       this.setData({ paramInvalid: true })
       return
     }
-    const title = decodeURIComponent(options.title || '文章列表')
+    const title = decodeRouteParam(options && options.title, 100) || '文章列表'
     wx.setNavigationBarTitle({ title })
     this._unloaded = false
     this.setData({ type, name })
@@ -38,7 +39,7 @@ Page({
       if (this._unloaded) return
       this._pageSize = runtime.site.pageSize
       await this.fetchPosts(true)
-    })
+    }).catch(() => {})
   },
 
   onUnload() {
@@ -92,7 +93,7 @@ Page({
     try {
       const res = await fetcher
       if (this._unloaded) return
-      const items = (res.items || []).map(normalizePostSummary)
+      const items = (res.items || []).map(normalizePostSummary).filter((item) => item.name)
       this.setData({
         postList: refresh ? items : [...this.data.postList, ...items],
         page: page + 1,

@@ -18,6 +18,12 @@ Component({
       const tag = e.currentTarget.dataset.tag
       if (!tag) return
       this.triggerEvent('tagtap', { tag })
+    },
+
+    openPost(e) {
+      const name = e.detail && e.detail.name
+      if (!name) return
+      this.triggerEvent('posttap', { name })
     }
   }
 })

@@ -54,6 +54,13 @@ test('summary: 相对封面补全域名', () => {
   assert.strictEqual(p.cover, `${config.baseUrl}/upload/cover.png`)
 })
 
+test('summary: 非法 metadata.name 不进入可导航模型', () => {
+  const p = normalizePostSummary({ metadata: { name: 'post/invalid' }, spec: { title: 't' } })
+  assert.strictEqual(p.name, '')
+  const valid = normalizePostSummary({ metadata: { name: 'post-valid.1' }, spec: { title: 't' } })
+  assert.strictEqual(valid.name, 'post-valid.1')
+})
+
 // ===== normalizePostDetail =====
 
 test('detail: 真实夹具全部正常转换，正文非空（B-01 回归）', () => {

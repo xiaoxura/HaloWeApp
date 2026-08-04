@@ -1,7 +1,8 @@
 const api = require('../../utils/api')
-const { MOMENT_TYPE, normalizeSearchResult } = require('../../utils/adapters/search')
+const { normalizeSearchResult } = require('../../utils/adapters/search')
 const { pluginCapabilities } = require('../../utils/plugin-capabilities')
 const historyStore = require('../../utils/search-history')
+const { resolveMomentSearchOption } = require('../../utils/search-flow')
 
 const SEARCH_LIMIT = 20
 const app = getApp()
@@ -38,6 +39,8 @@ Page({
   },
 
   onClearInput() {
+    // 让已发出的请求失效，避免清空后旧响应重新填回结果。
+    this._searchSeq += 1
     this.setData({ keyword: '', status: 'idle', results: [], total: 0 })
   },
 
@@ -56,15 +59,11 @@ Page({
       // 搜索请求立即开始；仅当响应真的包含 Moment 命中时才等待可选插件能力探测，
       // 文章-only 搜索不被 PluginMoments 的网络状态拖慢。
       const res = await api.search(keyword, SEARCH_LIMIT)
-      let includeMoments = false
-      const hasMomentHit =
-        res && Array.isArray(res.hits) && res.hits.some((hit) => hit && hit.type === MOMENT_TYPE)
-      if (hasMomentHit) {
-        await app.runtimeReady()
-        if (app.runtimeConfig.canReadMoments()) {
-          includeMoments = await pluginCapabilities.momentsAvailable()
-        }
-      }
+      const includeMoments = await resolveMomentSearchOption(res, {
+        runtimeReady: () => app.runtimeReady(),
+        canReadMoments: () => app.runtimeConfig.canReadMoments(),
+        momentsAvailable: () => pluginCapabilities.momentsAvailable()
+      })
       // 只处理最后一次提交的响应；页面卸载后不再 setData
       if (seq !== this._searchSeq || this._unloaded) return
       const { items, total } = normalizeSearchResult(res, { includeMoments })

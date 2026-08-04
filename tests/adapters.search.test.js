@@ -4,6 +4,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 
 const { parseHighlight, normalizeSearchHit, normalizeSearchResult } = require('../utils/adapters/search')
+const { resolveMomentSearchOption } = require('../utils/search-flow')
 
 const searchFixture = JSON.parse(
   fs.readFileSync(path.join(__dirname, 'fixtures', 'search-result.json'), 'utf8')
@@ -144,9 +145,19 @@ test('search: 混合结果保持服务端顺序并区分文章与瞬间', () => 
   )
 })
 
-test('search: Moment 功能或插件停用时过滤瞬间命中', () => {
-  const result = normalizeSearchResult({ hits: [momentHit, postHit], total: 2 }, { includeMoments: false })
+test('search: Moment 能力探测失败时保留文章并过滤瞬间', async () => {
+  const includeMoments = await resolveMomentSearchOption(
+    { hits: [momentHit, postHit], total: 2 },
+    {
+      runtimeReady: () => Promise.reject(new Error('runtime unavailable')),
+      canReadMoments: () => true,
+      momentsAvailable: () => Promise.resolve(true)
+    }
+  )
+  assert.strictEqual(includeMoments, false)
+  const result = normalizeSearchResult({ hits: [momentHit, postHit], total: 2 }, { includeMoments })
   assert.deepStrictEqual(result.items.map((item) => item.metadataName), ['post-1'])
+  assert.strictEqual(result.total, 1)
 })
 
 test('search: 陈旧索引中的未发布、回收或未知 Moment 不制造死链', () => {
@@ -162,4 +173,36 @@ test('search: 陈旧索引中的未发布、回收或未知 Moment 不制造死�
     { includeMoments: true }
   )
   assert.deepStrictEqual(result.items.map((item) => item.metadataName), ['visible'])
+})
+
+test('search: 明确私有或失效的 Moment 命中不制造死链，缺失字段仍保持兼容', () => {
+  const result = normalizeSearchResult(
+    {
+      hits: [
+        { ...momentHit, metadataName: 'private', visible: 'PRIVATE' },
+        { ...momentHit, metadataName: 'unapproved', approved: false },
+        { ...momentHit, metadataName: 'deleted', deletionTimestamp: '2026-08-04T00:00:00Z' },
+        { ...momentHit, metadataName: 'unexposed', exposed: false },
+        { ...momentHit, metadataName: 'spec-deleted', spec: { deleted: true } },
+        { ...momentHit, metadataName: 'visible' }
+      ]
+    },
+    { includeMoments: true }
+  )
+  assert.deepStrictEqual(result.items.map((item) => item.metadataName), ['visible'])
+})
+
+test('search: 非法主体名称不输出为可导航结果', () => {
+  const result = normalizeSearchResult(
+    {
+      hits: [
+        { ...postHit, metadataName: 'post/invalid' },
+        { ...momentHit, metadataName: 'moment/invalid' },
+        { ...postHit, metadataName: 'post-valid' }
+      ],
+      total: 3
+    },
+    { includeMoments: true }
+  )
+  assert.deepStrictEqual(result.items.map((item) => item.metadataName), ['post-valid'])
 })

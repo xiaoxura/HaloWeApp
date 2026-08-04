@@ -1,5 +1,6 @@
 const { resolveUrl } = require('../asset')
 const { htmlToText, preparePostContent } = require('../html')
+const { safeResourceName } = require('../resource-name')
 
 /**
  * PluginMoments v1.15+ Public API 数据适配层。
@@ -17,6 +18,28 @@ function objectOrEmpty(value) {
 function safeString(value, maxLength = 500) {
   if (typeof value !== 'string') return ''
   return Array.from(value.trim()).slice(0, maxLength).join('')
+}
+
+/**
+ * Moment 的 POST 媒体通常只有一个外部 permalink。只有插件明确提供文章
+ * metadata.name 时才生成内部跳转目标，避免从 slug 或任意 URL 猜测文章资源。
+ */
+function explicitPostName(item) {
+  const post = objectOrEmpty(item.post)
+  const target = objectOrEmpty(item.target)
+  const candidates = [
+    item.postName,
+    item.metadataName,
+    post.name,
+    objectOrEmpty(post.metadata).name,
+    target.postName,
+    target.name
+  ]
+  for (const candidate of candidates) {
+    const name = safeResourceName(candidate)
+    if (name) return name
+  }
+  return ''
 }
 
 function nonNegativeCount(value) {
@@ -67,13 +90,20 @@ function normalizeMedia(value) {
       photoCount += 1
     }
     const url = secureAssetUrl(item.url)
-    out.push({
+    const media = {
       type: known ? sourceType : 'UNKNOWN',
       url,
       originType: safeString(item.originType, 100),
       supported: known && !!url,
       sourceType: known ? sourceType : sourceType || 'UNKNOWN'
-    })
+    }
+    // Keep the stable model compact for ordinary media. This optional field is
+    // present only when the server supplied a valid, explicit article target.
+    if (sourceType === 'POST') {
+      const postName = explicitPostName(item)
+      if (postName) media.postName = postName
+    }
+    out.push(media)
     return out
   }, [])
 }
@@ -91,9 +121,10 @@ function isPublicMoment(item) {
   const spec = objectOrEmpty(it.spec)
   return (
     !metadata.deletionTimestamp &&
+    spec.deleted !== true &&
     spec.visible === 'PUBLIC' &&
     spec.approved === true &&
-    !!safeString(metadata.name, 128)
+    !!safeResourceName(metadata.name)
   )
 }
 
@@ -109,7 +140,7 @@ function normalizeMomentSummary(item) {
   const hasMoreContent = characters.length > SUMMARY_MAX_LENGTH
 
   return {
-    name: safeString(metadata.name, 128),
+    name: safeResourceName(metadata.name),
     text: hasMoreContent
       ? `${characters.slice(0, SUMMARY_MAX_LENGTH).join('').trimEnd()}…`
       : fullText,
@@ -156,6 +187,8 @@ module.exports = {
   SUMMARY_MAX_LENGTH,
   MAX_PHOTOS,
   KNOWN_MEDIA_TYPES,
+  safeMomentName: safeResourceName,
+  safeResourceName,
   secureAssetUrl,
   normalizeMedia,
   isPublicMoment,

@@ -15,19 +15,23 @@ App({
   },
 
   onLaunch() {
-    this.runtimeReady().then((runtime) => {
+    this.runtimeReady().then(async (runtime) => {
       this.loadFont(runtime.site.fontUrl)
       // 文章首屏不等待账号恢复；只有曾主动选择保持登录且隐私版本未变化才会发起。
-      authSession.restore()
-    })
+      await authSession.restore()
+    }).catch(() => {})
   },
 
   // 页面通过统一的就绪 Promise 获取配置，避免启动时序竞争
   runtimeReady() {
-    return runtimeConfig.ready().then((runtime) => {
-      this.globalData.runtime = runtime
-      return runtime
-    })
+    return Promise.resolve()
+      .then(() => runtimeConfig.ready())
+      .catch(() => runtimeConfig.getConfig())
+      .then((runtime) => {
+        const safeRuntime = runtime || runtimeConfig.getConfig()
+        this.globalData.runtime = safeRuntime
+        return safeRuntime
+      })
   },
 
   // 加载自定义字体（霞鹜文楷），失败不影响系统字体兜底

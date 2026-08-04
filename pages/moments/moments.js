@@ -3,18 +3,10 @@ const { normalizeMomentList } = require('../../utils/adapters/moment')
 const { pluginCapabilities } = require('../../utils/plugin-capabilities')
 const { mergeMomentsByName, buildMomentListParams } = require('../../utils/moment-list')
 const { momentMediaSession } = require('../../utils/moment-media-session')
+const { decodeRouteParam } = require('../../utils/route')
 
 const app = getApp()
 const PAGE_SIZE = 20
-
-function decodeOption(value) {
-  if (typeof value !== 'string' || !value) return ''
-  try {
-    return decodeURIComponent(value).trim().slice(0, 50)
-  } catch (e) {
-    return ''
-  }
-}
 
 Page({
   data: {
@@ -32,7 +24,7 @@ Page({
     this._available = false
     this._querySequence = 0
     this._loadPromise = null
-    const selectedTag = decodeOption(options && options.tag)
+    const selectedTag = decodeRouteParam(options && options.tag, 50)
     this.setData({ selectedTag })
     this.checkCapabilityAndLoad()
   },
@@ -149,6 +141,12 @@ Page({
     if (this._loadPromise) await this._loadPromise.catch(() => {})
     if (this._unloaded || sequence !== this._querySequence) return
     this._loadPromise = null
+    // 标签切换可能发生在首次能力探测期间；此时还没有可用状态，重新走探测流程，
+    // 避免 fetchMoments 的 fail-closed 短路把页面永久留在 loading。
+    if (!this._available) {
+      await this.checkCapabilityAndLoad()
+      return
+    }
     await this.fetchMoments(true, sequence)
   },
 
@@ -164,6 +162,12 @@ Page({
     const name = e.detail && e.detail.name
     if (!name) return
     wx.navigateTo({ url: `/pages/moment-detail/moment-detail?name=${encodeURIComponent(name)}` })
+  },
+
+  goPostDetail(e) {
+    const name = e.detail && e.detail.name
+    if (!name) return
+    wx.navigateTo({ url: `/pages/post-detail/post-detail?name=${encodeURIComponent(name)}` })
   },
 
   retry() {

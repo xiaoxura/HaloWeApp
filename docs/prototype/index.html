@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HaloWeApp UI 原型</title>
+<link rel="icon" href="data:,">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
 <style>
   :root {
@@ -250,6 +251,17 @@
   }
   .table-wrap td { padding: 8px 12px; border-top: 1px solid #f0f1f3; color: #444; white-space: nowrap; }
   .table-wrap tr:nth-child(even) td { background: #fafbfc; }
+
+  /* 窄视口下让设计 token 与单个手机画板收缩换行，原型页本身不产生横向滚动。 */
+  @media (max-width: 760px) {
+    body { padding: 24px 12px 56px; overflow-x: hidden; }
+    .page-header, .tokens, .screens { max-width: 100%; }
+    .tokens { padding: 18px; gap: 20px; }
+    .swatches { flex-wrap: wrap; }
+    .screens { display: block; }
+    .screen-block { width: 100%; max-width: 375px; margin: 0 auto 32px; }
+    .phone { width: 100%; max-width: 375px; }
+  }
 
   /* 分割线（对应 hr） */
   .divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; }

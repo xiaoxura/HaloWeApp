@@ -16,8 +16,11 @@
 - Moment v1.15/v1.16 adapter 与脱敏/合成夹具，覆盖列表、详情、字段缺失及
   PHOTO/VIDEO/AUDIO/POST/未知媒体；匿名列表防御性过滤私有、未审核和已删除内容
 - Moment 媒体闭环：最多九图预览、视频不自动播放、单一音频上下文、音视频互斥、页面卸载释放；
-  仅接受 HTTPS，POST 与未知媒体提供不可执行降级
+  仅接受 HTTPS，POST 仅在服务端明确提供文章 metadata.name 时内部跳转，否则复制安全链接，
+  未知媒体提供不可执行降级
 - 文章/Moment 混合搜索与正确详情分流；Moment 插件不可用时过滤陈旧索引命中
+- 资源名称校验、详情/分类/标签/评论路径编码和坏路由参数统一 fail-closed，避免异常主体出现
+  可读但不可导航/点赞的断链
 - Post / Moment 通用 tracker 点赞和本地 `post:` / `moment:` 命名空间；自动迁移 v0.3.0
   裸 Post key
 - 运行时配置增加 `features.moments` / `features.readerAccount` 白名单、安全默认值及
@@ -28,6 +31,8 @@
   退出确认和注销二次确认；明确既有公开评论不会自动删除
 - 配套插件 auth API 客户端：`POST /auth/login`、`GET/PATCH /auth/profile`、
   `DELETE /auth/session`、`DELETE /auth/account`，以及 PATCH/DELETE/204 请求层支持
+- v0.4.1 P1 Moment 评论客户端契约：Moment 详情读取固定 subjectRef 的评论/回复，使用受控
+  `/moments/{momentName}/comments` 写入路由；默认开关关闭，不改变文章评论主链路
 
 ### 变更
 
@@ -37,6 +42,8 @@
 - 文章评论优先复用真实认证的读者账号 token 与昵称；认证恢复失败才回落 v0.3.0 匿名临时会话，
   评论业务失败不会自动重提
 - 微信合法域名校验的共享项目配置改为开启；开发者私有覆盖不能作为发布验证证据
+- 资源 URL 只接受 HTTPS/可信站内相对地址；搜索、tracker、详情和评论回复路由统一校验输入，
+  页面异步请求在卸载或刷新序列变化后不再写入状态
 
 ### 安全
 
@@ -49,17 +56,22 @@
 - 注销成功或服务端已不存在时清理全部本地身份数据；普通退出即使网络失败也清理 token、资料
   和登录意愿，同时保留与匿名评论共用的既有隐私同意版本
 - Moment 读取不携带 Halo PAT/UC/Console 身份；HTML 继续清理 script/iframe/style/事件属性和
-  `javascript:` 链接，未知媒体不执行未知协议
+  各种引号形态、HTML 实体和控制空白的 `javascript:` / `vbscript:` 链接；危险 CSS URL、
+  未加引号的图片 src 与路由控制字符也 fail-closed，未知媒体不执行未知协议
+- 非法 `minVersion` 关闭所有客户端写能力；插件公开隐私 URL 强制 HTTPS，评论长度/频控配置有
+  上限，未知插件异常统一返回 503 `HALO_UNAVAILABLE`
+- 首页、分类和搜索异步请求在页面卸载、刷新或清空输入后丢弃陈旧响应，不再回填已失效状态
 
 ### 验证
 
-- Node 自动化测试 162 项全部通过；覆盖 Moment adapter/能力探测/媒体生命周期、混合搜索、
-  点赞迁移、auth-session、评论会话复用及远程配置门禁
+- Node 自动化测试 193 项全部通过；覆盖 Moment adapter/能力探测失败降级/媒体生命周期、混合搜索、
+  资源名/路由安全、点赞迁移、auth-session、评论会话复用及远程配置门禁
 - 微信开发者工具 preview 成功：v0.3.0 tag 为 162,533 bytes，v0.4.0 RC 实现基线为
-  236,493 bytes，增加 73,960 bytes（45.50%）；1 MiB `docs`/`tests/fixtures` canary 对比证明
-  pack ignore 生效
+  236,493 bytes；当前工作树在资源协议/API 输入、页面卸载竞态、插件配置边界和未知异常 503 收口后为 253,850 bytes；1 MiB
+  `docs`/`tests/fixtures` canary 对比证明 pack ignore 生效
 - 自动化和开发者工具结果不替代 iOS/Android 真机、弱网、合法域名、真实账号、插件暗部署或
   回滚证据；未完成项目见 `docs/release-checklist-v0.4.0.md`
+- 原型页面在桌面 1280px 与移动触控 390px 视口通过浏览器检查；无横向溢出、控制台错误或失败网络请求
 - 插件 `hotfix/v0.1.1` / `cfaa16f` 已在 Halo 2.23.3/2.25.4 完成
   v0.2.0 → v0.1.1 → v0.2.0，本机 ConfigMap/Moment/匿名路由闭环与 GitHub CI 通过；正式
   v0.1.1 tag/Release、目标环境 identityKey/WeAppUser 恢复和旧 v0.3.0 客户端仍待完成
@@ -70,9 +82,10 @@
   对 Halo 2.25.4 的 24 个 runtime 公告逐项归因。插件特定触发虽大多不存在，但 DNS、HTTP/1、
   模板与数据库宿主风险未排除，Halo 升级或目标环境正式风险接受前门禁继续 FAIL/PENDING
 
-### 未包含
+### v0.4.1 预留
 
-- Moment 评论/回复留到 v0.4.1；v0.4.0 不开放相关写入 UI，也不接受客户端自定义主体 GVK
+- Moment 评论/回复的服务端与详情 UI 已按独立 P1 契约实现，但 v0.4.0 生产仍不开放相关写入；
+  必须完成双端真机、内容审核、目标环境和正式审核后才能单独发布
 
 ## [0.3.0] - 2026-08-01
 

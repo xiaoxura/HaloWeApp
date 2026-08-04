@@ -66,6 +66,10 @@ const DEFAULT_CONFIG = Object.freeze({
   privacyPolicyVersion: ''
 })
 
+function isPluginAvailableResponse(value) {
+  return value === true || (!!value && typeof value === 'object' && value.available === true)
+}
+
 /**
  * 白名单字段逐项校验。只接受 JSON 对象；非法或全无效字段返回 null。
  * 绝不透传白名单以外的字段（AppSecret、OpenID、内部异常等）。
@@ -133,7 +137,12 @@ function validateRemoteConfig(data) {
   if (typeof data.minVersion === 'string') out.minVersion = data.minVersion
   if (typeof data.schemaVersion === 'number') out.schemaVersion = data.schemaVersion
   if (typeof data.generatedAt === 'string') out.generatedAt = data.generatedAt
-  if (typeof data.privacyPolicyUrl === 'string') out.privacyPolicyUrl = data.privacyPolicyUrl
+  if (
+    typeof data.privacyPolicyUrl === 'string' &&
+    (!data.privacyPolicyUrl || /^https:\/\//i.test(data.privacyPolicyUrl))
+  ) {
+    out.privacyPolicyUrl = data.privacyPolicyUrl
+  }
   if (typeof data.privacyPolicyVersion === 'string') {
     out.privacyPolicyVersion = data.privacyPolicyVersion
   }
@@ -145,8 +154,12 @@ function validateRemoteConfig(data) {
     if (typeof data.commentOptions.replyEnabled === 'boolean') {
       opts.replyEnabled = data.commentOptions.replyEnabled
     }
-    if (typeof data.commentOptions.maxLength === 'number' && data.commentOptions.maxLength > 0) {
-      opts.maxLength = Math.floor(data.commentOptions.maxLength)
+    if (
+      Number.isInteger(data.commentOptions.maxLength) &&
+      data.commentOptions.maxLength >= 1 &&
+      data.commentOptions.maxLength <= 500
+    ) {
+      opts.maxLength = data.commentOptions.maxLength
     }
     if (typeof data.commentOptions.nicknameRequired === 'boolean') {
       opts.nicknameRequired = data.commentOptions.nicknameRequired
@@ -238,9 +251,14 @@ function createRuntimeConfig(deps) {
 
   async function fetchRemote() {
     // 1. 插件可用性检测，不可用则抛错进入兜底
-    await get(
+    const availability = await get(
       `/apis/api.plugin.halo.run/v1alpha1/plugins/${encodeURIComponent(source.pluginName)}/available`
     )
+    if (!isPluginAvailableResponse(availability)) {
+      const err = new Error('配套插件不可用')
+      err.type = 'unavailable'
+      throw err
+    }
     // 2. 拉取配置（request 层已保证非 2xx / HTML / 非法 JSON 都会 reject）
     const data = await get(source.endpoint)
     const valid = validateRemoteConfig(data)
@@ -258,13 +276,13 @@ function createRuntimeConfig(deps) {
     return valid
   }
 
-  /** 客户端版本是否满足 minVersion；minVersion 非法时忽略并记录脱敏诊断 */
+  /** 客户端版本是否满足 minVersion；minVersion 非法时拒绝所有写能力。 */
   function checkVersion(cfg) {
     if (!cfg.minVersion) return true
     const cmp = compareSemver(clientVersion, cfg.minVersion)
     if (cmp === null) {
-      console.warn('远程 minVersion 非法，已忽略', clientVersion ? '' : '(客户端版本缺失)')
-      return true
+      console.warn('远程 minVersion 非法，已关闭写能力', clientVersion ? '' : '(客户端版本缺失)')
+      return false
     }
     return cmp >= 0
   }
@@ -312,9 +330,9 @@ function createRuntimeConfig(deps) {
     isVersionOk() {
       return checkVersion(current)
     },
-    /** Moment 展示开关；允许由未过期缓存恢复，只读能力还必须通过实时插件探测。 */
+    /** Moment 展示开关；缓存不能开启入口，必须先完成本次实时配置拉取。 */
     canReadMoments() {
-      return current.features.moments.enabled === true
+      return live && current.features.moments.enabled === true
     },
     /**
      * 微信读者登录门禁：必须是实时配置、开关开启、版本满足且隐私契约完整。

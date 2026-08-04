@@ -26,6 +26,65 @@ function pickContent(contentWrapper) {
   return ''
 }
 
+const URL_ENTITY_NAMES = Object.freeze({
+  amp: '&',
+  colon: ':',
+  tab: '\t',
+  newline: '\n'
+})
+
+function decodeUrlEntities(value) {
+  let out = String(value || '')
+  // Decode at most twice so nested `&amp;colon;` forms cannot hide a scheme,
+  // while avoiding an unbounded entity-expansion loop.
+  for (let pass = 0; pass < 2; pass += 1) {
+    const next = out
+      .replace(/&#(x[0-9a-f]+|[0-9]+);?/gi, (match, raw) => {
+        const codePoint = raw[0].toLowerCase() === 'x'
+          ? Number.parseInt(raw.slice(1), 16)
+          : Number.parseInt(raw, 10)
+        return Number.isInteger(codePoint) && codePoint >= 0 && codePoint <= 0x10ffff
+          ? String.fromCodePoint(codePoint)
+          : match
+      })
+      .replace(/&([a-z]+);/gi, (match, name) => URL_ENTITY_NAMES[name.toLowerCase()] || match)
+    if (next === out) break
+    out = next
+  }
+  return out
+}
+
+// CSS allows executable schemes to be split with comments or escaped code points,
+// e.g. `java/**/script:` and `j\\61vascript:`. Decode those forms before checking.
+function decodeCssEscapes(value) {
+  return String(value || '')
+    // A CSS hex escape consumes up to six hexadecimal digits and an optional
+    // whitespace terminator. Invalid/out-of-range values are left visible.
+    .replace(/\\([0-9a-f]{1,6})(?:[\t\n\r\f ]|$)?/gi, (match, hex) => {
+      const codePoint = Number.parseInt(hex, 16)
+      return Number.isInteger(codePoint) && codePoint > 0 && codePoint <= 0x10ffff
+        ? String.fromCodePoint(codePoint)
+        : match
+    })
+    // CSS line continuations disappear; a backslash before any other character
+    // escapes that character and therefore should be checked as the character.
+    .replace(/\\(?:\r\n|[\n\r\f])/g, '')
+    .replace(/\\([\s\S])/g, '$1')
+}
+
+function normalizeUrlForSafety(value) {
+  return decodeCssEscapes(decodeUrlEntities(value))
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/[\u0000-\u0020\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u2069\ufeff]+/g, '')
+    .toLowerCase()
+}
+
+function hasUnsafeCssUrl(value) {
+  const normalized = normalizeUrlForSafety(value)
+  return /url\(\s*["']?(?:javascript|vbscript|data):/i.test(normalized) ||
+    /\b(?:javascript|vbscript):/i.test(normalized)
+}
+
 /**
  * 安全清理：
  * - 移除 script / iframe / style 标签及其内容（主题常注入全局 <style class="pjax">）
@@ -40,10 +99,32 @@ function sanitizeHtml(html) {
       .replace(/<(script|iframe|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '')
       // 自闭合/单标签形式
       .replace(/<(script|iframe|style)\b[^>]*\/?>/gi, '')
+      // URL 属性：兼容单引号、双引号和未加引号，并折叠控制空白，
+      // 防止通过 `java\nscript:` 等变体绕过协议检查。
+      .replace(/\b(href|src)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi, (match, name, doubleQuoted, singleQuoted, bare) => {
+        const value = doubleQuoted !== undefined
+          ? doubleQuoted
+          : singleQuoted !== undefined
+            ? singleQuoted
+            : bare
+        const normalized = normalizeUrlForSafety(value)
+        if (/^(?:javascript|vbscript):/.test(normalized) || /^data:text\/html/.test(normalized)) {
+          return `${name}="#"`
+        }
+        return match
+      })
+      // Inline CSS is not needed for ordinary article content. Remove the
+      // whole attribute when a CSS URL contains an executable/data scheme.
+      .replace(/\bstyle\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi, (match, doubleQuoted, singleQuoted, bare) => {
+        const value = doubleQuoted !== undefined
+          ? doubleQuoted
+          : singleQuoted !== undefined
+            ? singleQuoted
+            : bare
+        return hasUnsafeCssUrl(value) ? '' : match
+      })
       // 事件属性 onxxx="..." / onxxx='...' / onxxx=xxx
       .replace(/\s+on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-      // javascript: 协议
-      .replace(/(href|src)\s*=\s*(["'])\s*javascript:[^"']*\2/gi, '$1=$2#$2')
   )
 }
 

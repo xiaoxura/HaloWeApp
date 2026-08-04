@@ -118,14 +118,20 @@ test('runtime: 合法配置生效并写入缓存', async () => {
 
 test('runtime: 插件不可用时保持默认且不写缓存', async () => {
   const storage = makeStorage()
+  let configCalls = 0
   const rc = createRuntimeConfig({
-    get: () => Promise.reject(Object.assign(new Error('nf'), { type: 'http', statusCode: 404 })),
+    get: (path) => {
+      if (path.includes('/available')) return Promise.resolve({ available: false })
+      configCalls++
+      return Promise.resolve({ commentEnabled: true })
+    },
     storage,
     now: () => 1000,
     source: TEST_SOURCE
   })
   const cfg = await rc.ready()
   assert.strictEqual(cfg.commentEnabled, false)
+  assert.strictEqual(configCalls, 0, '插件明确不可用时不应拉取配置')
   assert.strictEqual(storage.map.has(CACHE_KEY), false)
 })
 
@@ -189,7 +195,7 @@ test('runtime: schema 版本不符的缓存被忽略', async () => {
   assert.strictEqual(cfg.commentEnabled, false)
 })
 
-test('runtime: ready 前可同步读取未过期站点缓存，但写能力保持关闭', () => {
+test('runtime: ready 前可同步读取未过期站点缓存，但读取与写能力保持关闭', async () => {
   const cached = {
     data: {
       site: { blogName: '缓存博客', pageSize: 20 },
@@ -212,11 +218,13 @@ test('runtime: ready 前可同步读取未过期站点缓存，但写能力保�
   assert.strictEqual(rc.getConfig().site.blogName, '缓存博客')
   assert.strictEqual(rc.getConfig().site.blogDesc, DEFAULT_CONFIG.site.blogDesc)
   assert.strictEqual(rc.getConfig().commentEnabled, true)
-  assert.strictEqual(rc.canReadMoments(), true, '只读 Moment 展示可使用未过期缓存')
+  assert.strictEqual(rc.canReadMoments(), false, '缓存不能提前开启 Moment 展示入口')
   assert.strictEqual(rc.canLogin(), false, '缓存不能恢复或创建读者账号')
   assert.strictEqual(rc.canSubmitMomentComment(), false, '缓存不能开启 Moment 写入')
   assert.strictEqual(rc.isLive(), false)
   assert.strictEqual(rc.canSubmit(), false)
+  await rc.ready()
+  assert.strictEqual(rc.canReadMoments(), false, '实时配置失败后仍保持 fail-closed')
   assert.deepStrictEqual(DEFAULT_CONFIG.commentEnabled, false)
   assert.deepStrictEqual(DEFAULT_CONFIG.commentOptions.submitEnabled, false)
   assert.deepStrictEqual(DEFAULT_CONFIG.features.moments.enabled, false)
@@ -267,8 +275,12 @@ test('validate: v0.3.0 全字段白名单校验，未知字段被剔除', () => 
 })
 
 test('validate: commentOptions 部分字段与非法 maxLength', () => {
-  const out = validateRemoteConfig({ commentOptions: { submitEnabled: true, maxLength: -1 } })
+  const out = validateRemoteConfig({ commentOptions: { submitEnabled: true, maxLength: 501 } })
   assert.deepStrictEqual(out, { commentOptions: { submitEnabled: true } })
+  assert.deepStrictEqual(
+    validateRemoteConfig({ commentOptions: { maxLength: 0.5, replyEnabled: true } }),
+    { commentOptions: { replyEnabled: true } }
+  )
 })
 
 test('validate: site 非法字段被剔除，不能下发客户端凭据', () => {
@@ -429,11 +441,12 @@ test('runtime: minVersion 高于客户端版本时关闭写能力', async () => 
   assert.strictEqual(rc.canReadMoments(), true)
 })
 
-test('runtime: minVersion 非法时忽略，不影响写能力', async () => {
+test('runtime: minVersion 非法时关闭写能力', async () => {
   const rc = createWithRemote({ ...FULL_CONFIG, minVersion: 'not-a-version' })
   await rc.ready()
-  assert.strictEqual(rc.isVersionOk(), true)
-  assert.strictEqual(rc.canSubmit(), true)
+  assert.strictEqual(rc.isVersionOk(), false)
+  assert.strictEqual(rc.canSubmit(), false)
+  assert.strictEqual(rc.canLogin(), false)
 })
 
 test('runtime: 预发布版本比较（0.3.0-rc.1 < 0.3.0）', async () => {

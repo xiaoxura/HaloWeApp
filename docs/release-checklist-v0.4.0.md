@@ -1,6 +1,6 @@
 # HaloWeApp v0.4.0 / plugin-halo-weapp v0.2.0 RC 验证记录
 
-> 审计日期：2026-08-02（Asia/Shanghai）
+> 审计日期：2026-08-04（Asia/Shanghai）
 >
 > 对应计划：`docs/development-plan-v0.4.0.md` V040-08、§11、§12
 > 状态：**RC NOT READY — 不得创建正式 tag 或上传生产**
@@ -11,8 +11,8 @@
 ## 1. 范围与候选源
 
 v0.4.0 只验收 P0 V040-00～V040-08：公开 Moment 阅读、媒体/搜索/点赞、微信读者身份和文章
-评论会话复用。V040-09～V040-10（Moment 评论/回复）明确后移 v0.4.1，远程预留开关必须保持
-关闭，不能宣传为 v0.4.0 能力。
+评论会话复用。V040-09～V040-10（Moment 评论/回复）的本地代码、契约和自动化已完成，但仍后移
+v0.4.1；远程预留开关必须保持关闭，不能宣传为 v0.4.0 生产能力。
 
 | 仓库 | 候选分支/提交 | 目标版本 | 状态 |
 | --- | --- | --- | --- |
@@ -55,12 +55,14 @@ v0.4.0 只验收 P0 V040-00～V040-08：公开 Moment 阅读、媒体/搜索/点
 ```bash
 npm test
 git diff --check
-node --check <全部变更 JS>
+(git diff --name-only --diff-filter=ACMRTUXB -- '*.js'; \
+  git ls-files --others --exclude-standard -- '*.js') | sort -u | \
+  xargs -r -n1 node --check
 ```
 
 | 项目 | 结果 | 证据边界 |
 | --- | --- | --- |
-| Node 测试 | PASS：162/162，0 fail/skip | 纯函数、状态机、请求 Mock；非真机 |
+| Node 测试 | PASS：193/193，0 fail/skip | 纯函数、状态机、请求 Mock、文章/Moment 页面点赞、分享、媒体生命周期与 PHOTO 1～9 布局静态契约；非真机 |
 | auth-session | PASS：13 个场景（包含新增异常隐私响应与 READER_NOT_FOUND 收口） | 模拟微信/API/storage |
 | Moment 适配/能力/媒体 | PASS | v1.15 合成官方类型 + v1.16 脱敏夹具；本行仅自动化，实际矩阵见 §5.2 |
 | JS 语法 / whitespace | PASS | 不覆盖 WXML/WXSS 运行时 |
@@ -78,8 +80,8 @@ node --check <全部变更 JS>
 
 | 项目 | 结果 | 证据边界 |
 | --- | --- | --- |
-| API 2.23.0 测试 | PASS：106/106，0 fail/skip | 最低 API 编译 + Mock 单测 |
-| API 2.25.0 测试 | PASS：106/106，0 fail/skip | Halo 2.25.4 对应已发布 API platform |
+| API 2.23.0 测试 | PASS：143/143，0 fail/skip | 最低 API 编译 + Mock 单测，含评论/回复资源名 fail-closed 契约 |
+| API 2.25.0 测试 | PASS：143/143，0 fail/skip | Halo 2.25.4 对应已发布 API platform，含评论/回复资源名 fail-closed 契约 |
 | 正式兼容 jar build | PASS | 以最低 API 2.23.0 构建 |
 | OpenAPI | PASS：Redocly 结构有效 | 仅剩 1 个样式 warning：公开 GET `/config` 没有伪造 4xx 响应 |
 | YAML 解析 | PASS | workflow/settings/plugin/roles 均可解析 |
@@ -89,18 +91,19 @@ node --check <全部变更 JS>
 [run 30743459795](https://github.com/xiaoxura/plugin-halo-weapp/actions/runs/30743459795) 也已成功。
 平台审计工具提交 `04f3fa7` 的双 API / 最低 API build
 [run 30746660243](https://github.com/xiaoxura/plugin-halo-weapp/actions/runs/30746660243) 同样成功；
-该提交不改插件资源或 Java 源码，本地重建 jar 的大小、SHA 和 class 清单与下述 `e0fd9e2` 证据一致。
+该提交不改插件资源或 Java 源码；当前工作树随后加入 P1 Moment 评论代码，以下 jar 为本地最低
+API 2.23.0 重建，不能由上述 CI 运行直接背书。
 
-插件 jar 证据（源树 `e0fd9e2`，正式 tag 前仍须重建）：
+插件 jar 证据（当前工作树，正式 tag 前仍须重建）：
 
 - 文件：`plugin-halo-weapp-0.2.0.jar`；
-- 大小：160,820 bytes；
-- SHA-256：`35a38b8490787cfbcd736112fe5b973e657756e37416e4964dc576cd8713e43b`；
-- 72 个 class 全部位于 `run/halo/weapp/`，未内嵌第三方 class；
+- 大小：172,162 bytes；
+- SHA-256：`ca4f547d86817ddf0493e5210ef27ac5c3af22219f2e28fd6044fd19012cb34a`；
+- 76 个 class 全部位于 `run/halo/weapp/`，未内嵌第三方 class；
 - `plugin.yaml`、`extensions/settings.yaml`、`extensions/roles.yaml`、AuthEndpoint、WeAppUser 和
   IdentityKeyService 均存在。
 
-> jar SHA 只对应本次本地构建。正式 GitHub Release 必须从最终 tag 重新构建并记录新的、可下载
+> jar SHA 只对应本次本地构建（最低兼容 API 2.23.0）。正式 GitHub Release 必须从最终 tag 重新构建并记录新的、可下载
 > 产物 SHA，不能直接把本文哈希当作永久供应链证明。
 
 ### 3.3 plugin-halo-weapp v0.1.1 维护候选
@@ -128,7 +131,8 @@ v0.1.0 tag 在真实 Halo 回滚时暴露四项 P0：Setting 不在 `extensions/
 | 源 | TOTAL bytes | 工具显示 | 相对 v0.3.0 |
 | --- | ---: | ---: | ---: |
 | v0.3.0 tag `290ffa8` | 162,533 | 158.7 KB | — |
-| v0.4.0 RC | 236,493 | 231.0 KB | +73,960 bytes / +72.2 KiB / +45.50% |
+| v0.4.0 RC 实现基线 | 236,493 | 231.0 KB | +73,960 bytes / +72.2 KiB / +45.50% |
+| 当前工作树（资源协议/API 输入、页面卸载竞态、插件配置边界与错误状态码收口） | 253,850 | 247.9 KB | +91,317 bytes / +89.2 KiB / +56.18% |
 
 结果：PASS，当前总包远低于微信 2 MiB 限制。
 
@@ -137,8 +141,9 @@ pack ignore 采用可复现 canary 方法验证：在 v0.4.0 实现基线的临�
 TOTAL 仍为 236,493 bytes，与无 canary 完全一致。因此 `docs/`、`tests/` 和其 fixtures 未进入
 上传包。临时 canary 和二维码均未提交仓库。
 
-最终 RC preview（2026-08-02 12:43 Asia/Shanghai）在共享/私有 `urlCheck=true` 下成功，TOTAL
-仍为 236,493 bytes。此结果不证明后台合法域名或资源请求可用。
+最终基线 RC preview（2026-08-02 12:43 Asia/Shanghai）在共享/私有 `urlCheck=true` 下成功，
+TOTAL 为 236,493 bytes；当前工作树复验（2026-08-04）TOTAL 为 253,850 bytes。此结果不证明
+后台合法域名或资源请求可用。
 
 ## 5. 兼容矩阵
 
@@ -148,12 +153,12 @@ TOTAL 仍为 236,493 bytes，与无 canary 完全一致。因此 `docs/`、`test
 | --- | --- | --- |
 | Moment 1.15.0 契约 | 官方 jar 在 Halo 2.23.3/2.25.4 的真实 Public API 列表/详情 + 客户端 adapter | PASS（本机服务器/adapter 范围） |
 | Moment 1.16.1 契约 | 两个 Halo runtime 从 1.15.0 停用升级，数据保留并重新启用 | PASS（本机服务器/adapter 范围） |
-| Halo API 2.23.0 / runtime 2.23.3 | 插件 106 项测试 + 官方 2.23.3 镜像 | PASS（编译/Mock + 本机 H2 runtime） |
-| Halo API 2.25.0 / runtime 2.25.4 | 插件 106 项测试 + 官方 2.25.4 镜像 | PASS（编译/Mock + 本机 H2 runtime） |
+| Halo API 2.23.0 / runtime 2.23.3 | 插件 143 项测试 + 官方 2.23.3 镜像 | PASS（编译/Mock + 本机 H2 runtime） |
+| Halo API 2.25.0 / runtime 2.25.4 | 插件 143 项测试 + 官方 2.25.4 镜像 | PASS（编译/Mock + 本机 H2 runtime） |
 | Moment 插件缺失/停用/超时/HTML/非法 JSON | capabilities/runtime/search 自动化 | PASS（自动化范围） |
 | PHOTO/VIDEO/AUDIO/POST/未知媒体 | 两版真实 Public API 响应 + adapter/media-session 自动化 | PASS（服务器契约/模型范围），真机播放 PENDING |
 | PRIVATE/未审核/已删除 | PRIVATE 在两版实际匿名列表排除且详情 404；其余 fixture 防御性过滤 | PARTIAL：未审核/已删除真实场景 PENDING |
-| 登录/恢复/401/隐私变化/退出/注销 | 双端 162 + 插件 106 项测试 | PASS（自动化范围），真实微信 PENDING |
+| 登录/恢复/401/隐私变化/退出/注销 | 客户端 193 + 插件 143 项测试 | PASS（自动化范围），真实微信 PENDING |
 | 旧 v0.3.0 客户端 + v0.2.0 插件 | 路径/DTO 向后兼容测试和静态契约 | PARTIAL，实际暗部署回归 PENDING |
 | v0.2.0 → v0.1.1 → v0.2.0 | Halo 2.23.3/2.25.4 真实插件协调、旧路由、ConfigMap/Setting/Moment 哈希 | PASS（本机 H2 二进制范围），目标环境/旧客户端 PENDING |
 
@@ -246,7 +251,7 @@ identityKey 进入平台日志。原“独立 identity ConfigMap”设计因此�
 
 plugin `e0fd9e2` 将 key 改为同名 Opaque Secret 的二进制 `data.identityKey`，并在插件进入
 `STARTED` 前迁移旧 RC：原值创建/核对 Secret 后才清除旧 ConfigMap key；非法、冲突或清除失败
-均 fail-closed。106 项双 API 测试包含 Secret 单飞初始化、损坏/缺失、旧 ConfigMap 迁移、冲突
+均 fail-closed。143 项双 API 测试包含 Secret 单飞初始化、损坏/缺失、旧 ConfigMap 迁移、冲突
 阻止启动和 `Secret.toString()` 不打印 key。
 
 随后在全新恢复的 Halo 2.23.3 副本中使用 32 字节随机合成 key 和一个不含真实 OpenID 的
@@ -420,6 +425,7 @@ identityKey 32 字节/指纹、旧 RC 迁移、恢复顺序和 v0.1.1 回滚约�
 | Halo/Moment 双版本本机隔离 runtime | PASS（H2 服务器范围） |
 | v0.1.1 双 Halo 二进制回滚闭环 | PASS（本机 H2/无真实身份数据范围） |
 | identity Secret 迁移/合成备份恢复/v0.1.1 往返 | PASS（本机 H2/合成数据范围；真实 auth 恢复未证明） |
+| V040-09～V040-10 P1 本地代码与自动化 | PASS（当前工作树；v0.4.1 外部门禁 PENDING，远程默认关闭） |
 | v0.1.1 正式维护 tag/Release | **PENDING；v0.1.0 明确禁止使用** |
 | iOS/Android 双真机 | **PENDING** |
 | 登录/恢复/退出/注销真实微信记录 | **PENDING** |

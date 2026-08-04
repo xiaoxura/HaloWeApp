@@ -72,10 +72,13 @@ test('media session: 多条音频共享一个 InnerAudioContext，切换时停�
 test('media session: 视频和音频互斥，启动音频会停止当前视频', () => {
   const harness = createAudioHarness()
   const session = createMomentMediaSession(harness.wxApi)
-  let videoStops = 0
-  session.activateVideo('video:1', () => { videoStops += 1 })
+  let firstVideoStops = 0
+  let secondVideoStops = 0
+  session.activateVideo('video:1', () => { firstVideoStops += 1 })
+  session.activateVideo('video:2', () => { secondVideoStops += 1 })
+  assert.strictEqual(firstVideoStops, 1)
   session.toggleAudio({ key: 'audio:1', url: 'https://cdn.example/a.mp3', onState() {} })
-  assert.strictEqual(videoStops, 1)
+  assert.strictEqual(secondVideoStops, 1)
   assert.strictEqual(session.inspect().activeType, 'audio')
 })
 

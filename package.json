@@ -4,7 +4,7 @@
   "description": "Halo 博客微信小程序端",
   "private": true,
   "scripts": {
-    "test": "node --test tests/*.test.js"
+    "test": "find tests -type f -name '*.test.js' -print0 | xargs -0 node --test"
   },
   "dependencies": {
     "mp-html": "^2.5.2"

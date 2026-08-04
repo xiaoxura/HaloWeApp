@@ -26,6 +26,10 @@
 
 <block wx:else>
   <view class="moment-detail">
+    <view wx:if="{{detailLoadError}}" class="detail-loadfail">
+      <text>刷新失败，当前显示旧内容</text>
+      <text class="detail-retry" bindtap="retry">点击重试</text>
+    </view>
     <view class="detail-owner">
       <image
         wx:if="{{moment.owner.avatar}}"
@@ -59,9 +63,11 @@
     </view>
 
     <moment-media
+      id="momentMedia"
       wx:if="{{moment.media.length}}"
       moment-name="{{moment.name}}"
       media="{{moment.media}}"
+      bindposttap="goPostDetail"
     />
 
     <view wx:if="{{moment.tags.length}}" class="detail-tags">
@@ -78,10 +84,70 @@
       <text>{{moment.stats.upvote}} 个赞</text>
       <text>{{moment.stats.approvedComment}} 条评论</text>
     </view>
+
+    <view wx:if="{{commentEnabled}}" class="comment-block card">
+      <view class="comment-title">评论 {{commentTotal || ''}}</view>
+      <view wx:if="{{commentLoadError && !comments.length}}" class="comment-loadfail">
+        <text>评论加载失败</text>
+        <text class="comment-retry" bindtap="retryComments">点击重试</text>
+      </view>
+      <view wx:elif="{{!comments.length && !commentLoading}}" class="comment-empty">还没有评论，来抢沙发～</view>
+
+      <view wx:for="{{comments}}" wx:key="name" class="comment-item">
+        <image wx:if="{{item.avatar}}" class="c-avatar" src="{{item.avatar}}" mode="aspectFill" />
+        <view wx:else class="c-avatar c-avatar-placeholder"></view>
+        <view class="c-body">
+          <view class="c-head">
+            <text class="c-name">{{item.author}}</text>
+            <text wx:if="{{item.top}}" class="c-top">置顶</text>
+            <text class="c-time">{{item.time}}</text>
+          </view>
+          <view class="c-content">{{item.content}}</view>
+          <view wx:for="{{item.replies}}" wx:for-item="reply" wx:key="name" class="c-reply">
+            <view class="c-reply-line">
+              <text class="c-reply-name">{{reply.author}}</text>
+              <text wx:if="{{reply.quoteAuthor}}" class="c-reply-quote">回复 @{{reply.quoteAuthor}}</text>
+              <text>：{{reply.content}}</text>
+            </view>
+            <view
+              wx:if="{{commentReplyEnabled}}"
+              class="c-reply-btn"
+              data-comment-name="{{item.name}}"
+              data-quote-name="{{reply.name}}"
+              data-author="{{reply.author}}"
+              bindtap="handleReply"
+            >回复</view>
+          </view>
+          <view
+            wx:if="{{item.replyHasNext}}"
+            class="c-more-replies"
+            data-name="{{item.name}}"
+            bindtap="fetchReplies"
+          >展开更多回复（共 {{item.replyCount}} 条）</view>
+          <view
+            wx:if="{{commentReplyEnabled}}"
+            class="c-reply-btn c-comment-reply-btn"
+            data-comment-name="{{item.name}}"
+            data-author="{{item.author}}"
+            bindtap="handleReply"
+          >回复</view>
+        </view>
+      </view>
+
+      <view wx:if="{{commentLoading}}" class="comment-loading">加载中…</view>
+      <view wx:elif="{{commentLoadError && comments.length}}" class="comment-loadfail">
+        <text>加载失败</text>
+        <text class="comment-retry" bindtap="retryComments">点击重试</text>
+      </view>
+      <view wx:elif="{{commentHasNext}}" class="comment-more" bindtap="loadMoreComments">加载更多评论</view>
+    </view>
     <view class="bottom-spacer"></view>
   </view>
 
   <view class="action-bar">
+    <view class="input-fake {{commentSubmitEnabled ? '' : 'input-fake-off'}}" bindtap="handleComment">
+      {{commentSubmitEnabled ? '说点什么…' : '暂未开放评论'}}
+    </view>
     <view class="act {{upvoted ? 'act-on' : ''}}" bindtap="handleUpvote" hover-class="act-hover">
       <view class="act-icon icon {{upvoted ? 'i-heart-on' : 'i-heart'}}"></view>
       <text>{{upvoting ? '处理中' : moment.stats.upvote}}</text>
@@ -92,3 +158,16 @@
     </view>
   </view>
 </block>
+
+<comment-sheet
+  id="commentSheet"
+  visible="{{sheetVisible}}"
+  max-length="{{commentMaxLength}}"
+  reply-to="{{sheetReplyTo}}"
+  privacy-url="{{privacyUrl}}"
+  privacy-version="{{privacyVersion}}"
+  consent-given="{{consentGiven}}"
+  initial-nickname="{{initialNickname}}"
+  bind:submit="onSheetSubmit"
+  bind:close="onSheetClose"
+/>

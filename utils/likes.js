@@ -5,6 +5,8 @@
  * 记录只用于交互反馈（防止重复点赞的提示），不与服务端计数强一致。
  */
 
+const { safeResourceName } = require('./resource-name')
+
 const KEY = 'upvotedPosts'
 const MAX_ENTRIES = 500
 const SUBJECT_KINDS = new Set(['post', 'moment'])
@@ -27,8 +29,9 @@ function writeAll(all) {
 }
 
 function subjectKey(kind, name) {
-  if (!SUBJECT_KINDS.has(kind) || typeof name !== 'string' || !name) return ''
-  return `${kind}:${name}`
+  const safeName = safeResourceName(name)
+  if (!SUBJECT_KINDS.has(kind) || !safeName) return ''
+  return `${kind}:${safeName}`
 }
 
 function isUpvotedSubject(kind, name) {
@@ -38,9 +41,10 @@ function isUpvotedSubject(kind, name) {
   if (all[key]) return true
 
   // v0.3.0 旧 Post key 为裸 metadata.name：首次读取时原地迁移，Moment 永不读取裸 key。
-  if (kind === 'post' && all[name]) {
-    all[key] = all[name]
-    delete all[name]
+  const safeName = safeResourceName(name)
+  if (kind === 'post' && safeName && all[safeName]) {
+    all[key] = all[safeName]
+    delete all[safeName]
     writeAll(all)
     return true
   }

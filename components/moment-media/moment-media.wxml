@@ -5,6 +5,7 @@
       wx:key="index"
       class="photo-item"
       data-position="{{index}}"
+      data-generation="{{mediaGeneration}}"
       catchtap="previewPhoto"
     >
       <image
@@ -14,6 +15,7 @@
         mode="aspectFill"
         lazy-load
         data-position="{{index}}"
+        data-generation="{{mediaGeneration}}"
         binderror="onPhotoError"
       />
       <view wx:else class="media-error">图片加载失败</view>
@@ -22,7 +24,7 @@
   </view>
 
   <block wx:for="{{videos}}" wx:key="index">
-    <view wx:if="{{compact}}" class="media-link media-summary">
+    <view wx:if="{{compact}}" class="media-link media-summary" bindtap="openDetail">
       <text class="media-symbol">▶</text>
       <text>视频 · 进入详情播放</text>
     </view>
@@ -38,6 +40,7 @@
       show-center-play-btn
       enable-progress-gesture
       data-position="{{index}}"
+      data-generation="{{mediaGeneration}}"
       bindplay="onVideoPlay"
       bindpause="onVideoPause"
       bindended="onVideoEnded"
@@ -46,7 +49,7 @@
   </block>
 
   <block wx:for="{{audios}}" wx:key="index">
-    <view wx:if="{{compact}}" class="media-link media-summary">
+    <view wx:if="{{compact}}" class="media-link media-summary" bindtap="openDetail">
       <text class="media-symbol">♫</text>
       <text>音频 · 进入详情播放</text>
     </view>
@@ -54,6 +57,7 @@
       wx:else
       class="audio-card {{item.failed ? 'media-link-disabled' : ''}}"
       data-position="{{index}}"
+      data-generation="{{mediaGeneration}}"
       catchtap="toggleAudio"
     >
       <view class="audio-button">{{item.failed ? '!' : item.loading ? '…' : item.playing ? 'Ⅱ' : '▶'}}</view>
@@ -64,19 +68,32 @@
     </view>
   </block>
 
-  <view
-    wx:for="{{links}}"
-    wx:key="index"
-    class="media-link {{item.canCopy ? '' : 'media-link-disabled'}}"
-    data-position="{{index}}"
-    catchtap="copyMediaLink"
-  >
-    <text class="media-symbol">{{item.type === 'POST' ? '↗' : '?'}}</text>
-    <view class="media-link-copy">
-      <view class="media-link-title">{{item.label}}</view>
-      <view class="media-link-tip">
-        {{item.canCopy ? (item.type === 'POST' ? '点击复制安全链接' : '点击复制媒体地址') : '没有可用的 HTTPS 地址'}}
+  <block wx:for="{{links}}" wx:key="index">
+    <view
+      wx:if="{{item.canOpenPost}}"
+      class="media-link"
+      data-position="{{index}}"
+      catchtap="openPost"
+    >
+      <text class="media-symbol">↗</text>
+      <view class="media-link-copy">
+        <view class="media-link-title">{{item.label}}</view>
+        <view class="media-link-tip">打开小程序文章</view>
       </view>
     </view>
-  </view>
+    <view
+      wx:else
+      class="media-link {{item.canCopy ? '' : 'media-link-disabled'}}"
+      data-position="{{index}}"
+      catchtap="copyMediaLink"
+    >
+      <text class="media-symbol">{{item.type === 'POST' ? '↗' : '?'}}</text>
+      <view class="media-link-copy">
+        <view class="media-link-title">{{item.label}}</view>
+        <view class="media-link-tip">
+          {{item.canCopy ? (item.type === 'POST' ? '点击复制安全链接' : '点击复制媒体地址') : '没有可用的 HTTPS 地址'}}
+        </view>
+      </view>
+    </view>
+  </block>
 </view>
